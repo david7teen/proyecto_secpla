@@ -1,0 +1,21 @@
+from django import forms
+from .models import Solicitud, Encuesta, TipoIncidencia
+
+class SolicitudForm(forms.ModelForm):
+    class Meta:
+        model = Solicitud
+        fields = ("descripcion", "comuna", "encuesta")
+
+class EncuestaForm(forms.ModelForm):
+    class Meta:
+        model = Encuesta
+        fields = ("titulo", "estado", "descripcion", "nombre_vecino", "celular_vecino", "correo_vecino", "pregunta_sugerida", "tipo_incidencia")
+
+class FiltroIncidenciasForm(forms.Form):
+    estado = forms.ChoiceField(choices=[("", "— Todos —")] + list(Solicitud.ESTADOS), required=False)
+    departamento = forms.ModelChoiceField(queryset=TipoIncidencia.objects.none(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from .models import Departamento
+        self.fields["departamento"].queryset = Departamento.objects.all()

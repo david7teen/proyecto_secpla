@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Cuadrilla{% endblock %}
+
+{% block content %}
+<h1>Dashboard Cuadrilla</h1>
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 20px 0;">
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+        <h3>Asignadas</h3>
+        <div style="font-size: 2rem; font-weight: bold;">{{ metrics.asignadas }}</div>
+    </div>
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+        <h3>Pendientes</h3>
+        <div style="font-size: 2rem; font-weight: bold;">{{ metrics.pendientes }}</div>
+    </div>
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+        <h3>Finalizadas</h3>
+        <div style="font-size: 2rem; font-weight: bold;">{{ metrics.finalizadas }}</div>
+    </div>
+</div>
+
+<div style="margin-top: 30px;">
+    <h3>Solicitudes en Proceso</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Prioridad</th>
+                <th>Fecha Asignación</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for solicitud in solicitudes_en_proceso %}
+            <tr>
+                <td>#{{ solicitud.id }}</td>
+                <td>{{ solicitud.descripcion|truncatewords:10 }}</td>
+                <td>{{ solicitud.get_prioridad_display }}</td>
+                <td>{{ solicitud.fecha_asignacion_cuadrilla|date:"d/m/Y" }}</td>
+                <td>
+                    <a href="{% url 'gestion_solicitud_finalizar' solicitud.id %}" class="btn">Finalizar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No hay solicitudes en proceso</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión Municipal{% endblock %}
+
+{% block content %}
+<h1>{{ titulo }}</h1>
+<p>{{ nota }}</p>
+
+<ul>
+    <li><a href="{% url 'gestion_direccion_list' %}">Direcciones</a></li>
+    <li><a href="{% url 'gestion_departamento_list' %}">Departamentos</a></li>
+    <li><a href="{% url 'gestion_tipo_list' %}">Tipos de Incidencia</a></li>
+    <li><a href="{% url 'gestion_encuesta_list' %}">Encuestas</a></li>
+    <li><a href="{% url 'gestion_solicitud_list' %}">Solicitudes</a></li>
+    <li><a href="{% url 'gestion_cuadrilla_list' %}">Cuadrillas</a></li>
+</ul>
+
+<p><a href="/">Volver al inicio</a></p>
+{% endblock %}

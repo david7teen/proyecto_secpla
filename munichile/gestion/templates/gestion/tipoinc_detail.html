@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>Detalle Tipo Incidencia</title></head>
+<body style="font-family:system-ui,Arial,sans-serif;max-width:700px;margin:24px auto;">
+  <h1>{{ obj.nombre }}</h1>
+  <p><b>Departamento:</b> {{ obj.departamento.nombre_departamento }}</p>
+  <p><b>Descripción:</b> {{ obj.descripcion|default:'-' }}</p>
+  <p><b>Estado:</b> {{ obj.state }}</p>
+  <p><a href="{% url 'gestion_tipoinc_list' %}">Volver</a></p>
+</body>
+</html>

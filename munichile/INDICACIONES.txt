@@ -1,0 +1,19 @@
+-------------------- CMD EN EL DIRECTORIO DEL PROYECTO --------------------
+python manage.py makemigrations
+python manage.py migrate
+
+--------------------------------- PGADMIN ---------------------------------
+INSERT INTO auth_group VALUES(1,'Admin');
+
+-------------------- CMD EN EL DIRECTORIO DEL PROYECTO --------------------
+python crear_perfiles.py
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+
+---------------------------------------------------------------------------
+
+
+
+-------------------- CMD EN EL DIRECTORIO DEL PROYECTO --------------------
+python borrar_usuarios.py

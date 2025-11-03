@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle Encuesta{% endblock %}
+
+{% block content %}
+<h1>{{ obj.titulo }}</h1>
+
+<div style="margin-bottom: 20px;">
+    <p><strong>Descripción:</strong> {{ obj.descripcion }}</p>
+    <p><strong>Ubicación:</strong> {{ obj.ubicacion }}</p>
+    <p><strong>Prioridad:</strong> {{ obj.get_prioridad_display }}</p>
+    <p><strong>Tipo de Incidencia:</strong> {{ obj.tipo_incidencia.nombre }}</p>
+</div>
+
+{% if not obj.bloqueada %}
+<p><a href="{% url 'gestion_pregunta_create' obj.id %}" class="btn">Agregar Pregunta</a></p>
+{% endif %}
+
+<h2>Preguntas</h2>
+{% for pregunta in preguntas %}
+<div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0;">
+    <h3>{{ forloop.counter }}. {{ pregunta.texto_pregunta }}</h3>
+    <p><strong>Tipo:</strong> {{ pregunta.get_tipo_respuesta_display }}</p>
+    {% if pregunta.tipo_respuesta == 'opciones' %}
+    <p><strong>Opciones:</strong> {{ pregunta.opciones }}</p>
+    {% endif %}
+    
+    {% if not obj.bloqueada %}
+    <p>
+        <a href="{% url 'gestion_pregunta_update' obj.id pregunta.id %}" class="btn">Editar</a>
+        <a href="{% url 'gestion_pregunta_delete' obj.id pregunta.id %}" class="btn">Eliminar</a>
+    </p>
+    {% endif %}
+</div>
+{% empty %}
+<p>No hay preguntas en esta encuesta.</p>
+{% endfor %}
+
+<p><a href="{% url 'gestion_encuesta_list' %}" class="btn">Volver</a></p>
+{% endblock %}

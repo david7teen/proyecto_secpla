@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard SECPLA{% endblock %}
+
+{% block content %}
+<h1>Dashboard SECPLA</h1>
+
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 20px 0;">
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+        <h3>Total Usuarios</h3>
+        <div style="font-size: 2rem; font-weight: bold;">{{ metrics.total_usuarios }}</div>
+    </div>
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+        <h3>Total Incidencias</h3>
+        <div style="font-size: 2rem; font-weight: bold;">{{ metrics.total_incidencias }}</div>
+    </div>
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+        <h3>Derivadas</h3>
+        <div style="font-size: 2rem; font-weight: bold;">{{ metrics.incidencias_derivadas }}</div>
+    </div>
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+        <h3>Finalizadas</h3>
+        <div style="font-size: 2rem; font-weight: bold;">{{ metrics.incidencias_finalizadas }}</div>
+    </div>
+</div>
+
+<div style="margin-top: 30px;">
+    <h3>Acciones</h3>
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <a href="{% url 'gestion_direccion_list' %}" class="btn">Direcciones</a>
+        <a href="{% url 'gestion_departamento_list' %}" class="btn">Departamentos</a>
+        <a href="{% url 'gestion_encuesta_list' %}" class="btn">Encuestas</a>
+        <a href="{% url 'gestion_solicitud_list' %}" class="btn">Solicitudes</a>
+    </div>
+</div>
+{% endblock %}

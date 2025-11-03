@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>Tipos de Incidencia</title></head>
+<body style="font-family:system-ui,Arial,sans-serif;max-width:1000px;margin:24px auto;">
+  <h1>Tipos de Incidencia</h1>
+  <p>
+    <a href="{% url 'gestion_main' %}">Gestión</a> |
+    <a href="{% url 'gestion_overview' %}">Resumen</a> |
+    <a href="{% url 'gestion_tipoinc_create' %}">Nuevo</a>
+  </p>
+
+  <form method="get">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar por nombre o departamento...">
+    <button type="submit">Buscar</button>
+  </form>
+
+  <table border="1" width="100%" cellpadding="6">
+    <thead><tr><th>#</th><th>Nombre</th><th>Departamento</th><th>Estado</th><th>Acciones</th></tr></thead>
+    <tbody>
+      {% for x in items %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td><a href="{% url 'gestion_tipoinc_detail' x.id %}">{{ x.nombre }}</a></td>
+          <td>{{ x.departamento.nombre_departamento }}</td>
+          <td>{{ x.state }}</td>
+          <td>
+            <a href="{% url 'gestion_tipoinc_update' x.id %}">Editar</a> |
+            <a href="{% url 'gestion_tipoinc_delete' x.id %}">Inactivar</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5">Sin resultados</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

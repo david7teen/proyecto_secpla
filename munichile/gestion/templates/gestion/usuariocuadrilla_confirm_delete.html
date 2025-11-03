@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Eliminar Asignación</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 700px; margin: 24px auto; }
+        .btn { padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; }
+        .cancel-btn { background: #95a5a6; text-decoration: none; padding: 10px 20px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Eliminar Asignación</h1>
+    <p>¿Seguro que deseas eliminar la asignación de <strong>{{ obj.usuario.get_full_name }}</strong> a la cuadrilla <strong>{{ obj.cuadrilla.nombre_cuadrilla }}</strong>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn">Sí, eliminar</button>
+        <a href="{% url 'gestion_usuariocuadrilla_list' %}" class="cancel-btn">Cancelar</a>
+    </form>
+</body>
+</html>

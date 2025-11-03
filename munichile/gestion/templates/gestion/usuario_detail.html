@@ -1,0 +1,499 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Usuario: {{ obj.username }}{% endblock %}
+
+{% block breadcrumb_items %}
+&gt; <a href="{% url 'gestion_usuario_list' %}">Usuarios</a>
+&gt; <span>Detalle: {{ obj.username }}</span>
+{% endblock %}
+
+{% block page_title %}Detalle de Usuario: {{ obj.get_full_name|default:obj.username }}{% endblock %}
+
+{% block page_actions %}
+    <a href="{% url 'gestion_usuario_update' obj.id %}" class="btn">
+        Editar
+    </a>
+    <a href="{% url 'gestion_usuario_toggle' obj.id %}" 
+       class="btn {% if obj.profile.activo %}btn-warning{% else %}btn-success{% endif %}"
+       onclick="return confirm('¿Estás seguro de que deseas {% if obj.profile.activo %}bloquear{% else %}activar{% endif %} a {{ obj.username }}?')">
+        {% if obj.profile.activo %}Bloquear{% else %}Activar{% endif %}
+    </a>
+    <a href="{% url 'gestion_usuario_list' %}" class="btn btn-outline">
+        Volver a Lista
+    </a>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-2">
+    <!-- Información Personal -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Información Personal</h3>
+        </div>
+        <div class="card-body">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Nombre Completo</div>
+                    <div class="info-value">{{ obj.first_name }} {{ obj.last_name }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Nombre de Usuario</div>
+                    <div class="info-value">
+                        <code class="username">{{ obj.username }}</code>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Correo Electrónico</div>
+                    <div class="info-value">{{ obj.email|default:"No especificado" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Teléfono</div>
+                    <div class="info-value">{{ obj.profile.telefono|default:"No especificado" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información del Perfil -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Información del Perfil</h3>
+        </div>
+        <div class="card-body">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Perfil Asignado</div>
+                    <div class="info-value">
+                        {% with perfil=obj.profile.perfil %}
+                        {% if perfil == 'admin' %}
+                            <span class="badge badge-admin">Administrador (SECPLA)</span>
+                        {% elif perfil == 'direccion' %}
+                            <span class="badge badge-direccion">Usuario Dirección</span>
+                        {% elif perfil == 'departamento' %}
+                            <span class="badge badge-departamento">Usuario Departamento</span>
+                        {% elif perfil == 'territorial' %}
+                            <span class="badge badge-territorial">Usuario Territorial</span>
+                        {% elif perfil == 'cuadrilla' %}
+                            <span class="badge badge-cuadrilla">Usuario Cuadrilla</span>
+                        {% else %}
+                            <span class="badge">{{ obj.profile.get_perfil_display }}</span>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Estado</div>
+                    <div class="info-value">
+                        {% if obj.profile.activo %}
+                            <span class="badge badge-success">Activo</span>
+                        {% else %}
+                            <span class="badge badge-danger">Bloqueado</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Fecha de Registro</div>
+                    <div class="info-value">{{ obj.date_joined|date:"d/m/Y H:i" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Último Acceso</div>
+                    <div class="info-value">
+                        {% if obj.last_login %}
+                            {{ obj.last_login|date:"d/m/Y H:i" }}
+                        {% else %}
+                            <span style="color: #999;">Nunca ha ingresado</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Información del Perfil Detallada -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Información del Perfil: {{ obj.profile.get_perfil_display }}</h3>
+    </div>
+    <div class="card-body">
+        <div class="perfil-description">
+            {% with perfil=obj.profile.perfil %}
+                {% if perfil == 'admin' %}
+                <div class="perfil-info admin">
+                    <h4>Permisos de Administrador (SECPLA)</h4>
+                    <ul>
+                        <li>Acceso completo a todos los módulos del sistema</li>
+                        <li>Gestión de usuarios, direcciones y departamentos</li>
+                        <li>Creación y modificación de tipos de incidencia</li>
+                        <li>Visualización de todas las solicitudes e incidencias</li>
+                        <li>Dashboard completo con métricas del sistema</li>
+                        <li>Configuración y administración del sistema</li>
+                    </ul>
+                </div>
+                {% elif perfil == 'direccion' %}
+                <div class="perfil-info direccion">
+                    <h4>Permisos de Usuario Dirección</h4>
+                    <ul>
+                        <li>Visualización de incidencias asignadas a su dirección</li>
+                        <li>Supervisión del trabajo de departamentos</li>
+                        <li>Dashboard con métricas de su dirección</li>
+                        <li>No puede gestionar usuarios del sistema</li>
+                        <li>No puede crear tipos de incidencia</li>
+                    </ul>
+                </div>
+                {% elif perfil == 'departamento' %}
+                <div class="perfil-info departamento">
+                    <h4>Permisos de Usuario Departamento</h4>
+                    <ul>
+                        <li>Derivación de incidencias a cuadrillas</li>
+                        <li>Gestión de solicitudes de su departamento</li>
+                        <li>Dashboard con métricas de su departamento</li>
+                        <li>Asignación de trabajos a cuadrillas</li>
+                        <li>No puede crear nuevos tipos de incidencia</li>
+                    </ul>
+                </div>
+                {% elif perfil == 'territorial' %}
+                <div class="perfil-info territorial">
+                    <h4>Permisos de Usuario Territorial</h4>
+                    <ul>
+                        <li>Creación de nuevas solicitudes e incidencias</li>
+                        <li>Validación de trabajos finalizados por cuadrillas</li>
+                        <li>Dashboard personal con sus solicitudes</li>
+                        <li>Edición de solicitudes rechazadas</li>
+                        <li>No puede derivar incidencias a departamentos</li>
+                    </ul>
+                </div>
+                {% elif perfil == 'cuadrilla' %}
+                <div class="perfil-info cuadrilla">
+                    <h4>Permisos de Usuario Cuadrilla</h4>
+                    <ul>
+                        <li>Resolución de incidencias asignadas</li>
+                        <li>Reporte de avances y finalizaciones</li>
+                        <li>Carga de evidencias (imágenes, documentos)</li>
+                        <li>Dashboard con trabajos asignados</li>
+                        <li>No puede crear nuevas solicitudes</li>
+                    </ul>
+                </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+</div>
+
+<!-- Estadísticas del Usuario -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Estadísticas de Actividad</h3>
+    </div>
+    <div class="card-body">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-icon"></div>
+                <div class="stat-number">{{ obj.solicitudes_creadas_por.count|default:0 }}</div>
+                <div class="stat-label">Solicitudes Creadas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon"></div>
+                <div class="stat-number">{{ obj.solicitudes_validadas.count|default:0 }}</div>
+                <div class="stat-label">Solicitudes Validadas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon"></div>
+                <div class="stat-number">{{ obj.seguimientosolicitud_set.count|default:0 }}</div>
+                <div class="stat-label">Seguimientos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon"></div>
+                <div class="stat-number">{{ obj.usuariocuadrilla_set.count|default:0 }}</div>
+                <div class="stat-label">Cuadrillas Asignadas</div>
+            </div>
+        </div>
+        
+        {% if obj.profile.perfil == 'territorial' %}
+        <div style="margin-top: 2rem; padding: 1rem; background: #e8f4fd; border-radius: 6px;">
+            <h4 style="margin: 0 0 1rem 0; color: #2c3e50;">Actividad como Territorial</h4>
+            <div class="grid grid-3">
+                <div style="text-align: center;">
+                    <div style="font-size: 1.5rem; color: #f39c12;">{{ obj.solicitudes_como_territorial.count|default:0 }}</div>
+                    <div style="font-size: 0.9rem; color: #666;">Total Reportes</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 1.5rem; color: #27ae60;">{{ obj.solicitudes_como_territorial.filter|length }}</div>
+                    <div style="font-size: 0.9rem; color: #666;">Finalizados</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 1.5rem; color: #e74c3c;">{{ obj.solicitudes_como_territorial.filter|length }}</div>
+                    <div style="font-size: 0.9rem; color: #666;">En Proceso</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Información Técnica -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Información Técnica</h3>
+    </div>
+    <div class="card-body">
+        <div class="grid grid-2">
+            <div class="info-item">
+                <div class="info-label">ID de Usuario</div>
+                <div class="info-value">
+                    <code>{{ obj.id }}</code>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Última Actualización</div>
+                <div class="info-value">{{ obj.profile.updated|date:"d/m/Y H:i" }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Es Staff</div>
+                <div class="info-value">
+                    {% if obj.is_staff %}
+                        <span class="badge badge-success">Sí</span>
+                    {% else %}
+                        <span class="badge" style="background: #e9ecef; color: #495057;">No</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Superusuario</div>
+                <div class="info-value">
+                    {% if obj.is_superuser %}
+                        <span class="badge badge-success">Sí</span>
+                    {% else %}
+                        <span class="badge" style="background: #e9ecef; color: #495057;">No</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.info-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.info-value {
+    font-size: 1rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.username {
+    background: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    border: 1px solid #e9ecef;
+}
+
+.badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-admin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.badge-direccion {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.badge-departamento {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+}
+
+.badge-territorial {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    color: white;
+}
+
+.badge-cuadrilla {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    color: white;
+}
+
+.badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.perfil-description {
+    line-height: 1.6;
+}
+
+.perfil-description h4 {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+}
+
+.perfil-description ul {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.perfil-description li {
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 0.5rem 0;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .info-item {
+        flex-direction: column;
+    }
+}
+
+/* Animaciones */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Estilos específicos para perfiles */
+.perfil-info.admin {
+    border-left: 4px solid #667eea;
+    padding-left: 1rem;
+}
+
+.perfil-info.direccion {
+    border-left: 4px solid #4facfe;
+    padding-left: 1rem;
+}
+
+.perfil-info.departamento {
+    border-left: 4px solid #43e97b;
+    padding-left: 1rem;
+}
+
+.perfil-info.territorial {
+    border-left: 4px solid #fa709a;
+    padding-left: 1rem;
+}
+
+.perfil-info.cuadrilla {
+    border-left: 4px solid #ff9a9e;
+    padding-left: 1rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación para las estadísticas
+    const statNumbers = document.querySelectorAll('.stat-number');
+    statNumbers.forEach(stat => {
+        const finalValue = parseInt(stat.textContent);
+        let currentValue = 0;
+        const duration = 1500;
+        const increment = finalValue / (duration / 16);
+        
+        const timer = setInterval(() => {
+            currentValue += increment;
+            if (currentValue >= finalValue) {
+                stat.textContent = finalValue;
+                clearInterval(timer);
+            } else {
+                stat.textContent = Math.floor(currentValue);
+            }
+        }, 16);
+    });
+    
+    // Tooltips para información adicional
+    const infoItems = document.querySelectorAll('.info-item');
+    infoItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(5px)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Territorial{% endblock %}
+
+{% block content %}
+<h1>Dashboard Territorial</h1>
+
+<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin: 20px 0;">
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+        <h3>Total Creadas</h3>
+        <div style="font-size: 1.8rem; font-weight: bold;">{{ metrics.total_creadas }}</div>
+    </div>
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+        <h3>Abiertas</h3>
+        <div style="font-size: 1.8rem; font-weight: bold;">{{ metrics.abiertas }}</div>
+    </div>
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+        <h3>Derivadas</h3>
+        <div style="font-size: 1.8rem; font-weight: bold;">{{ metrics.derivadas }}</div>
+    </div>
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+        <h3>Finalizadas</h3>
+        <div style="font-size: 1.8rem; font-weight: bold;">{{ metrics.finalizadas }}</div>
+    </div>
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+        <h3>Rechazadas</h3>
+        <div style="font-size: 1.8rem; font-weight: bold;">{{ metrics.rechazadas }}</div>
+    </div>
+</div>
+
+<div style="margin: 25px 0; padding: 15px; background: #e8f4fd; border-radius: 8px;">
+    <h3>Crear Nueva Solicitud</h3>
+    <a href="{% url 'gestion_solicitud_create' %}" class="btn">Nueva Solicitud</a>
+</div>
+
+<div style="margin: 25px 0;">
+    <h3>Mis Solicitudes Recientes</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Encuesta</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for solicitud in solicitudes %}
+            <tr>
+                <td>#{{ solicitud.id }}</td>
+                <td>{{ solicitud.encuesta.titulo }}</td>
+                <td>{{ solicitud.estado }}</td>
+                <td>{{ solicitud.created|date:"d/m/Y" }}</td>
+                <td>
+                    <a href="{% url 'gestion_solicitud_detail' solicitud.id %}" class="btn">Ver</a>
+                    {% if solicitud.estado == 'rechazada' %}
+                    <a href="{% url 'gestion_solicitud_update' solicitud.id %}" class="btn">Reeditar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No has creado solicitudes</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

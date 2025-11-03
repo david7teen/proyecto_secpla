@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Solicitud #{{ obj.id }}{% endblock %}
+
+{% block content %}
+<h1>Solicitud #{{ obj.id }}</h1>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div>
+        <h2>Información</h2>
+        <p><strong>Encuesta:</strong> {{ obj.encuesta.titulo }}</p>
+        <p><strong>Descripción:</strong> {{ obj.descripcion }}</p>
+        <p><strong>Ubicación:</strong> {{ obj.ubicacion }}</p>
+        <p><strong>Comuna:</strong> {{ obj.comuna }}</p>
+    </div>
+    
+    <div>
+        <h2>Metadatos</h2>
+        <p><strong>Estado:</strong> {{ obj.estado }}</p>
+        <p><strong>Prioridad:</strong> {{ obj.prioridad }}</p>
+        <p><strong>Territorial:</strong> {{ obj.territorial.get_full_name }}</p>
+        <p><strong>Fecha:</strong> {{ obj.created|date:"d/m/Y H:i" }}</p>
+        {% if obj.departamento_asignado %}
+        <p><strong>Departamento:</strong> {{ obj.departamento_asignado.nombre_departamento }}</p>
+        {% endif %}
+        {% if obj.cuadrilla_asignada %}
+        <p><strong>Cuadrilla:</strong> {{ obj.cuadrilla_asignada.nombre_cuadrilla }}</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if adjuntos %}
+<h2>Archivos Adjuntos</h2>
+{% for adjunto in adjuntos %}
+<div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0;">
+    <p><strong>Tipo:</strong> {{ adjunto.get_tipo_display }}</p>
+    <p><strong>Descripción:</strong> {{ adjunto.descripcion }}</p>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if seguimientos %}
+<h2>Seguimiento</h2>
+{% for seguimiento in seguimientos %}
+<div style="border-left: 4px solid #3498db; padding-left: 10px; margin: 10px 0;">
+    <p><strong>{{ seguimiento.usuario.username }}</strong> - {{ seguimiento.created|date:"d/m/Y H:i" }}</p>
+    <p>{{ seguimiento.estado_anterior }} → {{ seguimiento.estado_nuevo }}</p>
+    <p>{{ seguimiento.comentario }}</p>
+</div>
+{% endfor %}
+{% endif %}
+
+<p><a href="{% url 'gestion_solicitud_list' %}" class="btn">Volver</a></p>
+{% endblock %}

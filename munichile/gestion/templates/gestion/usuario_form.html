@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if modo == 'crear' %}Nuevo Usuario{% else %}Editar Usuario{% endif %}{% endblock %}
+
+{% block content %}
+<h1>{% if modo == 'crear' %}Nuevo Usuario{% else %}Editar Usuario{% endif %}</h1>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div style="margin-bottom: 15px;">
+        <label>Nombre:</label>
+        {{ form.first_name }}
+        {{ form.first_name.errors }}
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <label>Apellido:</label>
+        {{ form.last_name }}
+        {{ form.last_name.errors }}
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <label>Email:</label>
+        {{ form.email }}
+        {{ form.email.errors }}
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <label>Usuario:</label>
+        {{ form.username }}
+        {{ form.username.errors }}
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <label>Teléfono:</label>
+        {{ form.telefono }}
+        {{ form.telefono.errors }}
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <label>Perfil:</label>
+        {{ form.perfil }}
+        {{ form.perfil.errors }}
+    </div>
+    
+    {% if modo == 'crear' %}
+    <div style="margin-bottom: 15px;">
+        <label>Contraseña:</label>
+        {{ form.password }}
+        {{ form.password.errors }}
+    </div>
+    {% endif %}
+    
+    <button type="submit" class="btn">
+        {% if modo == 'crear' %}Crear Usuario{% else %}Guardar Cambios{% endif %}
+    </button>
+    <a href="{% url 'gestion_usuario_list' %}" class="btn">Cancelar</a>
+</form>
+{% endblock %}

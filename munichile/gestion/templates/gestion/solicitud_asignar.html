@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Asignar Cuadrilla{% endblock %}
+
+{% block content %}
+<h1>Asignar Solicitud a Cuadrilla</h1>
+<p><strong>Solicitud:</strong> #{{ obj.id }} - {{ obj.encuesta.titulo }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <div style="margin-bottom: 15px;">
+        <label>Cuadrilla:</label>
+        <select name="cuadrilla_asignada" required>
+            <option value="">Seleccione cuadrilla</option>
+            {% for cuadrilla in cuadrillas %}
+            <option value="{{ cuadrilla.id }}">{{ cuadrilla.nombre_cuadrilla }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <button type="submit" class="btn">Asignar Cuadrilla</button>
+    <a href="{% url 'gestion_solicitud_list' %}" class="btn">Cancelar</a>
+</form>
+{% endblock %}

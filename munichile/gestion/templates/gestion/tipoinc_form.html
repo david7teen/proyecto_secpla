@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>Tipo de Incidencia</title></head>
+<body style="font-family:system-ui,Arial,sans-serif;max-width:700px;margin:24px auto;">
+  <h1>{% if modo == 'crear' %}Nuevo Tipo de Incidencia{% else %}Editar Tipo de Incidencia{% endif %}</h1>
+  <form method="post">{% csrf_token %} {{ form.as_p }}
+    <button type="submit">{% if modo == 'crear' %}Crear{% else %}Guardar{% endif %}</button>
+    <a href="{% url 'gestion_tipoinc_list' %}">Cancelar</a>
+  </form>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>Departamento</title></head>
+<body style="font-family:system-ui,Arial,sans-serif;max-width:700px;margin:24px auto;">
+  <h1>{% if modo == 'crear' %}Nuevo Departamento{% else %}Editar Departamento{% endif %}</h1>
+  <form method="post">{% csrf_token %} {{ form.as_p }}
+    <button type="submit">{% if modo == 'crear' %}Crear{% else %}Guardar{% endif %}</button>
+    <a href="{% url 'gestion_departamento_list' %}">Cancelar</a>
+  </form>
+</body>
+</html>

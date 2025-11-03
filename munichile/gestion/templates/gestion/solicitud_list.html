@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Solicitudes{% endblock %}
+
+{% block content %}
+<h1>Solicitudes</h1>
+
+{% if user.profile.perfil == 'territorial' or user.profile.perfil == 'admin' %}
+<p><a href="{% url 'gestion_solicitud_create' %}" class="btn">Nueva Solicitud</a></p>
+{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Encuesta</th>
+            <th>Descripción</th>
+            <th>Ubicación</th>
+            <th>Estado</th>
+            <th>Prioridad</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for solicitud in items %}
+        <tr>
+            <td>#{{ solicitud.id }}</td>
+            <td>{{ solicitud.encuesta.titulo|truncatewords:4 }}</td>
+            <td>{{ solicitud.descripcion|truncatewords:8|default:"-" }}</td>
+            <td>{{ solicitud.ubicacion|truncatewords:3|default:"-" }}</td>
+            <td>{{ solicitud.estado }}</td>
+            <td>{{ solicitud.prioridad }}</td>
+            <td>{{ solicitud.created|date:"d/m/Y" }}</td>
+            <td>
+                <a href="{% url 'gestion_solicitud_detail' solicitud.id %}" class="btn">Ver</a>
+                {% if user.profile.perfil == 'admin' or user.profile.perfil == 'territorial' %}
+                <a href="{% url 'gestion_solicitud_update' solicitud.id %}" class="btn">Editar</a>
+                {% endif %}
+                
+                {% if user.profile.perfil == 'territorial' and solicitud.estado == 'finalizada' %}
+                <a href="{% url 'gestion_solicitud_validar' solicitud.id %}" class="btn">Validar</a>
+                {% endif %}
+                
+                {% if user.profile.perfil == 'departamento' and solicitud.estado == 'derivada' %}
+                <a href="{% url 'gestion_solicitud_derivar' solicitud.id %}" class="btn">Derivar</a>
+                {% endif %}
+                
+                {% if user.profile.perfil == 'cuadrilla' and solicitud.estado == 'en_proceso' %}
+                <a href="{% url 'gestion_solicitud_finalizar' solicitud.id %}" class="btn">Finalizar</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8">No hay solicitudes</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

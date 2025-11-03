@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Cuadrillas{% endblock %}
+
+{% block content %}
+<h1>Cuadrillas</h1>
+
+<p>
+    <a href="{% url 'gestion_cuadrilla_create' %}" class="btn">Nueva Cuadrilla</a>
+</p>
+
+<form method="get" style="margin: 20px 0;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar...">
+    <button type="submit" class="btn">Buscar</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Departamento</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for x in items %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ x.nombre_cuadrilla }}</td>
+            <td>{{ x.departamento.nombre_departamento }}</td>
+            <td>{{ x.state }}</td>
+            <td>
+                <a href="{% url 'gestion_cuadrilla_update' x.id %}" class="btn">Editar</a>
+                <a href="{% url 'gestion_cuadrilla_delete' x.id %}" class="btn">Inactivar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No hay cuadrillas</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

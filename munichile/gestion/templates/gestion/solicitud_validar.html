@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Validar Solicitud</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 24px auto; }
+        .adjunto { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .btn { padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; }
+        .rechazar-btn { background: #e74c3c; }
+        .cancel-btn { background: #95a5a6; text-decoration: none; padding: 10px 20px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Validar Solicitud #{{ obj.id }}</h1>
+    
+    <div class="solicitud-info">
+        <p><strong>Encuesta:</strong> {{ obj.encuesta.titulo }}</p>
+        <p><strong>Descripción:</strong> {{ obj.descripcion }}</p>
+        <p><strong>Ubicación:</strong> {{ obj.ubicacion }}</p>
+        <p><strong>Cuadrilla asignada:</strong> {{ obj.cuadrilla_asignada }}</p>
+    </div>
+
+    <h3>Trabajos Realizados por la Cuadrilla</h3>
+    {% for adjunto in adjuntos %}
+    <div class="adjunto">
+        <p><strong>Tipo:</strong> {{ adjunto.get_tipo_display }}</p>
+        <p><strong>Descripción:</strong> {{ adjunto.descripcion }}</p>
+        {% if adjunto.tipo == 'imagen' %}
+        <p><strong>Archivo:</strong> <a href="{{ adjunto.ruta_archivo.url }}" target="_blank">Ver imagen</a></p>
+        {% else %}
+        <p><strong>Archivo:</strong> <a href="{{ adjunto.ruta_archivo.url }}" target="_blank">Descargar</a></p>
+        {% endif %}
+        <p><strong>Fecha:</strong> {{ adjunto.created|date:"d/m/Y H:i" }}</p>
+    </div>
+    {% empty %}
+    <p>No hay archivos adjuntos para esta solicitud.</p>
+    {% endfor %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="comentario_validacion">Comentario de Validación:</label>
+            <textarea name="comentario_validacion" id="comentario_validacion" rows="4" style="width: 100%; padding: 8px;" placeholder="Agregue sus comentarios sobre el trabajo realizado..."></textarea>
+        </div>
+        
+        <div class="actions">
+            <button type="submit" name="accion" value="validar" class="btn">Validar Trabajo</button>
+            <button type="submit" name="accion" value="rechazar" class="btn rechazar-btn">Rechazar Validación</button>
+            <a href="{% url 'gestion_solicitud_list' %}" class="cancel-btn">Cancelar</a>
+        </div>
+    </form>
+</body>
+</html>

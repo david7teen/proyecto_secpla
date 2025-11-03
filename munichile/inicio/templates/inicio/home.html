@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Municipal de Incidencias</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container { 
+            max-width: 800px; 
+            text-align: center;
+            padding: 2rem;
+        }
+        .logo { 
+            font-size: 3rem; 
+            margin-bottom: 1rem; 
+        }
+        h1 { 
+            font-size: 2.5rem; 
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .feature {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .buttons {
+            margin-top: 2rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 0 10px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+        .footer {
+            margin-top: 3rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">️</div>
+        <h1>Sistema Municipal de Incidencias</h1>
+        <p class="subtitle">Plataforma integral para la gestión y seguimiento de incidencias municipales</p>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon"></div>
+                <h3>Dashboard Interactivo</h3>
+                <p>Seguimiento en tiempo real de todas las incidencias</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon"></div>
+                <h3>Múltiples Perfiles</h3>
+                <p>SECPLA, Dirección, Departamento, Cuadrilla y Territorial</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon"></div>
+                <h3>Gestión Eficiente</h3>
+                <p>Flujo completo desde reporte hasta solución</p>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <a href="{% url 'login' %}" class="btn">Iniciar Sesión</a>
+            <a href="{% url 'signup' %}" class="btn btn-outline">Registrarse</a>
+        </div>
+        
+        <div class="footer">
+            <p>Sistema desarrollado para la gestión municipal eficiente</p>
+        </div>
+    </div>
+</body>
+</html>

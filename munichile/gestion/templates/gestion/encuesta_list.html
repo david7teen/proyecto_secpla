@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Encuestas{% endblock %}
+
+{% block content %}
+<h1>Encuestas</h1>
+
+<p>
+    <a href="{% url 'gestion_encuesta_create' %}" class="btn">Nueva Encuesta</a>
+</p>
+
+<form method="get" style="margin: 20px 0;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar...">
+    <button type="submit" class="btn">Buscar</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Título</th>
+            <th>Tipo Incidencia</th>
+            <th>Prioridad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for encuesta in items %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ encuesta.titulo }}</td>
+            <td>{{ encuesta.tipo_incidencia.nombre }}</td>
+            <td>{{ encuesta.get_prioridad_display }}</td>
+            <td>{% if encuesta.bloqueada %}Bloqueada{% else %}Activa{% endif %}</td>
+            <td>
+                <a href="{% url 'gestion_encuesta_detail' encuesta.id %}" class="btn">Ver</a>
+                {% if not encuesta.bloqueada %}
+                <a href="{% url 'gestion_encuesta_update' encuesta.id %}" class="btn">Editar</a>
+                {% endif %}
+                <a href="{% url 'gestion_encuesta_toggle' encuesta.id %}" class="btn">
+                    {% if encuesta.bloqueada %}Desbloquear{% else %}Bloquear{% endif %}
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No hay encuestas</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Usuarios{% endblock %}
+
+{% block content %}
+<h1>Gestión de Usuarios</h1>
+
+<p>
+    <a href="{% url 'gestion_usuario_create' %}" class="btn">Nuevo Usuario</a>
+</p>
+
+<form method="get" style="margin: 20px 0;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar...">
+    <button type="submit" class="btn">Buscar</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Usuario</th>
+            <th>Email</th>
+            <th>Perfil</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user_obj in items %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ user_obj.first_name }} {{ user_obj.last_name }}</td>
+            <td>{{ user_obj.username }}</td>
+            <td>{{ user_obj.email }}</td>
+            <td>{{ user_obj.profile.get_perfil_display }}</td>
+            <td>{% if user_obj.profile.activo %}Activo{% else %}Inactivo{% endif %}</td>
+            <td>
+                <a href="{% url 'gestion_usuario_detail' user_obj.id %}" class="btn">Ver</a>
+                <a href="{% url 'gestion_usuario_update' user_obj.id %}" class="btn">Editar</a>
+                <a href="{% url 'gestion_usuario_toggle' user_obj.id %}" class="btn">
+                    {% if user_obj.profile.activo %}Bloquear{% else %}Activar{% endif %}
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No hay usuarios</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

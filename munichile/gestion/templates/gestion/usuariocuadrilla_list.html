@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Usuarios en Cuadrillas</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 1200px; margin: 24px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; font-weight: 600; }
+        .btn { display: inline-block; padding: 6px 12px; background: #3498db; color: white; text-decoration: none; border-radius: 4px; margin: 2px; }
+        .btn-danger { background: #e74c3c; }
+    </style>
+</head>
+<body>
+    <h1>Usuarios en Cuadrillas</h1>
+    
+    <p>
+        <a href="{% url 'gestion_main' %}">Inicio</a> |
+        <a href="{% url 'gestion_usuariocuadrilla_create' %}">Asignar Usuario a Cuadrilla</a>
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Usuario</th>
+                <th>Cuadrilla</th>
+                <th>Departamento</th>
+                <th>Fecha Asignación</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for uc in items %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ uc.usuario.get_full_name }} ({{ uc.usuario.username }})</td>
+                <td>{{ uc.cuadrilla.nombre_cuadrilla }}</td>
+                <td>{{ uc.cuadrilla.departamento.nombre_departamento }}</td>
+                <td>{{ uc.created|date:"d/m/Y" }}</td>
+                <td>
+                    <a href="{% url 'gestion_usuariocuadrilla_delete' uc.id %}" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No hay usuarios asignados a cuadrillas</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

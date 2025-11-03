@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Direcciones{% endblock %}
+
+{% block content %}
+<h1>Direcciones</h1>
+
+<p>
+    <a href="{% url 'gestion_direccion_create' %}" class="btn">Nueva Dirección</a>
+</p>
+
+<form method="get" style="margin: 20px 0;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar...">
+    <button type="submit" class="btn">Buscar</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Encargado</th>
+            <th>Email</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for x in items %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ x.nombre_direccion }}</td>
+            <td>{{ x.nombre_encargado }}</td>
+            <td>{{ x.correo_encargado }}</td>
+            <td>{{ x.state }}</td>
+            <td>
+                <a href="{% url 'gestion_direccion_update' x.id %}" class="btn">Editar</a>
+                <a href="{% url 'gestion_direccion_delete' x.id %}" class="btn">Inactivar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No hay direcciones</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

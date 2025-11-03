@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if modo == 'crear' %}Nueva Solicitud{% else %}Editar Solicitud{% endif %}{% endblock %}
+
+{% block content %}
+<h1>{% if modo == 'crear' %}Nueva Solicitud{% else %}Editar Solicitud{% endif %}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    
+    {% for field in form %}
+    <div style="margin-bottom: 15px;">
+        <label>{{ field.label }}:</label>
+        {{ field }}
+        {{ field.errors }}
+    </div>
+    {% endfor %}
+    
+    <button type="submit" class="btn">
+        {% if modo == 'crear' %}Crear Solicitud{% else %}Guardar Cambios{% endif %}
+    </button>
+    <a href="{% url 'gestion_solicitud_list' %}" class="btn">Cancelar</a>
+</form>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Inactivar Departamento{% endblock %}
+
+{% block content %}
+<h1>Inactivar Departamento</h1>
+<p>¿Seguro que deseas marcar <strong>{{ obj.nombre_departamento }}</strong> como inactivo?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn">Sí, inactivar</button>
+    <a href="{% url 'gestion_departamento_list' %}" class="btn">Cancelar</a>
+</form>
+{% endblock %}

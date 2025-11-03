@@ -1,0 +1,105 @@
+{% load static %}
+{% block title %}Registro - Sistema Municipal{% endblock %}
+{% block content %}
+<style>
+    .errorlist{color:red;}
+    .signup-form {
+        max-width: 500px;
+        margin: 30px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+    }
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+</style>
+
+<div class="signup-form">
+    <h2>Registro de Usuario</h2>
+    
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>Nombre:</label>
+            {{ form.first_name }}
+            {{ form.first_name.errors }}
+        </div>
+        
+        <div class="form-group">
+            <label>Apellido:</label>
+            {{ form.last_name }}
+            {{ form.last_name.errors }}
+        </div>
+        
+        <div class="form-group">
+            <label>Correo Electrónico:</label>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+        
+        <div class="form-group">
+            <label>Nombre de Usuario:</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+        
+        <div class="form-group">
+            <label>Teléfono:</label>
+            {{ form.telefono }}
+            {{ form.telefono.errors }}
+        </div>
+        
+        <div class="form-group">
+            <label>Perfil:</label>
+            {{ form.perfil }}
+            {{ form.perfil.errors }}
+        </div>
+        
+        <div class="form-group">
+            <label>Contraseña:</label>
+            {{ form.password1 }}
+            {{ form.password1.errors }}
+        </div>
+        
+        <div class="form-group">
+            <label>Confirmar Contraseña:</label>
+            {{ form.password2 }}
+            {{ form.password2.errors }}
+        </div>
+        
+        <button type="submit" class="btn" style="width: 100%; padding: 12px; background: #27ae60;">
+            Registrar Usuario
+        </button>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'login' %}">¿Ya tienes cuenta? Inicia Sesión</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

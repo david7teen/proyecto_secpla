@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Derivar Solicitud{% endblock %}
+
+{% block content %}
+<h1>Derivar Solicitud #{{ obj.id }}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    
+    {% for field in form %}
+    <div style="margin-bottom: 15px;">
+        <label>{{ field.label }}:</label>
+        {{ field }}
+        {{ field.errors }}
+    </div>
+    {% endfor %}
+    
+    <button type="submit" class="btn">Derivar Solicitud</button>
+    <a href="{% url 'gestion_solicitud_list' %}" class="btn">Cancelar</a>
+</form>
+{% endblock %}

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><title>Detalle Dirección</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body style="font-family:system-ui,Arial,sans-serif;max-width:700px;margin:24px auto;">
+  <h1>Detalle de Dirección</h1>
+
+  <p><b>Nombre:</b> {{ obj.nombre_direccion }}</p>
+  <p><b>Encargado:</b> {{ obj.nombre_encargado }}</p>
+  <p><b>Correo:</b> {{ obj.correo_encargado }}</p>
+  <p><b>Estado:</b> {{ obj.state }}</p>
+
+  <p>
+    <a href="{% url 'gestion_direccion_update' obj.id %}">Editar</a> |
+    <a href="{% url 'gestion_direccion_list' %}">Volver</a>
+  </p>
+</body>
+</html>

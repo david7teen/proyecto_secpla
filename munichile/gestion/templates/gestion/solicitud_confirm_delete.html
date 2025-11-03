@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Solicitud{% endblock %}
+
+{% block breadcrumb_items %}
+&gt; <a href="{% url 'gestion_solicitud_list' %}">Solicitudes</a>
+&gt; <span>Eliminar Solicitud</span>
+{% endblock %}
+
+{% block page_title %}Eliminar Solicitud{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Confirmar Eliminación</h3>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <strong>Advertencia:</strong> Estás a punto de eliminar la siguiente solicitud. Esta acción no se puede deshacer.
+        </div>
+
+        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
+            <h4>Detalles de la Solicitud</h4>
+            <p><strong>ID:</strong> #{{ obj.id }}</p>
+            <p><strong>Encuesta:</strong> {{ obj.encuesta.titulo }}</p>
+            <p><strong>Descripción:</strong> {{ obj.descripcion|truncatewords:20 }}</p>
+            <p><strong>Estado:</strong> <span class="badge badge-{{ obj.estado }}">{{ obj.estado|title }}</span></p>
+            <p><strong>Fecha Creación:</strong> {{ obj.created|date:"d/m/Y H:i" }}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions" style="display: flex; gap: 10px; margin-top: 2rem;">
+                <button type="submit" class="btn btn-danger">
+                    Confirmar Eliminación
+                </button>
+                <a href="{% url 'gestion_solicitud_list' %}" class="btn btn-outline">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

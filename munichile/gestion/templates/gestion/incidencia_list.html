@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Tipos de Incidencia</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 1200px; margin: 24px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; font-weight: 600; }
+        .btn { display: inline-block; padding: 6px 12px; background: #3498db; color: white; 
+               text-decoration: none; border-radius: 4px; margin: 2px; }
+    </style>
+</head>
+<body>
+    <h1>Tipos de Incidencia</h1>
+    
+    <p>
+        <a href="{% url 'gestion_main' %}">Inicio</a> |
+        <a href="{% url 'gestion_incidencia_create' %}">Nuevo Tipo</a>
+    </p>
+
+    <form method="get">
+        <input type="text" name="q" value="{{ q }}" placeholder="Buscar por nombre...">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Departamento</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for incidencia in items %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ incidencia.nombre }}</td>
+                <td>{{ incidencia.departamento.direccion.nombre_direccion }}</td>
+                <td>{{ incidencia.departamento.nombre_departamento }}</td>
+                <td>{{ incidencia.state }}</td>
+                <td>
+                    <a href="{% url 'gestion_incidencia_detail' incidencia.id %}" class="btn">Ver</a>
+                    <a href="{% url 'gestion_incidencia_update' incidencia.id %}" class="btn">Editar</a>
+                    <a href="{% url 'gestion_incidencia_delete' incidencia.id %}" class="btn">Bloquear</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No hay tipos de incidencia registrados</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Tipos de Incidencia{% endblock %}
+
+{% block content %}
+<h1>Tipos de Incidencia</h1>
+
+<p>
+    <a href="{% url 'gestion_tipo_create' %}" class="btn">Nuevo Tipo</a>
+</p>
+
+<form method="get" style="margin: 20px 0;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar...">
+    <button type="submit" class="btn">Buscar</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Departamento</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for x in items %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ x.nombre }}</td>
+            <td>{{ x.departamento.nombre_departamento }}</td>
+            <td>{{ x.state }}</td>
+            <td>
+                <a href="{% url 'gestion_tipo_update' x.id %}" class="btn">Editar</a>
+                <a href="{% url 'gestion_tipo_delete' x.id %}" class="btn">Inactivar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No hay tipos de incidencia</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

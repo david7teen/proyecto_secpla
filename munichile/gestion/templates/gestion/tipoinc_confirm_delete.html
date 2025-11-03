@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>Inactivar Tipo de Incidencia</title></head>
+<body style="font-family:system-ui,Arial,sans-serif;max-width:700px;margin:24px auto;">
+  <h1>Inactivar Tipo de Incidencia</h1>
+  <p>¿Seguro que deseas marcar <b>{{ obj.nombre }}</b> como <b>Inactivo</b>?</p>
+  <form method="post">{% csrf_token %}
+    <button type="submit">Sí, inactivar</button>
+    <a href="{% url 'gestion_tipoinc_list' %}">Cancelar</a>
+  </form>
+</body>
+</html>

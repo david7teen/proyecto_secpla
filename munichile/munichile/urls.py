@@ -19,6 +19,9 @@ from django.urls import path, include
 from core.urls import core_urlpatterns
 from gestion.urls import gestion_urlpatterns
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('', include(core_urlpatterns)),
     path('admin/', admin.site.urls),
@@ -26,3 +29,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('registration.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

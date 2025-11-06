@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Crear Nueva Incidencia{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4 text-gray-800">Crear Nueva Solicitud / Incidencia</h1>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Formulario de Encuesta</h6>
+    </div>
+    <div class="card-body">
+        
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="{{ form.titulo_encuesta.id_for_label }}">{{ form.titulo_encuesta.label }}</label>
+                {{ form.titulo_encuesta }}
+                {{ form.titulo_encuesta.errors }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.descripcion.id_for_label }}">{{ form.descripcion.label }}</label>
+                {{ form.descripcion }}
+                {{ form.descripcion.errors }}
+            </div>
+
+            <hr>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="{{ form.ubicacion.id_for_label }}">{{ form.ubicacion.label }}</label>
+                    {{ form.ubicacion }}
+                    {{ form.ubicacion.errors }}
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="{{ form.prioridad.id_for_label }}">{{ form.prioridad.label }}</label>
+                    {{ form.prioridad }}
+                    {{ form.prioridad.errors }}
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="{{ form.tipo_incidencia.id_for_label }}">{{ form.tipo_incidencia.label }}</TIPO></label>
+                    {{ form.tipo_incidencia }}
+                    {{ form.tipo_incidencia.errors }}
+                </div>
+            </div>
+
+            <hr>
+
+            <h6 class="font-weight-bold">Datos del Vecino (Opcional)</h6>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="{{ form.nombre_vecino.id_for_label }}">{{ form.nombre_vecino.label }}</label>
+                    {{ form.nombre_vecino }}
+                    {{ form.nombre_vecino.errors }}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="{{ form.celular_vecino.id_for_label }}">{{ form.celular_vecino.label }}</label>
+                    {{ form.celular_vecino }}
+                    {{ form.celular_vecino.errors }}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="{{ form.email_vecino.id_for_label }}">{{ form.email_vecino.label }}</label>
+                    {{ form.email_vecino }}
+                    {{ form.email_vecino.errors }}
+                </div>
+            </div>
+
+            <hr>
+
+            <h6 class="font-weight-bold">Adjuntar Evidencia (Opcional)</h6>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="{{ form.imagen.id_for_label }}">{{ form.imagen.label }}</label>
+                    {{ form.imagen }}
+                    {{ form.imagen.errors }}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="{{ form.video.id_for_label }}">{{ form.video.label }}</label>
+                    {{ form.video }}
+                    {{ form.video.errors }}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="{{ form.audio.id_for_label }}">{{ form.audio.label }}</label>
+                    {{ form.audio }}
+                    {{ form.audio.errors }}
+                </div>
+            </div>
+            
+            <hr>
+
+            <button type="submit" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-paper-plane"></i>
+                </span>
+                <span class="text">Crear Incidencia</span>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,3 +1,11 @@
-<h4>Menú Principal</h4>
-</hr>
-<a href="{% url 'main_usuario' %}">Gestión Usuario</a>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Panel Principal{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4 text-gray-800">Menú Principal</h1>
+    
+    <hr>
+    <a href="{% url 'main_usuario' %}" class="btn btn-primary">Gestión Usuario</a>
+    {% endblock %}

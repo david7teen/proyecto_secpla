@@ -1,3 +1,14 @@
-<h4>Gestión de Usuarios</h4>
-</hr>
-<a href="">Nuevo Usuario</a>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestión de Usuarios{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4 text-gray-800">Gestión de Usuarios</h1>
+
+    <hr>
+    <a href="#" class="btn btn-success">
+        <i class="fas fa-plus"></i> Nuevo Usuario
+    </a>
+
+    {% endblock %}

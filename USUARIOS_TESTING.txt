@@ -1,0 +1,7 @@
+-- USUARIOS PARA TESTING - TODOS CON CONTRASEÑA: 123
+INSERT INTO "SECPLA_usuario" (nombre, apellido, correo, telefono, perfil, contraseña, estado) VALUES
+('Ana', 'Secpla', 'secpla@m.com', '+56912345678', 'SECPLA', '123', 'Activo'),
+('Carlos', 'Direccion', 'direccion@m.com', '+56987654321', 'Dirección', '123', 'Activo'),
+('Maria', 'Departamento', 'departamento@m.com', '+56911223344', 'Departamento', '123', 'Activo'),
+('Pedro', 'Territorial', 'territorial@m.com', '+56955667788', 'Territorial', '123', 'Activo'),
+('Luis', 'Cuadrilla', 'cuadrilla@m.com', '+56999887766', 'Cuadrilla', '123', 'Activo');

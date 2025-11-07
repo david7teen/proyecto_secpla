@@ -77,12 +77,12 @@ WSGI_APPLICATION = 'munichile.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'munichile',
-        'USER': 'postgres',
-        'PASSWORD': 'maxi1',
         'HOST': 'localhost',
-        'PORT': '5433',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'munichile_local',       # Reemplaza con el nombre de tu base de datos
+        'USER': 'munidavid',        # El usuario que creaste en pgAdmin
+        'PASSWORD': '12345',    # La contraseña del usuario
+        'PORT': '5432',
     }
 }
 

@@ -1,0 +1,45 @@
+{% extends 'base_secpla.html' %}
+
+{% block title %}Solicitudes de recuperación{% endblock %}
+
+{% block content %}
+<div class="formulario-departamento">
+  <h2>Solicitudes de recuperación</h2>
+
+  {% if intentos|length == 0 %}
+    <p class="alert alert-info">No hay solicitudes registradas.</p>
+  {% else %}
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Correo</th>
+          <th>Perfil</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Observación</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for intento in intentos %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ intento.correo }}</td>
+            <td>{{ intento.perfil|title }}</td>
+            <td>{{ intento.fecha|date:"d/m/Y H:i" }}</td>
+            <td>
+              <span class="estado-tag estado-{{ intento.estado|lower }}">
+                {{ intento.estado }}
+              </span>
+            </td>
+            <td>{{ intento.observacion }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+<div style="margin-top: 10px; margin-bottom: 20px;">
+  <a href="/perfil/secpla/" class="btn" style="margin-top: 15px;">🏠 Volver al inicio</a>
+
+{% endblock %}

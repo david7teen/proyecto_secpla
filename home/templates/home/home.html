@@ -1,0 +1,172 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ingreso a la Plataforma Municipal</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #e2e2e2;
+      color: #333;
+    }
+
+    header {
+      background-color: #1e3a5f;
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-header img {
+      height: 50px;
+    }
+
+    .logo-header span {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .header-title {
+      text-align: right;
+    }
+
+    .header-title h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .main-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 40px;
+      gap: 40px;
+    }
+
+    .perfil-box {
+      background-color: #f0f0f0;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .perfil-box h2 {
+      color: #1e3a5f;
+      margin-bottom: 10px;
+    }
+
+    .perfil-box p {
+      margin-bottom: 30px;
+    }
+
+    .perfil-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .perfil-btn {
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      background-color: #2c6cb0;
+      border: none;
+      border-radius: 6px;
+      text-align: center;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .perfil-btn:hover {
+      background-color: #1b4b85;
+      transform: scale(1.02);
+    }
+
+    .imagen-lateral {
+      flex: 1;
+      height: 100%;
+      background-color: #d9e4f2;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-style: italic;
+      color: #555;
+    }
+
+    footer {
+      background-color: #1e3a5f;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      margin-top: 40px;
+    }
+
+    footer a {
+      color: #ccc;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-header">
+      <img src="{% static 'img/logo.png' %}" alt="Logo Municipalidad">
+      <span>GESTIÓN MUNICIPAL</span>
+    </div>
+    <div class="header-title">
+      <h1>Municipalidad</h1>
+      <p>Plataforma de Gestión Municipal</p>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <div class="perfil-box">
+      <h2>Bienvenido(a)</h2>
+      <p>Selecciona un Perfil:</p>
+
+      <div class="perfil-container">
+        <a href="/secpla/login/secpla/" class="perfil-btn">Perfil SECPLA</a>
+        <a href="/secpla/login/direccion/" class="perfil-btn">Perfil Dirección</a>
+        <a href="/secpla/login/departamento/" class="perfil-btn">Perfil Departamento</a>
+        <a href="/secpla/login/territorial/" class="perfil-btn">Perfil Territorial</a>
+        <a href="/secpla/login/cuadrilla/" class="perfil-btn">Perfil Cuadrilla</a>
+      </div>
+    </div>
+
+    <div class="imagen-lateral">
+      <img src="{% static 'img/infraestructura_comunal.png' %}" alt="Descripción" style="max-width:100%; border-radius:8px;">
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Municipalidad. Todos los derechos reservados.
+    <br>
+    <a href="#">Política de privacidad</a> |
+    <a href="#">Términos de uso</a>
+  </footer>
+
+</body>
+</html>

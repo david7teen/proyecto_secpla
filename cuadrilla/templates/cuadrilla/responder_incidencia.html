@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Responder incidencia{% endblock %}
+
+{% block content %}
+<h2>Responder incidencia: {{ incidencia.nombre_incidencia }}</h2>
+
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="descripcion">Descripción de la solución:</label>
+    <textarea name="descripcion" required></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="imagen">Subir imagen de resolución:</label>
+    <input type="file" name="imagen" accept="image/*" required>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit">Enviar respuesta</button>
+    <a href="/cuadrilla/incidencias/activas/" class="btn">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base_secpla.html' %}
+{% block title %}Detalle Departamento{% endblock %}
+
+{% block content %}
+<div class="usuario-detalle-card">
+  <h2><i class="fas fa-user-tie"></i> Detalle de Departamento</h2>
+
+  <div class="usuario-info">
+    <p><strong>Nombre Departamento:</strong> {{ departamento.nombre_departamento }}</p>
+    <p><strong>Encargado:</strong> {{ departamento.nombre_encargado }}</p>
+    <p><strong>Correo:</strong> <a href="mailto:{{ departamento.correo_encargado }}">{{ departamento.correo_encargado }}</a></p>
+    <p><strong>Dirección Asociada:</strong> <a href="mailto:{{ direccion.correo_encargado }}">{{ departamento.correo_encargado }}</a></p>
+    <p><strong>Estado:</strong> 
+      {% if direccion.estado == "Activo" %}
+        <span class="estado-activo">🟢 Activo</span>
+      {% else %}
+        <span class="estado-inactivo">🔴 Inactivo</span>
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="usuario-acciones">
+    <a href="{% url 'editar_departamento' departamento.id %}" class="btn btn-editar"> Editar</a>
+      {% if direccion.estado == "Activo" %}
+        <a href="{% url 'bloquear_departamento' departamento.id %}" class="btn btn-bloquear"> Bloquear</a>
+      {% else %}
+        <a href="{% url 'activar_departamento' departamento.id %}" class="btn btn-activar"> Activar</a>
+      {% endif %}
+    <a href="{% url 'vista_secpla' %}" class="btn btn-volver"> Volver</a>
+  </div>
+</div>
+{% endblock %}

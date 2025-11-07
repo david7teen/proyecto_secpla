@@ -1,0 +1,18 @@
+{% extends 'base_perfil.html' %}
+{% block title %}Dashboard Cuadrilla{% endblock %}
+{% block menu %}
+  <a href="/cuadrilla/incidencias/activas/">🛠️ Incidencias en curso</a>
+  <a href="/cuadrilla/incidencias/finalizadas/">✅ Incidencias finalizadas</a>
+  <a href="/">🏠 Inicio</a>
+  <a href="/logout/">🔒 Cerrar sesión</a>
+{% endblock %}
+
+{% block content %}
+<h1>Bienvenido, {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</h1>
+<h3>Perfil: Cuadrilla</h3>
+
+<div class="stats-container">
+  <div class="card">Incidencias asignadas: {{ resumen.pendientes }}</div>
+  <div class="card">Resueltas: {{ resumen.finalizadas }}</div>
+</div>
+{% endblock %}

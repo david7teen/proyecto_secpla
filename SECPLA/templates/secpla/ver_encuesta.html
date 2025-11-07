@@ -1,0 +1,57 @@
+{% extends 'base_secpla.html' %}
+{% block title %}Detalle Encuesta{% endblock %}
+
+{% block content %}
+<div class="usuario-detalle-card">
+  <h2>📋 Detalle de Encuesta</h2>
+
+  <div class="usuario-info">
+    <p><strong>Nombre:</strong> {{ encuesta.nombre_encuesta }}</p>
+    <p><strong>Descripción:</strong> {{ encuesta.descripcion_incidente }}</p>
+    <p><strong>Ubicación:</strong> {{ encuesta.ubicacion }}</p>
+    <p><strong>Prioridad:</strong> {{ encuesta.prioridad }}</p>
+    <p><strong>Datos del vecino:</strong> {{ encuesta.datos_vecino }}</p>
+    <p><strong>Pregunta:</strong> {{ encuesta.pregunta.nombre_pregunta }}</p>
+    <p><strong>Tipo de incidencia:</strong> {{ encuesta.tipo_incidencia.nombre_incidencia }}</p>
+
+    <p><strong>Imagen:</strong><br>
+      {% if encuesta.imagen %}
+        <img src="{{ encuesta.imagen.url }}" alt="Imagen de encuesta" width="300">
+      {% else %}
+        <span class="advertencia">Sin imagen</span>
+      {% endif %}
+    </p>
+
+    <p><strong>Video:</strong>
+      {% if encuesta.video %}
+        <a href="{{ encuesta.video.url }}" target="_blank">Ver video</a>
+      {% else %}
+        <span class="advertencia">Sin video</span>
+      {% endif %}
+    </p>
+
+    <p><strong>Audio:</strong>
+      {% if encuesta.audio %}
+        <a href="{{ encuesta.audio.url }}" target="_blank">Escuchar audio</a>
+      {% else %}
+        <span class="advertencia">Sin audio</span>
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="usuario-acciones">
+    {% if encuesta.categoria == "Vigente" %}
+      <form method="post" action="{% url 'bloquear_encuesta' encuesta.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-bloquear">🚫 Bloquear</button>
+      </form>
+    {% else %}
+      <form method="post" action="{% url 'activar_encuesta' encuesta.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-activar">✅ Activar</button>
+      </form>
+    {% endif %}
+    <a href="{% url 'listar_encuestas' %}" class="btn btn-volver">⬅️ Volver</a>
+  </div>
+</div>
+{% endblock %}

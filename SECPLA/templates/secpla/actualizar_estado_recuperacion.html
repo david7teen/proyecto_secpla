@@ -1,0 +1,9 @@
+<form method="POST" action="/secpla/actualizar_estado/{{ intento.id }}/">
+  {% csrf_token %}
+  <select name="estado">
+    <option value="Pendiente">Pendiente</option>
+    <option value="Revisado">Revisado</option>
+    <option value="Resuelto">Resuelto</option>
+  </select>
+  <button type="submit">Actualizar</button>
+</form>

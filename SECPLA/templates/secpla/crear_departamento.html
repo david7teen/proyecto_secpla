@@ -1,0 +1,51 @@
+{% extends 'base_secpla.html' %}
+
+{% block title %}Crear nuevo Departamento{% endblock %}
+
+{% block content %}
+<div class="formulario-departamento">
+  <h2>Crear nuevo Departamento</h2>
+
+  {% if error %}
+    <p class="alert alert-danger">{{ error }}</p>
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label>Nombre Departamento:</label>
+      <input type="text" name="nombre_departamento" required>
+    </div>
+
+    <div class="form-group">
+      <label>Nombre Encargado:</label>
+      <input type="text" name="nombre_encargado" required>
+    </div>
+
+    <div class="form-group">
+      <label>Correo Encargado:</label>
+      <input type="email" name="correo_encargado" required>
+    </div>
+
+    <div class="form-group">
+      <label>Dirección Departamento:</label>
+      {% if direcciones %}
+        <select name="direccion_departamento" required>
+          {% for direccion in direcciones %}
+            <option value="{{ direccion.id }}">{{ direccion.nombre_direccion }}</option>
+          {% endfor %}
+        </select>
+      {% else %}
+        <p class="alert alert-warning">No hay direcciones disponibles. Cree una primero.</p>
+      {% endif %}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit">Crear</button>
+      <button type="button" onclick="window.location.href='/perfil/secpla/'">Cancelar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

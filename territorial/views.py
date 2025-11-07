@@ -1,10 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Usuario, Incidencia
+from encuesta.forms import IncidenciaForm
 
 def vista_territorial(request):
     usuario_activo = Usuario.objects.get(id=request.session['usuario_activo']['id'])
 
-    # Filtrar incidencias creadas por este territorial
     incidencias = Incidencia.objects.filter(territorial_creador=usuario_activo)
 
     resumen = {
@@ -21,3 +21,21 @@ def vista_territorial(request):
         'usuario_activo': usuario_activo,
         'resumen': resumen
     })
+
+def crear_incidencia(request):
+    usuario_activo = Usuario.objects.get(id=request.session['usuario_activo']['id'])
+    if request.method == 'POST':
+        form = IncidenciaForm(request.POST, request.FILES)
+        if form.is_valid():
+            incidencia = form.save(commit=False)
+            incidencia.territorial_creador = usuario_activo 
+            incidencia.estado = 'Abierta'
+            incidencia.save()
+            return redirect('/territorial/dashboard/') 
+    else:
+        form = IncidenciaForm()
+    context = {
+        'form': form,
+        'usuario_activo': usuario_activo
+    }
+    return render(request, 'territorial/crear_incidencia.html', context)

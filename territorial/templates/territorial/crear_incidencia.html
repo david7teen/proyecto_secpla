@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Crear Nueva Solicitud{% endblock %}
+
+{% block content %}
+    <h2>Crear Nueva Solicitud / Incidencia </h2>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        
+        <button type="submit">Guardar Incidencia</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Departamento{% endblock %}
+
+{% block content %}
+<h1>Bienvenida, {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</h1>
+<h3>Departamento: {{ usuario_activo.departamento }}</h3>
+
+<div class="stats-container">
+  <div class="card">Pendientes: {{ resumen.pendientes }}</div>
+  <div class="card">Derivadas: {{ resumen.derivadas }}</div>
+  <div class="card">Rechazadas: {{ resumen.rechazadas }}</div>
+  <div class="card">Finalizadas: {{ resumen.finalizadas }}</div>
+</div>
+
+<h2>Acceso a listados por estado</h2>
+<div class="form-actions">
+  <a href="/departamento/incidencias/pendientes/" class="btn">Ver Pendientes</a>
+  <a href="/departamento/incidencias/derivadas/" class="btn">Ver Derivadas</a>
+  <a href="/departamento/incidencias/rechazadas/" class="btn"> Ver Rechazadas</a>
+  <a href="/departamento/incidencias/finalizadas/" class="btn">Ver Finalizadas</a>
+</div>
+
+<div style="margin-top: 10px; margin-bottom: 20px;">
+<a href="/" class="btn" style="margin-top: 15px;">🏠 Volver al inicio</a>
+{% endblock %}

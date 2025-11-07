@@ -1,0 +1,64 @@
+{% extends 'base_secpla.html' %}
+{% block title %}Listado de Departamentos{% endblock %}
+
+{% block content %}
+<h2>Listado de Departamentos</h2>
+<a href="{% url 'crear_departamento' %}" class="btn">Crear nuevo departamento</a>
+
+<table class="user-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Nombre Departamento</th>
+      <th>Encargado</th>
+      <th>Correo</th>
+      <th>Dirección Asociada</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for d in departamentos %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ d.nombre_departamento }}</td>
+        <td>{{ d.nombre_encargado }}</td>
+        <td><a href="mailto:{{ d.correo_encargado }}">{{ d.correo_encargado }}</a></td>
+        <td>
+          {% if d.direccion_departamento %}
+            <a href="{% url 'ver_direccion' d.direccion_departamento.id %}">
+              {{ d.direccion_departamento.nombre_direccion }}
+            </a>
+          {% else %}
+            <span class="advertencia">Sin dirección</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if d.estado == "Activo" %}
+            <span class="estado-activo">🟢 Activo</span>
+          {% else %}
+            <span class="estado-inactivo">🔴 Inactivo</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if d.id %}
+            <a href="{% url 'ver_departamento' d.id %}">Ver</a> |
+            <a href="{% url 'editar_departamento' d.id %}">Editar</a> |
+            {% if d.estado == "Activo" %}
+              <a href="{% url 'bloquear_departamento' d.id %}">Bloquear</a>
+            {% else %}
+              <a href="{% url 'activar_departamento' d.id %}">Activar</a>
+            {% endif %}
+          {% else %}
+            <span class="advertencia">⚠️ Sin ID válido</span>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7">No hay departamentos registrados.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'vista_secpla' %}" class="ver-todo">⬅️ Volver al panel principal</a>
+{% endblock %}

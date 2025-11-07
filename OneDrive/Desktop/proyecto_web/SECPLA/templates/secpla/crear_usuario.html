@@ -1,0 +1,59 @@
+{% extends 'base_secpla.html' %}
+
+{% block title %}Crear nuevo usuario{% endblock %}
+
+{% block content %}
+<div class="formulario-departamento">
+  <h2>Crear nuevo usuario</h2>
+
+  {% if error %}
+    <p class="alert alert-danger">{{ error }}</p>
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label>Nombre:</label>
+      <input type="text" name="nombre" required>
+    </div>
+
+    <div class="form-group">
+      <label>Apellido:</label>
+      <input type="text" name="apellido" required>
+    </div>
+
+    <div class="form-group">
+      <label>Correo:</label>
+      <input type="email" name="correo" required>
+    </div>
+
+    <div class="form-group">
+      <label>Teléfono:</label>
+      <input type="text" name="telefono" required>
+    </div>
+
+    <div class="form-group">
+      <label>Perfil:</label>
+      <select name="perfil" required>
+        <option value="">Seleccione un perfil</option>
+        <option value="SECPLA">SECPLA</option>
+        <option value="Dirección">Dirección</option>
+        <option value="Departamento">Departamento</option>
+        <option value="Territorial">Territorial</option>
+        <option value="Cuadrilla">Cuadrilla</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Contraseña:</label>
+      <input type="text" name="contraseña" required>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit">Crear usuario</button>
+      <button type="button" onclick="window.location.href='/perfil/secpla/'">Cancelar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

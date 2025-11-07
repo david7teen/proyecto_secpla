@@ -1,0 +1,39 @@
+{% extends 'base_secpla.html' %}
+{% block title %}Editar Tipo de Incidencia{% endblock %}
+{% block content %}
+<h2>Editar Tipo de Incidencia</h2>
+
+<form method="POST">
+  {% csrf_token %}
+  <div class="form-group">
+    <label>Nombre:</label>
+    <input type="text" name="nombre" value="{{ tipo.nombre }}" required>
+  </div>
+
+  <div class="form-group">
+    <label>Descripción:</label>
+    <input type="text" name="descripcion" value="{{ tipo.descripcion }}">
+  </div>
+
+  <div class="form-group">
+    <label>Dirección:</label>
+    <select name="direccion" required>
+      {% for d in direcciones %}
+        <option value="{{ d.id }}" {% if tipo.direccion.id == d.id %}selected{% endif %}>{{ d.nombre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Departamento:</label>
+    <select name="departamento" required>
+      {% for dep in departamentos %}
+        <option value="{{ dep.id }}" {% if tipo.departamento.id == dep.id %}selected{% endif %}>{{ dep.nombre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button type="submit">Actualizar</button>
+  <a href="{% url 'lista_tipos_incidencia' %}">Cancelar</a>
+</form>
+{% endblock %}

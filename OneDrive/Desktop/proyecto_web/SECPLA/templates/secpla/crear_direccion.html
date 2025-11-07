@@ -1,0 +1,37 @@
+{% extends 'base_secpla.html' %}
+
+{% block title %}Crear nueva dirección{% endblock %}
+
+{% block content %}
+<div class="formulario-departamento">
+  <h2>Crear nueva dirección</h2>
+
+  {% if error %}
+    <p class="alert alert-danger">{{ error }}</p>
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label>Nombre Dirección:</label>
+      <input type="text" name="nombre_direccion" required>
+    </div>
+
+    <div class="form-group">
+      <label>Nombre Encargado:</label>
+      <input type="text" name="nombre_encargado" required>
+    </div>
+
+    <div class="form-group">
+      <label>Correo Encargado:</label>
+      <input type="email" name="correo_encargado" required>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit">Crear</button>
+      <button type="button" onclick="window.location.href='/perfil/secpla/'">Cancelar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

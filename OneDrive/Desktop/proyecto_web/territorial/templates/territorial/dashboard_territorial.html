@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Territorial{% endblock %}
+
+{% block content %}
+<h1>Bienvenido/a, {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</h1>
+<h3>Perfil: Territorial</h3>
+
+<div class="stats-container">
+  <div class="card">Total solicitudes: {{ resumen.total }}</div>
+  <div class="card">Abiertas: {{ resumen.abiertas }}</div>
+  <div class="card">Derivadas: {{ resumen.derivadas }}</div>
+  <div class="card">Rechazadas: {{ resumen.rechazadas }}</div>
+  <div class="card">En proceso: {{ resumen.proceso }}</div>
+  <div class="card">Finalizadas: {{ resumen.finalizadas }}</div>
+  <div class="card">Cerradas: {{ resumen.cerradas }}</div>
+</div>
+
+<h2>Accesos rápidos</h2>
+<div class="form-actions">
+  <a href="/territorial/incidencias/abiertas/" class="btn">📌 Ver Abiertas</a>
+  <a href="/territorial/incidencias/derivadas/" class="btn">📤 Ver Derivadas</a>
+  <a href="/territorial/incidencias/rechazadas/" class="btn">❌ Ver Rechazadas</a>
+  <a href="/territorial/incidencias/proceso/" class="btn">🔄 Ver En Proceso</a>
+  <a href="/territorial/incidencias/finalizadas/" class="btn">✅ Ver Finalizadas</a>
+  <a href="/territorial/incidencias/cerradas/" class="btn">🔒 Ver Cerradas</a>
+  <a href="/territorial/ver_solicitudes/" class="btn">📋 Ver todas las solicitudes</a>
+  <a href="/territorial/crear_incidencia/" class="btn">🆕 Crear nueva solicitud</a>
+</div>
+
+<div style="margin-top: 10px; margin-bottom: 20px;">
+<a href="/" class="btn" style="margin-top: 15px;">🏠 Volver al inicio</a>
+{% endblock %}

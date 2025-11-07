@@ -1,0 +1,78 @@
+{% extends 'base_secpla.html' %}
+
+{% block title %}Crear nueva Incidencia{% endblock %}
+
+{% block content %}
+<div class="formulario-departamento">
+  <h2>Crear nueva Incidencia</h2>
+
+  {% if error %}
+    <p class="alert alert-danger">{{ error }}</p>
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label>Título de la Incidencia:</label>
+      <input type="text" name="nombre_incidencia" required>
+    </div>
+
+    <div class="form-group">
+      <label>Descripción:</label>
+      <textarea name="descripcion" rows="4" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Dirección asociada:</label>
+      <select name="direccion_incidencia" id="direccion-select" required>
+        <option value="">Seleccione una dirección</option>
+        {% for direccion in direcciones %}
+          <option value="{{ direccion.id }}">{{ direccion.nombre_direccion }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Departamento responsable:</label>
+      <select name="departamento_incidencia" id="departamento-select" required disabled>
+        <option value="">Seleccione una dirección primero</option>
+      </select>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit">Crear Incidencia</button>
+      <button type="button" onclick="window.location.href='/perfil/secpla/'">Cancelar</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.getElementById('direccion-select').addEventListener('change', function () {
+    const direccionId = this.value;
+    const departamentoSelect = document.getElementById('departamento-select');
+    departamentoSelect.innerHTML = '';
+    departamentoSelect.disabled = true;
+
+    if (direccionId) {
+      fetch(`/api/departamentos/?direccion_id=${direccionId}`)
+        .then(response => response.json())
+        .then(data => {
+          const departamentos = data.departamentos;
+          if (departamentos.length > 0) {
+            departamentoSelect.innerHTML = '<option value="">Seleccione un departamento</option>';
+            departamentos.forEach(dep => {
+              const option = document.createElement('option');
+              option.value = dep.id;
+              option.textContent = dep.nombre;
+              departamentoSelect.appendChild(option);
+            });
+            departamentoSelect.disabled = false;
+          } else {
+            departamentoSelect.innerHTML = '<option value="">No hay departamentos para esta dirección</option>';
+          }
+        });
+    }
+  });
+</script>
+{% endblock %}

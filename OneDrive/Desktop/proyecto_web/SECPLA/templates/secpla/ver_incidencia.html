@@ -1,0 +1,50 @@
+{% extends 'base_secpla.html' %}
+{% block title %}Detalle Incidencia{% endblock %}
+
+{% block content %}
+<div class="usuario-detalle-card">
+  <h2>🔍 Detalle de Incidencia</h2>
+
+  <div class="usuario-info">
+    <p><strong>Nombre Incidencia:</strong> {{ incidencia.nombre_incidencia }}</p>
+    <p><strong>Descripción:</strong> {{ incidencia.descripcion }}</p>
+    <p><strong>Dirección:</strong>
+      {% if incidencia.direccion_incidencia %}
+        <a href="{% url 'ver_direccion' incidencia.direccion_incidencia.id %}">
+          {{ incidencia.direccion_incidencia.nombre_direccion }}
+        </a>
+      {% else %}
+        <span class="advertencia">Sin dirección</span>
+      {% endif %}
+    </p>
+    <p><strong>Departamento:</strong>
+      {% if incidencia.departamento_incidencia %}
+        <a href="{% url 'ver_departamento' incidencia.departamento_incidencia.id %}">
+          {{ incidencia.departamento_incidencia.nombre_departamento }}
+        </a>
+      {% else %}
+        <span class="advertencia">Sin departamento</span>
+      {% endif %}
+    </p>
+    <p><strong>Estado:</strong>
+      {% if incidencia.estado == "Activo" %}
+        <span class="estado-activo">🟢 Activo</span>
+      {% else %}
+        <span class="estado-inactivo">🔴 Inactivo</span>
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="usuario-acciones">
+    {% if incidencia.id %}
+      <a href="{% url 'editar_incidencia' incidencia.id %}" class="btn btn-editar">✏️ Editar</a>
+      {% if incidencia.estado == "Activo" %}
+        <a href="{% url 'bloquear_incidencia' incidencia.id %}" class="btn btn-bloquear">🚫 Bloquear</a>
+      {% else %}
+        <a href="{% url 'activar_incidencia' incidencia.id %}" class="btn btn-activar">✅ Activar</a>
+      {% endif %}
+    {% endif %}
+    <a href="{% url 'listar_incidencias' %}" class="btn btn-volver">⬅️ Volver</a>
+  </div>
+</div>
+{% endblock %}

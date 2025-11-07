@@ -1,0 +1,358 @@
+{% extends 'base_secpla.html' %}
+{% block title %}Crear nueva Encuesta{% endblock %}
+{% block content %}
+<style>
+  .formulario-encuesta {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+
+  .formulario-encuesta h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+  #modalPregunta {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  #modalPregunta form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+
+  #modalPregunta button {
+    margin-right: 10px;
+  }
+</style>
+
+<form method="POST" action="{% url 'crear_encuesta' %}" enctype="multipart/form-data" class="formulario-encuesta">
+  <h2>Crear nueva Encuesta</h2>
+  {% csrf_token %}
+  {% if error %}
+    <p style="color:red;">{{ error }}</p>
+  {% endif %}
+
+  <div class="form-group">
+    <label>Nombre:</label>
+    <input type="text" name="nombre_encuesta" required>
+  </div>
+
+  <div class="form-group">
+    <label>Descripción:</label>
+    <textarea name="descripcion_incidente" required></textarea>
+  </div>
+
+  <div class="form-group">
+    <label>Ubicación:</label>
+    <input type="text" name="ubicacion" required>
+  </div>
+
+  <div class="form-group">
+    <label>Imagen:</label>
+    <input type="file" name="imagen">
+  </div>
+
+  <div class="form-group">
+    <label>Video:</label>
+    <input type="file" name="video">
+  </div>
+
+  <div class="form-group">
+    <label>Audio:</label>
+    <input type="file" name="audio">
+  </div>
+
+  <div class="form-group">
+    <label>Preguntas:</label>
+    <div id="contenedorPreguntas">
+      <div class="bloque-pregunta">
+        <select name="preguntas[]" required>
+          <option value="" disabled selected>Seleccione una pregunta</option>
+          {% for p in preguntas %}
+            <option value="{{ p.id }}">{{ p.nombre_pregunta }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <button type="button" onclick="agregarCampoPregunta()"> Agregar otra pregunta</button>
+    <button type="button" onclick="window.location.href='{% url 'crear_pregunta_desde_encuesta' %}'">
+       Crear nueva pregunta
+    </button>
+  </div>
+
+
+  <div class="form-group">
+    <label for="prioridad">Prioridad:</label>
+    <select id="prioridad" name="prioridad" required>
+      <option value="">Seleccione una opción</option>
+      <option value="Alta">Alta</option>
+      <option value="Normal">Normal</option>
+      <option value="Baja">Baja</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="datos_vecino">Datos del vecino (Nombre - Celular - Email):</label>
+    <input type="text" name="datos_vecino" id="datos_vecino" required pattern=".+ - .+ - .+">
+  </div>
+
+  <div class="form-group">
+    <label for="tipo_incidencia">Tipo de incidencia:</label>
+    <select id="tipo_incidencia" name="tipo_incidencia" required>
+      <option value="">Seleccione una incidencia</option>
+      {% for i in incidencias %}
+        <option value="{{ i.id }}">{{ i.nombre_incidencia }}</option>
+      {% endfor %}
+    </select>
+    <button type="button" onclick="abrirModalTipo()">➕ Crear nuevo tipo</button>
+  </div>
+
+
+  <div class="form-actions">
+    <button type="submit">Crear Encuesta</button>
+    <button type="button" onclick="window.location.href='/perfil/secpla/'">Cancelar</button>
+  </div>
+</form>
+
+<div id="modalPregunta">
+  <form id="formPregunta" method="post" action="{% url 'crear_pregunta_ajax' %}">
+    {% csrf_token %}
+    <label for="nombre_pregunta">Nombre de la nueva pregunta:</label>
+    <input type="text" name="nombre_pregunta" id="nombre_pregunta" required>
+    <br><br>
+    <button type="button" onclick="cerrarModal()">Cancelar</button>
+    <button type="submit">Guardar</button>
+  </form>
+</div>
+
+<div id="modalTipo" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
+  <form id="formTipo" method="post" action="{% url 'crear_tipo_incidencia_ajax' %}" style="background:white; padding:20px; border-radius:8px; width:300px;">
+    {% csrf_token %}
+    <label for="nombre_tipo">Nombre del nuevo tipo:</label>
+    <input type="text" name="nombre_tipo" id="nombre_tipo" required>
+
+    <label for="direccion_tipo">Dirección:</label>
+    <select name="direccion_tipo" id="direccion_tipo" required onchange="cargarDepartamentos()">
+      <option value="">Seleccione una dirección</option>
+      {% for d in direcciones %}
+        <option value="{{ d.id }}">{{ d.nombre_direccion }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="departamento_tipo">Departamento:</label>
+    <select name="departamento_tipo" id="departamento_tipo" required disabled>
+      <option value="">Seleccione un departamento</option>
+    </select>
+
+    <button type="button" id="crearDepartamentoBtn" style="display:none;" onclick="crearDepartamento()">➕ Crear nuevo departamento</button>
+
+    <br><br>
+    <button type="button" onclick="cerrarModalTipo()">Cancelar</button>
+    <button type="submit">Guardar</button>
+  </form>
+</div>
+
+<script>
+function abrirModal() {
+  document.getElementById("modalPregunta").style.display = "flex";
+}
+
+function cerrarModal() {
+  document.getElementById("modalPregunta").style.display = "none";
+}
+
+document.getElementById("formPregunta").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const nombre = document.getElementById("nombre_pregunta").value.trim();
+
+  if (!nombre) {
+    alert("Debes ingresar el nombre de la pregunta.");
+    return;
+  }
+
+  const data = new FormData(form);
+
+  fetch(form.action, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": data.get("csrfmiddlewaretoken")
+    },
+    body: data
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.id) {
+      const select = document.getElementById("pregunta");
+
+      // Eliminar opción vacía si existe
+      const vacia = select.querySelector('option[value=""]');
+      if (vacia) {
+        vacia.remove();
+      }
+
+      const option = document.createElement("option");
+      option.value = data.id;
+      option.text = data.nombre;
+      option.selected = true;
+      select.appendChild(option);
+      cerrarModal();
+    } else {
+      alert("Error al crear la pregunta.");
+    }
+  })
+  .catch(() => alert("Error de conexión al crear la pregunta."));
+});
+</script>
+
+<script>
+function agregarCampoPregunta() {
+  const contenedor = document.getElementById("contenedorPreguntas");
+  const nuevoBloque = document.createElement("div");
+  nuevoBloque.classList.add("bloque-pregunta");
+
+  nuevoBloque.innerHTML = `
+    <select name="preguntas[]" required>
+      <option value="" disabled selected>Seleccione una pregunta</option>
+      {% for p in preguntas %}
+        <option value="{{ p.id }}">{{ p.nombre_pregunta }}</option>
+      {% endfor %}
+    </select>
+  `;
+
+  contenedor.appendChild(nuevoBloque);
+}
+</script>
+
+<script>
+function abrirModalTipo() {
+  document.getElementById("modalTipo").style.display = "flex";
+}
+
+function cerrarModalTipo() {
+  document.getElementById("modalTipo").style.display = "none";
+}
+
+document.getElementById("formTipo").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const nombre = document.getElementById("nombre_tipo").value.trim();
+
+  if (!nombre) {
+    alert("Debes ingresar el nombre del tipo.");
+    return;
+  }
+
+  const data = new FormData(form);
+
+  fetch(form.action, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": data.get("csrfmiddlewaretoken")
+    },
+    body: data
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.id) {
+      const select = document.getElementById("tipo_incidencia");
+
+      const vacia = select.querySelector('option[value=""]');
+      if (vacia) {
+        vacia.remove();
+      }
+
+      const option = document.createElement("option");
+      option.value = data.id;
+      option.text = data.nombre;
+      option.selected = true;
+      select.appendChild(option);
+      cerrarModalTipo();
+    } else {
+      alert("Error al crear el tipo.");
+    }
+  })
+  .catch(() => alert("Error de conexión al crear el tipo."));
+});
+</script>
+
+<script>
+function cargarDepartamentos() {
+  const direccionId = document.getElementById("direccion_tipo").value;
+  const departamentoSelect = document.getElementById("departamento_tipo");
+  const crearBtn = document.getElementById("crearDepartamentoBtn");
+
+  departamentoSelect.innerHTML = '<option value="">Cargando...</option>';
+  departamentoSelect.disabled = true;
+  crearBtn.style.display = "none";
+
+  if (!direccionId) return;
+
+  fetch(`/secpla/api/departamentos_por_direccion/${direccionId}/`)
+    .then(response => response.json())
+    .then(data => {
+      departamentoSelect.innerHTML = '<option value="">Seleccione un departamento</option>';
+      
+      if (data.length === 0) {
+        crearBtn.style.display = "inline-block";
+      } else {
+        data.forEach(dep => {
+          const option = document.createElement("option");
+          option.value = dep.id;
+          option.text = dep.nombre;
+          departamentoSelect.appendChild(option);
+        });
+        crearBtn.style.display = "none";
+      }
+
+      departamentoSelect.disabled = false;
+    })
+    .catch(() => {
+      departamentoSelect.innerHTML = '<option value="">Error al cargar</option>';
+    });
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base_secpla.html' %}
+
+{% block title %}Usuarios{% endblock %}
+
+{% block content %}
+
+<h2>Listado de usuarios/perfiles</h2>
+<table class="user-table">
+    <thead>
+      <tr>
+        <th>#</th><th>Nombre</th><th>Apellido</th><th>Correo</th><th>Teléfono</th><th>Perfil</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in usuarios %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ u.nombre }}</td>
+          <td>{{ u.apellido }}</td>
+          <td>{{ u.correo }}</td>
+          <td>{{ u.telefono }}</td>
+          <td>{{ u.perfil }}</td>
+          <td>
+            <a href="{% url 'cambiar_contraseña' u.id %}" class="btn">Cambiar contraseña</a>
+            <a href="/secpla/ver_usuario_2/{{ u.id }}">Ver</a> |
+            <a href="/secpla/editar_usuario/{{ u.id }}">Editar</a> |
+            {% if u.estado == 'Activo' %}
+              <a href="/secpla/bloquear_usuario/{{ u.id }}">Bloquear</a>
+            {% else %}
+              <a href="/secpla/activar_usuario/{{ u.id }}">Activar</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

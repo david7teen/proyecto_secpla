@@ -1,0 +1,31 @@
+{% extends 'base_secpla.html' %}
+{% block title %}Detalle Dirección{% endblock %}
+
+{% block content %}
+<div class="usuario-detalle-card">
+  <h2><i class="fas fa-user-tie"></i> Detalle de Dirección</h2>
+
+  <div class="usuario-info">
+    <p><strong>Nombre Dirección:</strong> {{ direccion.nombre_direccion }}</p>
+    <p><strong>Encargado:</strong> {{ direccion.nombre_encargado }}</p>
+    <p><strong>Correo:</strong> <a href="mailto:{{ direccion.correo_encargado }}">{{ direccion.correo_encargado }}</a></p>
+    <p><strong>Estado:</strong> 
+      {% if direccion.estado == "Activo" %}
+        <span class="estado-activo">🟢 Activo</span>
+      {% else %}
+        <span class="estado-inactivo">🔴 Inactivo</span>
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="usuario-acciones">
+    <a href="{% url 'editar_direccion' direccion.id %}" class="btn btn-editar"> Editar</a>
+      {% if direccion.estado == "Activo" %}
+        <a href="{% url 'bloquear_direccion' direccion.id %}" class="btn btn-bloquear"> Bloquear</a>
+      {% else %}
+        <a href="{% url 'activar_direccion' direccion.id %}" class="btn btn-activar"> Activar</a>
+      {% endif %}
+    <a href="{% url 'vista_secpla' %}" class="btn btn-volver"> Volver</a>
+  </div>
+</div>
+{% endblock %}

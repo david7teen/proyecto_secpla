@@ -22,7 +22,15 @@ class Encuesta(models.Model):
     datos_vecino = models.TextField(blank=True, null=True)
     tipo_incidencia = models.ForeignKey(TipoIncidencia, on_delete=models.CASCADE, null=True)
 
-    estado = models.CharField(max_length=20, default='Activo')  
+    estado = models.CharField(max_length=20, choices=[
+    ('Abierta', 'Abierta'),
+    ('Derivada', 'Derivada'),
+    ('En Proceso', 'En Proceso'),
+    ('Finalizada', 'Finalizada'),
+    ('Cerrada', 'Cerrada'),
+    ('Rechazada', 'Rechazada'),
+    ], default='Abierta')
+  
 
     CATEGORIA_CHOICES = [
         ('Creada', 'Creada'),

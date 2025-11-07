@@ -15,18 +15,84 @@
   <div class="card">Cerradas: {{ resumen.cerradas }}</div>
 </div>
 
-<h2>Accesos rápidos</h2>
-<div class="form-actions">
-  <a href="/territorial/incidencias/abiertas/" class="btn">📌 Ver Abiertas</a>
-  <a href="/territorial/incidencias/derivadas/" class="btn">📤 Ver Derivadas</a>
-  <a href="/territorial/incidencias/rechazadas/" class="btn">❌ Ver Rechazadas</a>
-  <a href="/territorial/incidencias/proceso/" class="btn">🔄 Ver En Proceso</a>
-  <a href="/territorial/incidencias/finalizadas/" class="btn">✅ Ver Finalizadas</a>
-  <a href="/territorial/incidencias/cerradas/" class="btn">🔒 Ver Cerradas</a>
-  <a href="/territorial/ver_solicitudes/" class="btn">📋 Ver todas las solicitudes</a>
-  <a href="/territorial/crear_incidencia/" class="btn">🆕 Crear nueva solicitud</a>
-</div>
+<h2>Acceso rápido de Encuestas/Solicitudes:</h2>
+
+<h2>Abiertas</h2>
+<a href="/territorial/encuestas_abiertas/" class="btn">Ver Abiertas</a>
+
+<table class="user-table">
+  <thead>
+    <tr>
+      <th>#</th><th>Tipo Incidencia</th><th>Nombre</th><th>Ubicación</th><th>Prioridad</th><th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for e in encuestas %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ e.tipo_incidencia.nombre_tipo }}</td>
+        <td>
+          {{ e.nombre_encuesta }}<br>
+          {% if e.imagen %}
+            <img src="{{ e.imagen.url }}" alt="Imagen de encuesta" width="150">
+          {% else %}
+            <p>Sin imagen</p>
+          {% endif %}
+        </td>
+        <td>{{ e.ubicacion }}</td>
+        <td>{{ e.prioridad }}</td>
+        <td>
+          {% if e.categoria == 'Bloqueada' %}
+            | <a href="{% url 'editar_encuesta' e.id %}">Editar</a>
+          {% endif %}
+          {% if e.categoria == 'Vigente' %}
+            <a href="{% url 'ver_encuesta' e.id %}">Ver</a>
+            | <form method="post" action="{% url 'bloquear_encuesta' e.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning btn-sm">Bloquear</button>
+              </form>
+          {% elif e.categoria == 'Bloqueada' %}
+            | <form method="post" action="{% url 'activar_encuesta' e.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success btn-sm">Activar</button>
+              </form>
+          {% endif %}
+
+          {% if perfil == 'TERRITORIAL' and e.estado == 'Abierta' %}
+            <form method="post" action="{% url 'derivar_encuesta' e.id %}" style="margin-top:5px;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary btn-sm">Derivar</button>
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6">No hay encuestas registradas.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'listar_encuestas' %}" class="ver-todo">Ver todas las Encuestas →</a>
+
+<h2>Derivadas</h2>
+<a href="/territorial/incidencias/derivadas/" class="btn">Ver Derivadas</a>
+
+<h2>En Proceso</h2>
+<a href="/territorial/incidencias/proceso/" class="btn">Ver En Proceso</a>
+
+<h2>Rechazadas</h2>
+<a href="/territorial/incidencias/rechazadas/" class="btn">Ver Rechazadas</a>
+
+<h2>Finalizadas</h2>
+<a href="/territorial/incidencias/finalizadas/" class="btn">Ver Finalizadas</a>
+
+<h2>Cerradas</h2>
+<a href="/territorial/incidencias/cerradas/" class="btn">Ver Cerradas</a>
+
+<h3>Ver Todas las Encuestas/Solicitudes</h3>
+<a href="/territorial/ver_solicitudes/" class="btn">Ver todas las solicitudes</a>
 
 <div style="margin-top: 10px; margin-bottom: 20px;">
-<a href="/" class="btn" style="margin-top: 15px;">🏠 Volver al inicio</a>
+  <a href="/" class="btn" style="margin-top: 15px;">Volver al inicio</a>
+</div>
 {% endblock %}

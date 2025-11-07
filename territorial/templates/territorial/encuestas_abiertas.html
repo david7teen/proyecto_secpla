@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Encuestas Abiertas{% endblock %}
+
+{% block content %}
+<h2>Encuestas Abiertas</h2>
+
+<table class="user-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Nombre</th>
+      <th>Ubicación</th>
+      <th>Prioridad</th>
+      <th>Preguntas</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for e in encuestas %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ e.nombre_encuesta }}</td>
+        <td>{{ e.ubicacion }}</td>
+        <td>{{ e.prioridad }}</td>
+        <td>
+          {% if e.preguntas.all %}
+            <ul>
+              {% for p in e.preguntas.all %}
+                <li>{{ p.texto }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <em>Sin preguntas</em>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'ver_encuesta' e.id %}" class="btn btn-info btn-sm">Ver</a>
+          {% if perfil == 'Territorial' and e.estado == 'Abierta' %}
+            <form method="post" action="{% url 'derivar_encuesta' e.id %}" style="margin-top: 5px;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary btn-sm">Derivar</button>
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6">No hay encuestas abiertas.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'vista_territorial' %}" class="ver-todo">⬅ Volver al panel principal</a>
+{% endblock %}

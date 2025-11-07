@@ -391,7 +391,7 @@ def crear_encuesta(request):
                 prioridad=prioridad,
                 datos_vecino=datos_vecino,
                 tipo_incidencia=incidencia,
-                estado='Activo',
+                estado='Abierta',
                 categoria='Vigente'
             )
 

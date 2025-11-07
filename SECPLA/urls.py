@@ -4,6 +4,7 @@ from .views import obtener_departamentos_por_direccion
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import crear_pregunta_ajax
+from SECPLA.views import obtener_departamentos_por_direccion
 
 
 urlpatterns = [
@@ -62,7 +63,9 @@ urlpatterns = [
     #path('tipos-incidencia/<int:id>/eliminar/', views.eliminar_tipo_incidencia, name='eliminar_tipo_incidencia'),
     #path('crear-tipo-ajax/', views.crear_tipo_incidencia_ajax, name='crear_tipo_incidencia_ajax'),
     path('api/departamentos/', obtener_departamentos_por_direccion, name='api_departamentos'),
-    
+    path('secpla/crear_tipo_incidencia_ajax/', views.crear_tipo_incidencia_ajax, name='crear_tipo_incidencia_ajax'),
+    path('api/departamentos_por_direccion/<int:direccion_id>/', obtener_departamentos_por_direccion, name='departamentos_por_direccion'),
+    path('secpla/api/departamentos_por_direccion/<int:direccion_id>/', obtener_departamentos_por_direccion)
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

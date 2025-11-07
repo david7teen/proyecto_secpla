@@ -14,6 +14,8 @@ from .models import RecuperacionIntento
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
+from tipo_incidencia.models import TipoIncidencia
+from django.db import IntegrityError
 
 
 redirecciones = {
@@ -346,18 +348,18 @@ def crear_incidencia(request):
         'departamentos': []
     })
 
-def obtener_departamentos_por_direccion(request):
-    direccion_id = request.GET.get('direccion_id')
+def obtener_departamentos_por_direccion(request, direccion_id):
     departamentos = Departamento.objects.filter(direccion_departamento_id=direccion_id, estado='Activo')
     data = [{'id': d.id, 'nombre': d.nombre_departamento} for d in departamentos]
-    return JsonResponse({'departamentos': data})
+    return JsonResponse(data, safe=False)
 
 def crear_encuesta(request):
     if request.session.get('perfil') != 'SECPLA':
         return redirect('/login/secpla/')
 
     preguntas = Pregunta.objects.all()
-    incidencias = Incidencia.objects.filter(estado='Activo')
+    incidencias = TipoIncidencia.objects.all()
+    direcciones = Direccion.objects.filter(estado='Activo')
 
     if request.method == 'POST':
         try:
@@ -370,24 +372,22 @@ def crear_encuesta(request):
 
             prioridad = request.POST.get('prioridad')
             datos_vecino = request.POST.get('datos_vecino')
-
-            pregunta_id = request.POST.get('pregunta')
             incidencia_id = request.POST.get('tipo_incidencia')
+            pregunta_ids = request.POST.getlist('preguntas[]')  # ✅ lista de IDs
 
-            if not all([nombre, descripcion, ubicacion, prioridad, datos_vecino, pregunta_id, incidencia_id]):
+            if not all([nombre, prioridad, incidencia_id]):
                 raise ValueError("Faltan campos obligatorios.")
 
-            pregunta = Pregunta.objects.get(id=pregunta_id)
-            incidencia = Incidencia.objects.get(id=incidencia_id)
+            incidencia = TipoIncidencia.objects.get(id=incidencia_id)
+            preguntas_seleccionadas = Pregunta.objects.filter(id__in=pregunta_ids)
 
-            Encuesta.objects.create(
+            encuesta = Encuesta.objects.create(
                 nombre_encuesta=nombre,
                 descripcion_incidente=descripcion,
                 ubicacion=ubicacion,
                 imagen=imagen,
                 video=video,
                 audio=audio,
-                pregunta=pregunta,
                 prioridad=prioridad,
                 datos_vecino=datos_vecino,
                 tipo_incidencia=incidencia,
@@ -395,20 +395,23 @@ def crear_encuesta(request):
                 categoria='Vigente'
             )
 
+            encuesta.preguntas.set(preguntas_seleccionadas)  # ✅ asigna todas las preguntas
+
             return redirect('vista_secpla')
 
         except Exception as e:
             return render(request, 'SECPLA/crear_encuesta.html', {
                 'error': str(e),
                 'preguntas': preguntas,
-                'incidencias': incidencias
+                'incidencias': incidencias,
+                'direcciones': direcciones
             })
 
     return render(request, 'SECPLA/crear_encuesta.html', {
         'preguntas': preguntas,
-        'incidencias': incidencias
+        'incidencias': incidencias,
+        'direcciones': direcciones
     })
-
 
 @require_POST
 def crear_pregunta_ajax(request):
@@ -426,27 +429,6 @@ def crear_pregunta_desde_encuesta(request):
             return redirect('crear_encuesta')  # vuelve al formulario original
         return render(request, 'SECPLA/crear_pregunta_desde_encuesta.html', {'error': 'Campo vacío'})
     return render(request, 'SECPLA/crear_pregunta_desde_encuesta.html')
-
-def bloquear_encuesta(request, encuesta_id):
-    if request.method == 'POST' and request.session.get('perfil') == 'SECPLA':
-        encuesta = get_object_or_404(Encuesta, id=encuesta_id)
-        encuesta.categoria = 'Bloqueada'
-        encuesta.save()
-    return redirect('vista_secpla')
-
-def activar_encuesta(request, encuesta_id):
-    if request.method == 'POST' and request.session.get('perfil') == 'SECPLA':
-        encuesta = get_object_or_404(Encuesta, id=encuesta_id)
-        encuesta.categoria = 'Vigente'
-        encuesta.save()
-    return redirect('vista_secpla')
-
-def editar_encuesta(request, encuesta_id):
-    if request.method == 'POST' and request.session.get('perfil') == 'SECPLA':
-        encuesta = get_object_or_404(Encuesta, id=encuesta_id)
-        encuesta.categoria = 'Vigente'
-        encuesta.save()
-    return redirect('vista_secpla')
 
 """"
 def crear_territorial(request):
@@ -925,5 +907,39 @@ def listar_encuestas(request):
         'resumen': resumen,
         'perfil': 'SECPLA',
     })
+
+@require_POST
+def crear_tipo_incidencia_ajax(request):
+    nombre = request.POST.get('nombre_tipo', '').strip()
+    direccion_id = request.POST.get('direccion_tipo')
+    departamento_id = request.POST.get('departamento_tipo')
+
+    if not nombre or not direccion_id or not departamento_id:
+        return JsonResponse({'error': 'Faltan datos obligatorios'}, status=400)
+
+    try:
+        direccion = Direccion.objects.get(id=direccion_id)
+        departamento = Departamento.objects.get(id=departamento_id)
+
+        if TipoIncidencia.objects.filter(nombre_incidencia__iexact=nombre).exists():
+            return JsonResponse({'error': f'Ya existe un tipo con el nombre "{nombre}".'}, status=409)
+
+        tipo = TipoIncidencia.objects.create(
+            nombre_incidencia=nombre,
+            direccion=direccion,
+            departamento=departamento,
+            estado='Activo'
+        )
+
+        return JsonResponse({'id': tipo.id, 'nombre_incidencia': tipo.nombre})
+
+    except Direccion.DoesNotExist:
+        return JsonResponse({'error': 'Dirección no encontrada'}, status=404)
+    except Departamento.DoesNotExist:
+        return JsonResponse({'error': 'Departamento no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
 
 

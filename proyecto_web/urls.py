@@ -12,6 +12,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('secpla/', include('SECPLA.urls')),
     path('territorial/', include('territorial.urls')),
+    path('departamento/', include('departamento.urls')),
+    path('cuadrilla/', include('cuadrilla.urls')),    
     path('perfil/secpla/', vista_secpla, name='dashboard_secpla'),
     path('perfil/direccion/', vista_direccion, name='dashboard_direccion'),
     path('perfil/departamento/', vista_departamento, name='dashboard_departamento'),

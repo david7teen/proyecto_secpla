@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Reporte Incidencias Finalizadas{% endblock %}
+
+{% block content %}
+<div class="usuario-detalle-card">
+    <h2>📈 Reporte de Incidencias Finalizadas</h2>
+    
+    <div class="stats-header">
+        <p><strong>Departamento:</strong> {{ departamento.nombre_departamento }}</p>
+        <p><strong>Encargado:</strong> {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</p>
+        <p><strong>Total Finalizadas:</strong> {{ incidencias|length }}</p>
+        <p><strong>Fecha del Reporte:</strong> {% now "d/m/Y H:i" %}</p>
+    </div>
+
+    {% if incidencias %}
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Incidencia</th>
+                <th>Descripción</th>
+                <th>Dirección</th>
+                <th>Fecha Creación</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for incidencia in incidencias %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ incidencia.nombre_incidencia }}</td>
+                <td>{{ incidencia.descripcion }}</td>
+                <td>{{ incidencia.direccion_incidencia.nombre_direccion }}</td>
+                <td>{{ incidencia.fecha_creacion|date:"d/m/Y H:i" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div style="margin-top: 20px; text-align: center;">
+        <button onclick="window.print()" class="btn btn-primary">🖨️ Imprimir Reporte</button>
+    </div>
+    {% else %}
+    <p>No hay incidencias finalizadas para generar reporte.</p>
+    {% endif %}
+
+    <div class="usuario-acciones">
+        <a href="{% url 'ver_finalizadas_departamento' %}" class="btn btn-volver">⬅️ Volver</a>
+    </div>
+</div>
+
+<style>
+@media print {
+    .btn, .usuario-acciones { display: none; }
+    body { font-size: 12px; }
+}
+</style>
+{% endblock %}

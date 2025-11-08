@@ -12,7 +12,45 @@
 <h3>Perfil: Cuadrilla</h3>
 
 <div class="stats-container">
-  <div class="card">Incidencias asignadas: {{ resumen.pendientes }}</div>
-  <div class="card">Resueltas: {{ resumen.finalizadas }}</div>
+  <div class="card">Incidencias Pendientes: {{ resumen.pendientes }}</div>
+  <div class="card">Incidencias en Proceso: {{ resumen.en_proceso }}</div>
+  <div class="card">Incidencias Finalizadas: {{ resumen.finalizadas }}</div>
+  <div class="card">Incidencias Rechazadas: {{ resumen.rechazadas }}</div>
+</div>
+
+<h2>Incidencias Pendientes</h2>
+<a href="/cuadrilla/incidencias/activas/" class="btn">Ver todas las incidencias pendientes</a>
+<table class="user-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Nombre Incidencia</th>
+      <th>Descripción</th>
+      <th>Dirección</th>
+      <th>Departamento</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for i in incidencias_pendientes %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ i.nombre_incidencia }}</td>
+        <td>{{ i.descripcion }}</td>
+        <td>{{ i.direccion_incidencia.nombre_direccion }}</td>
+        <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
+        <td>
+          <a href="/cuadrilla/incidencias/responder/{{ i.id }}/">Trabajar</a> |
+          <a href="/cuadrilla/incidencias/rechazar/{{ i.id }}/">Rechazar</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6">No hay incidencias pendientes.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div style="margin-top: 10px; margin-bottom: 20px;">
+  <a href="/" class="btn" style="margin-top: 15px;">🏠 Volver al inicio</a>
 </div>
 {% endblock %}

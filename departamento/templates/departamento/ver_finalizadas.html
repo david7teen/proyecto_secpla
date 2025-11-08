@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Incidencias Finalizadas - Departamento{% endblock %}
+
+{% block content %}
+<div class="usuario-detalle-card">
+  <h2>✅ Incidencias Finalizadas - Departamento</h2>
+  
+  <div class="stats-header">
+    <p><strong>Departamento:</strong> {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</p>
+    <p><strong>Total Finalizadas:</strong> {{ incidencias|length }}</p>
+    <p><strong>Eficiencia del Departamento:</strong> {{ porcentaje_eficiencia }}%</p>
+  </div>
+
+  {% if incidencias %}
+  <div class="table-container">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Incidencia</th>
+          <th>Descripción</th>
+          <th>Cuadrilla Ejecutora</th>
+          <th>Fecha Finalización</th>
+          <th>Tiempo Resolución</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for incidencia in incidencias %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ incidencia.nombre_incidencia }}</td>
+          <td>{{ incidencia.descripcion }}</td>
+          <td>
+            {% if incidencia.cuadrilla_asignada %}
+              {{ incidencia.cuadrilla_asignada.nombre }} {{ incidencia.cuadrilla_asignada.apellido }}
+            {% else %}
+              <span class="advertencia">No asignada</span>
+            {% endif %}
+          </td>
+          <td>{{ incidencia.fecha_finalizacion|date:"d/m/Y H:i" }}</td>
+          <td>{{ incidencia.tiempo_resolucion }} días</td>
+          <td>
+            <div class="acciones-container">
+              <a href="{% url 'ver_incidencia_departamento' incidencia.id %}" class="btn btn-info btn-sm">👁️ Ver Detalles</a>
+              <a href="{% url 'ver_evidencia_incidencia' incidencia.id %}" class="btn btn-secondary btn-sm">📷 Evidencias</a>
+<!--
+              <a href="{% url 'cerrar_incidencia' incidencia.id %}" class="btn btn-success btn-sm">🔒 Cerrar</a>
+-->
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>📊 Aún no hay incidencias finalizadas.</p>
+  </div>
+  {% endif %}
+
+  <div class="usuario-acciones">
+    <a href="{% url 'dashboard_departamento' %}" class="btn btn-volver">⬅️ Volver al Dashboard</a>
+    <a href="{% url 'reporte_finalizadas' %}" class="btn btn-primary">📈 Generar Reporte</a>
+  </div>
+</div>
+
+<style>
+.estado-finalizada {
+  color: #28a745;
+  font-weight: bold;
+  background: #d4edda;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.stats-header {
+  background: linear-gradient(135deg, #d4edda, #f8f9fa);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  border-left: 5px solid #28a745;
+}
+</style>
+{% endblock %}

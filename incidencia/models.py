@@ -10,6 +10,15 @@ class Incidencia(models.Model):
     direccion_incidencia = models.ForeignKey(Direccion, on_delete=models.CASCADE, null=False)
     departamento_incidencia = models.ForeignKey(Departamento, on_delete=models.CASCADE, null=False)
 
+    cuadrilla_asignada = models.ForeignKey(
+        Usuario,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='incidencias_asignadas'
+    )
+    
+    
     estado = models.CharField(
         max_length=20,
         choices=[

@@ -1,9 +1,13 @@
 from django.shortcuts import render,redirect
-from .models import Usuario, Incidencia
+from SECPLA.models import Usuario
+from incidencia.models import Incidencia
 
 def vista_cuadrilla(request):
-    usuario_activo = request.session.get('usuario_activo')
-    cuadrilla = Usuario.objects.get(id=usuario_activo['id'])
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/cuadrilla/')
+    
+    cuadrilla = Usuario.objects.get(id=usuario_activo_data['id'])
 
     incidencias = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla)
 

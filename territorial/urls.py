@@ -5,12 +5,13 @@ urlpatterns = [
     path('', views.vista_territorial, name='dashboard_territorial'),
 
     # Incidencias por estado
-    #path('incidencias/abiertas/', views.incidencias_abiertas, name='incidencias_abiertas'),
-    #path('incidencias/derivadas/', views.incidencias_derivadas, name='incidencias_derivadas'),
-    #path('incidencias/proceso/', views.incidencias_proceso, name='incidencias_proceso'),
-    #path('incidencias/rechazadas/', views.incidencias_rechazadas, name='incidencias_rechazadas'),
-    #path('incidencias/finalizadas/', views.incidencias_finalizadas, name='incidencias_finalizadas'),
-    #path('incidencias/cerradas/', views.incidencias_cerradas, name='incidencias_cerradas'),
+    path('incidencias/abiertas/', views.incidencias_abiertas, name='incidencias_abiertas'),
+    path('incidencias/derivadas/', views.incidencias_derivadas, name='incidencias_derivadas'),
+    path('incidencias/proceso/', views.incidencias_proceso, name='incidencias_proceso'),
+    path('incidencias/rechazadas/', views.incidencias_rechazadas, name='incidencias_rechazadas'),
+    path('incidencias/finalizadas/', views.incidencias_finalizadas, name='incidencias_finalizadas'),
+    path('incidencias/cerradas/', views.incidencias_cerradas, name='incidencias_cerradas'),
+	path('ver_solicitudes/', views.ver_todas_solicitudes, name='ver_solicitudes'),
 
     # Encuestas
     #path('ver_solicitudes/', views.ver_solicitudes, name='ver_solicitudes'),

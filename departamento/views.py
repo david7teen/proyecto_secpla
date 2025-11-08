@@ -1,11 +1,17 @@
-from django.shortcuts import render
-from .models import Usuario, Incidencia
+from django.shortcuts import render, redirect
+from SECPLA.models import Usuario
+from incidencia.models import Incidencia
 
 def vista_departamento(request):
-    usuario_activo = request.session.get('usuario_activo')
-    departamento = Usuario.objects.get(id=usuario_activo['id'])
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/departamento/')
+    
+    departamento = Usuario.objects.get(id=usuario_activo_data['id'])
 
-    incidencias = Incidencia.objects.filter(departamento_incidencia=departamento)
+    # Aquí necesitas lógica para obtener las incidencias del departamento
+    # Esto depende de cómo esté estructurado tu modelo
+    incidencias = Incidencia.objects.all()  # Temporal
 
     resumen = {
         'pendientes': incidencias.filter(estado='Pendiente').count(),
@@ -31,3 +37,15 @@ def incidencias_pendientes_departamento(request):
         'cuadrillas': cuadrillas,
         'usuario_activo': departamento
     })
+
+def derivar_incidencia(request, incidencia_id):
+    if request.method == 'POST':
+        cuadrilla_id = request.POST.get('cuadrilla_id')
+        incidencia = Incidencia.objects.get(id=incidencia_id)
+        cuadrilla = Usuario.objects.get(id=cuadrilla_id)
+
+        incidencia.cuadrilla_asignada = cuadrilla
+        incidencia.estado = 'Derivada'
+        incidencia.save()
+
+    return redirect('/departamento/incidencias/pendientes/')

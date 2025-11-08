@@ -3,11 +3,11 @@ from .models import Usuario, Incidencia, Direccion
 from django.shortcuts import get_object_or_404
 
 def vista_direccion(request):
-    usuario_data = request.session.get('usuario_activo')
-    if not usuario_data:
-        return redirect('/login/direccion/')
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/direccion/')
 
-    usuario = Usuario.objects.filter(id=usuario_data['id'], perfil='Dirección').first()
+    usuario = Usuario.objects.filter(id=usuario_activo_data['id'], perfil='Dirección').first()
     if not usuario or not usuario.direccion_asociada:
         return render(request, 'Direccion/dashboard_direccion.html', {
             'usuario_activo': usuario,
@@ -18,7 +18,6 @@ def vista_direccion(request):
 
     direccion = usuario.direccion_asociada
     incidencias = Incidencia.objects.filter(direccion_incidencia=direccion)
-
 
     resumen = {
         'abiertas': incidencias.filter(estado='Abierta').count(),

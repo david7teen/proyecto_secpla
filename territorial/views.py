@@ -1,6 +1,4 @@
 from django.shortcuts import render, redirect
-from .models import Usuario, Incidencia
-from encuesta.forms import IncidenciaForm
 
 from SECPLA.models import Usuario
 from incidencia.models import Incidencia
@@ -16,18 +14,22 @@ from django.shortcuts import get_object_or_404
 
 
 def vista_territorial(request):
-    usuario_activo = Usuario.objects.get(id=request.session['usuario_activo']['id'])
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/territorial/')
+    
+    usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
 
     incidencias = Incidencia.objects.filter(territorial_creador=usuario_activo)
+    incidencias_abiertas = incidencias.filter(estado='Abierta')[:5]  # Últimas 5
 
-    # Obtener encuestas recientes
-    encuestas = Encuesta.objects.filter(estado='Abierta').order_by('-id')[:3]
+    encuestas = Encuesta.objects.filter(estado='Abierta').order_by('-id')[:5]
 
     resumen = {
         'abiertas': incidencias.filter(estado='Abierta').count(),
         'derivadas': incidencias.filter(estado='Derivada').count(),
         'rechazadas': incidencias.filter(estado='Rechazada').count(),
-        'proceso': incidencias.filter(estado='Proceso').count(),
+        'proceso': incidencias.filter(estado='En proceso').count(),
         'finalizadas': incidencias.filter(estado='Finalizada').count(),
         'cerradas': incidencias.filter(estado='Cerrada').count(),
         'total': incidencias.count()
@@ -35,7 +37,9 @@ def vista_territorial(request):
 
     return render(request, 'Territorial/dashboard_territorial.html', {
         'usuario_activo': usuario_activo,
-        'resumen': resumen
+        'resumen': resumen,
+        'encuestas': encuestas,
+        'incidencias_abiertas': incidencias_abiertas
     })
 
 def obtener_departamentos_por_direccion(request, direccion_id):
@@ -128,3 +132,100 @@ def encuestas_abiertas(request):
         'perfil': 'territorial'
     })
 
+def incidencias_abiertas(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/territorial/')
+    
+    usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
+    abiertas = Incidencia.objects.filter(territorial_creador=usuario_activo, estado='Abierta')
+    
+    return render(request, 'territorial/listado_incidencias.html', {
+        'incidencias': abiertas,
+        'estado': 'Abiertas',
+        'usuario_activo': usuario_activo
+    })
+
+def incidencias_derivadas(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/territorial/')
+    
+    usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
+    derivadas = Incidencia.objects.filter(territorial_creador=usuario_activo, estado='Derivada')
+    
+    return render(request, 'territorial/listado_incidencias.html', {
+        'incidencias': derivadas,
+        'estado': 'Derivadas',
+        'usuario_activo': usuario_activo
+    })
+
+def incidencias_proceso(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/territorial/')
+    
+    usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
+    proceso = Incidencia.objects.filter(territorial_creador=usuario_activo, estado='En proceso')
+    
+    return render(request, 'territorial/listado_incidencias.html', {
+        'incidencias': proceso,
+        'estado': 'En Proceso',
+        'usuario_activo': usuario_activo
+    })
+
+def incidencias_rechazadas(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/territorial/')
+    
+    usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
+    rechazadas = Incidencia.objects.filter(territorial_creador=usuario_activo, estado='Rechazada')
+    
+    return render(request, 'territorial/listado_incidencias.html', {
+        'incidencias': rechazadas,
+        'estado': 'Rechazadas',
+        'usuario_activo': usuario_activo
+    })
+
+def incidencias_finalizadas(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/territorial/')
+    
+    usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
+    finalizadas = Incidencia.objects.filter(territorial_creador=usuario_activo, estado='Finalizada')
+    
+    return render(request, 'territorial/listado_incidencias.html', {
+        'incidencias': finalizadas,
+        'estado': 'Finalizadas',
+        'usuario_activo': usuario_activo
+    })
+
+def incidencias_cerradas(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/territorial/')
+    
+    usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
+    cerradas = Incidencia.objects.filter(territorial_creador=usuario_activo, estado='Cerrada')
+    
+    return render(request, 'territorial/listado_incidencias.html', {
+        'incidencias': cerradas,
+        'estado': 'Cerradas',
+        'usuario_activo': usuario_activo
+    })
+
+def ver_todas_solicitudes(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/territorial/')
+    
+    usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
+    todas = Incidencia.objects.filter(territorial_creador=usuario_activo)
+    
+    return render(request, 'territorial/listado_incidencias.html', {
+        'incidencias': todas,
+        'estado': 'Todas las Solicitudes',
+        'usuario_activo': usuario_activo
+    })

@@ -62,7 +62,14 @@ def login_por_perfil(request, perfil):
         elif usuario.contraseña.strip() != contraseña:
             error = 'Contraseña incorrecta.'
         else:
-            # Login exitoso
+            # Login exitoso - CORREGIDO
+            request.session['usuario_activo'] = {
+                'id': usuario.id,
+                'nombre': usuario.nombre,
+                'apellido': usuario.apellido,
+                'correo': usuario.correo,
+                'perfil': usuario.perfil
+            }
             request.session['usuario_id'] = usuario.id
             request.session['perfil'] = usuario.perfil
             request.session['correo'] = usuario.correo

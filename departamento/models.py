@@ -13,15 +13,3 @@ class Departamento(models.Model):
         return self.nombre_departamento
     
 
-
-def derivar_incidencia(request, incidencia_id):
-    if request.method == 'POST':
-        cuadrilla_id = request.POST.get('cuadrilla_id')
-        incidencia = Incidencia.objects.get(id=incidencia_id)
-        cuadrilla = Usuario.objects.get(id=cuadrilla_id)
-
-        incidencia.cuadrilla_asignada = cuadrilla
-        incidencia.estado = 'Derivada'
-        incidencia.save()
-
-    return redirect('/departamento/incidencias/pendientes/')

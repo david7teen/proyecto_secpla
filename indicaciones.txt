@@ -1,5 +1,6 @@
--------------------- CMD EN EL DIRECTORIO DEL PROYECTO --------------------
-pip install pillow
+Django==5.2.4
+pillow==12.0.0
+psycopg2-binary==2.9.10
 
 -------------------- CMD EN EL DIRECTORIO DEL PROYECTO --------------------
 python manage.py makemigrations
@@ -9,8 +10,6 @@ python manage.py migrate
 INSERT INTO "SECPLA_usuario" (nombre, apellido, correo, telefono, perfil, contraseña, estado) VALUES ('nombre_1','apellido_1','secpla@m.com','+56912345678','SECPLA','123','Activo');
 
 -------------------- CMD EN EL DIRECTORIO DEL PROYECTO --------------------
-python manage.py makemigrations territorial
-python manage.py migrate
 python manage.py runserver
 
 ---------------------------------------------------------------------------

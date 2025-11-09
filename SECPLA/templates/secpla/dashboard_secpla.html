@@ -7,16 +7,6 @@
 <h1>Bienvenida, {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</h1>
 <h3>Perfil: {{ usuario_activo.perfil }}</h3>
 
-<div class="stats-container">
-  <div class="card">Usuarios activos: {{ resumen.usuarios_activos }}</div>
-  <div class="card">Direcciones creadas: {{ resumen.direcciones_creadas }}</div>
-  <div class="card">Departamentos creados: {{ resumen.departamentos_creados }}</div>
-  <div class="card">Incidencias creadas: {{ resumen.incidencias_creadas }}</div>
-  <div class="card">Territoriales creados: {{ resumen.territoriales }}</div>
-  <div class="card">Incidencias Derivadas: {{ resumen.derivadas }}</div>
-  <div class="card">Incidencias Rechazadas: {{ resumen.rechazadas }}</div>
-  <div class="card">Incidencias Finalizadas: {{ resumen.finalizadas }}</div>
-</div>
 
 <h2>Gestión de solicitudes de recuperación</h2>
 <a href="/secpla/ver_intentos_recuperacion/" class="btn">Ver solicitudes de recuperación</a>
@@ -106,7 +96,7 @@
       <th>Encargado</th>
       <th>Correo</th>
       <th>Dirección Asociada</th>
-      <th>Estado</th> <!-- ✅ Agregado -->
+      <th>Estado</th> <!-- Agregado -->
       <th>Acciones</th>
     </tr>
   </thead>
@@ -134,39 +124,6 @@
 </table>
 
 <a href="{% url 'listar_departamentos' %}" class="ver-todo">Ver todos los Departamentos →</a>
-
-<h2>Listado de Incidencias</h2>
-<a href="/secpla/secpla/crear_incidencia/" class="btn">Crear nueva Incidencia</a>
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th><th>Nombre Incidencia</th><th>Descripción</th><th>Dirección</th><th>Departamento</th><th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for i in incidencias %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ i.nombre_incidencia }}</td>
-        <td>{{ i.descripcion }}</td>
-        <td>{{ i.direccion_incidencia.nombre_direccion }}</td>
-        <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
-        <td>
-          <a href="/secpla/ver_incidencia/{{ i.id }}">Ver</a> |
-          <a href="/secpla/editar_incidencia/{{ i.id }}">Editar</a> |
-          {% if i.estado == 'Activo' %}
-            <a href="/secpla/bloquear_incidencia/{{ i.id }}">Bloquear</a>
-          {% else %}
-            <a href="/secpla/activar_incidencia/{{ i.id }}">Activar</a>
-          {% endif %}
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="6">No hay incidencias registradas.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
-<a href="{% url 'listar_incidencias' %}" class="ver-todo">Ver todas las Incidencias →</a>
 
 <h2>Listado de Encuestas</h2>
 <a href="/secpla/secpla/crear_encuesta/" class="btn">Crear nueva Encuesta</a>

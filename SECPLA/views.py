@@ -100,7 +100,6 @@ def vista_secpla(request):
     direcciones = Direccion.objects.filter(estado='Activo').order_by('-id')[:3]
     departamentos = Departamento.objects.filter(estado='Activo').order_by('-id')[:3]
     territoriales = Territorial.objects.filter(estado='Activo').order_by('-id')[:3]
-    incidencias = Incidencia.objects.all().order_by('-id')[:3]
     encuestas = Encuesta.objects.all().order_by('-id')[:3]
 
     resumen = {
@@ -108,10 +107,6 @@ def vista_secpla(request):
         'direcciones_creadas': Direccion.objects.filter(estado='Activo').count(),
         'departamentos_creados': Departamento.objects.filter(estado='Activo').count(),
         'territoriales': Territorial.objects.filter( estado='Activo').count(),
-        'incidencias_creadas':Incidencia.objects.filter(estado='Activo').count(),
-        'derivadas': Incidencia.objects.filter(estado='Derivada').count(),
-        'rechazadas': Incidencia.objects.filter(estado='Rechazada').count(),
-        'finalizadas': Incidencia.objects.filter(estado='Finalizada').count(),
     }
 
     return render(request, 'SECPLA/dashboard_secpla.html', {
@@ -119,7 +114,6 @@ def vista_secpla(request):
         'usuarios': usuarios,
         'direcciones': direcciones,
         'departamentos':departamentos,
-        'incidencias':incidencias,
         'encuestas':encuestas,
         'resumen': resumen,
         'perfil':'SECPLA',
@@ -199,7 +193,6 @@ def dashboard_secpla(request):
     territoriales = Usuario.objects.filter(perfil='Territorial').order_by('nombre')
 
     # Otros modelos
-    incidencias = Incidencia.objects.all().order_by('-id')
     encuestas = Encuesta.objects.all().order_by('nombre_encuesta')
 
     # Resumen dinámico
@@ -208,10 +201,6 @@ def dashboard_secpla(request):
         'direcciones_creadas': Usuario.objects.filter(perfil='Dirección', estado='Activo').count(),
         'departamentos_creados': Usuario.objects.filter(perfil='Departamento', estado='Activo').count(),
         'territoriales': Usuario.objects.filter(perfil='Territorial', estado='Activo').count(),
-        'incidencias_creadas': Incidencia.objects.count(),
-        'derivadas': Incidencia.objects.filter(estado='Derivada').count(),
-        'rechazadas': Incidencia.objects.filter(estado='Rechazada').count(),
-        'finalizadas': Incidencia.objects.filter(estado='Finalizada').count(),
     }
 
     return render(request, 'SECPLA/dashboard_secpla.html', {
@@ -220,7 +209,6 @@ def dashboard_secpla(request):
         'direcciones': direcciones,
         'departamentos': departamentos,
         'territoriales': territoriales,
-        'incidencias': incidencias,
         'encuestas': encuestas,
         'resumen': resumen,
     })
@@ -285,75 +273,7 @@ def crear_departamento(request):
 
 
 def crear_incidencia(request):
-    if request.session.get('perfil') != 'SECPLA':
-        print("Redirigiendo: perfil no es SECPLA")
-        return redirect('/login/secpla/')
-
-    direcciones_disponibles = Direccion.objects.filter(estado='Activo')
-
-    if not direcciones_disponibles.exists():
-        print("No hay direcciones disponibles")
-        return render(request, 'SECPLA/crear_incidencia.html', {
-            'error': 'No hay direcciones disponibles. Cree una dirección primero.',
-            'direcciones': [],
-            'departamentos': []
-        })
-
-    if request.method == 'POST':
-        nombre_incidencia = request.POST.get('nombre_incidencia')
-        descripcion = request.POST.get('descripcion')
-        direccion_incidencia = request.POST.get('direccion_incidencia')
-        departamento_incidencia = request.POST.get('departamento_incidencia')
-
-        print(f"Datos recibidos: {nombre_incidencia}, {descripcion}, {direccion_incidencia}, {departamento_incidencia}")
-
-        try:
-            direccion = Direccion.objects.get(id=direccion_incidencia, estado='Activo')
-        except Direccion.DoesNotExist:
-            print("Dirección inválida")
-            return render(request, 'SECPLA/crear_incidencia.html', {
-                'error': 'La dirección seleccionada no existe.',
-                'direcciones': direcciones_disponibles,
-                'departamentos': []
-            })
-
-        departamentos_disponibles = Departamento.objects.filter(
-            direccion_departamento=direccion,
-            estado='Activo'
-        )
-
-        if not departamentos_disponibles.exists():
-            print("No hay departamentos disponibles para esta dirección")
-            return render(request, 'SECPLA/crear_incidencia.html', {
-                'error': 'No hay departamentos asociados a esta dirección.',
-                'direcciones': direcciones_disponibles,
-                'departamentos': []
-            })
-
-        try:
-            departamento = Departamento.objects.get(id=departamento_incidencia, direccion_departamento=direccion)
-        except Departamento.DoesNotExist:
-            print("Departamento inválido")
-            return render(request, 'SECPLA/crear_incidencia.html', {
-                'error': 'El departamento seleccionado no pertenece a la dirección elegida.',
-                'direcciones': direcciones_disponibles,
-                'departamentos': departamentos_disponibles
-            })
-
-        Incidencia.objects.create(
-            nombre_incidencia=nombre_incidencia,
-            descripcion=descripcion,
-            direccion_incidencia=direccion,
-            departamento_incidencia=departamento,
-            estado='Activo'
-        )
-        print("Incidencia creada correctamente")
-        return redirect('/perfil/secpla/')
-
-    return render(request, 'SECPLA/crear_incidencia.html', {
-        'direcciones': direcciones_disponibles,
-        'departamentos': []
-    })
+    return redirect('/perfil/secpla/') #lo redirige al dashboard
 
 def obtener_departamentos_por_direccion(request, direccion_id):
     departamentos = Departamento.objects.filter(direccion_departamento_id=direccion_id, estado='Activo')
@@ -732,91 +652,19 @@ def listar_departamentos(request):
     })
 
 def ver_incidencia(request, incidencia_id):
-    if request.session.get('perfil') != 'SECPLA':
-        return redirect('/login/secpla/')
-    
-    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
-    
-    return render(request, 'SECPLA/ver_incidencia.html', {
-        'incidencia': incidencia
-    })
+    return redirect('/perfil/secpla/')
 
 def editar_incidencia(request, incidencia_id):
-    if request.session.get('perfil') != 'SECPLA':
-        return redirect('/login/secpla/')
-    
-    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
-    
-    if request.method == 'POST':
-        incidencia.nombre_incidencia = request.POST.get('nombre_incidencia')
-        incidencia.descripcion = request.POST.get('descripcion')
-        incidencia.estado = request.POST.get('estado')
-
-        direccion_id = request.POST.get('direccion_incidencia')
-        departamento_id = request.POST.get('departamento_incidencia')
-
-        if direccion_id:
-            incidencia.direccion_incidencia = Direccion.objects.filter(id=direccion_id).first()
-        if departamento_id:
-            incidencia.departamento_incidencia = Departamento.objects.filter(id=departamento_id).first()
-
-        incidencia.save()
-        return redirect('listar_incidencias')
-
-    direcciones = Direccion.objects.filter(estado='Activo')
-    departamentos = Departamento.objects.filter(estado='Activo')
-
-    return render(request, 'SECPLA/editar_incidencia.html', {
-        'incidencia': incidencia,
-        'direcciones': direcciones,
-        'departamentos': departamentos
-    })
+    return redirect('/perfil/secpla/')
 
 def activar_incidencia(request, incidencia_id):
-    if request.session.get('perfil') != 'SECPLA':
-        return redirect('/login/secpla/')
-    
-    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
-    incidencia.estado = 'Activo'
-    incidencia.save()
-    
-    return redirect('listar_incidencias')
+    return redirect('/perfil/secpla/')
 
 def bloquear_incidencia(request, incidencia_id):
-    if request.session.get('perfil') != 'SECPLA':
-        return redirect('/login/secpla/')
-    
-    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
-    incidencia.estado = 'Inactivo'
-    incidencia.save()
-    
-    return redirect('listar_incidencias')
+    return redirect('/perfil/secpla/')
 
 def listar_incidencias(request):
-    if request.session.get('perfil') != 'SECPLA':
-        perfil = request.session.get('perfil')
-        return redirect(f"/perfil/{redirecciones.get(perfil, perfil.lower())}/")
-
-    usuario_id = request.session.get('usuario_id')
-    if not usuario_id:
-        return redirect('/login/secpla/')
-
-    try:
-        usuario_activo = Usuario.objects.get(id=usuario_id)
-    except Usuario.DoesNotExist:
-        return redirect('/login/secpla/')
-
-    incidencias = Incidencia.objects.exclude(id__isnull=True).order_by('-id')
-    resumen = {
-        'incidencias_activas': Incidencia.objects.filter(estado='Activo').count(),
-    }
-
-    return render(request, 'SECPLA/listar_incidencias.html', {
-        'usuario_activo': usuario_activo,
-        'incidencias': incidencias,
-        'resumen': resumen,
-        'perfil': 'SECPLA',
-    })
+    return redirect('/perfil/secpla/')
 
 def ver_encuesta(request, encuesta_id):
     if request.session.get('perfil') != 'SECPLA':
@@ -917,35 +765,8 @@ def listar_encuestas(request):
 
 @require_POST
 def crear_tipo_incidencia_ajax(request):
-    nombre = request.POST.get('nombre_tipo', '').strip()
-    direccion_id = request.POST.get('direccion_tipo')
-    departamento_id = request.POST.get('departamento_tipo')
+    return redirect('/perfil/secpla/')
 
-    if not nombre or not direccion_id or not departamento_id:
-        return JsonResponse({'error': 'Faltan datos obligatorios'}, status=400)
-
-    try:
-        direccion = Direccion.objects.get(id=direccion_id)
-        departamento = Departamento.objects.get(id=departamento_id)
-
-        if TipoIncidencia.objects.filter(nombre_incidencia__iexact=nombre).exists():
-            return JsonResponse({'error': f'Ya existe un tipo con el nombre "{nombre}".'}, status=409)
-
-        tipo = TipoIncidencia.objects.create(
-            nombre_incidencia=nombre,
-            direccion=direccion,
-            departamento=departamento,
-            estado='Activo'
-        )
-
-        return JsonResponse({'id': tipo.id, 'nombre_incidencia': tipo.nombre})
-
-    except Direccion.DoesNotExist:
-        return JsonResponse({'error': 'Dirección no encontrada'}, status=404)
-    except Departamento.DoesNotExist:
-        return JsonResponse({'error': 'Departamento no encontrado'}, status=404)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
 
 
 

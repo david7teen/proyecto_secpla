@@ -1,0 +1,12 @@
+# Archivos de Python
+__pycache__/
+*.pyc
+
+# Base de datos local
+db.sqlite3
+
+# Archivos de configuración local
+local_settings.py
+
+# Archivos de entorno (si usas)
+.env

@@ -30,7 +30,7 @@ class Encuesta(models.Model):
     ('Cerrada', 'Cerrada'),
     ('Rechazada', 'Rechazada'),
     ], default='Abierta')
-  
+
 
     CATEGORIA_CHOICES = [
         ('Creada', 'Creada'),

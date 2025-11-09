@@ -4,6 +4,14 @@ from . import views
 urlpatterns = [
     path('', views.vista_territorial, name='dashboard_territorial'),
 
+    # CRUD de Incidencias
+    path('incidencia/crear/', views.crear_incidencia, name='crear_incidencia'),
+    path('incidencia/editar/<int:incidencia_id>/', views.editar_incidencia, name='editar_incidencia'),
+    path('incidencia/eliminar/<int:incidencia_id>/', views.eliminar_incidencia, name='eliminar_incidencia'),
+        
+    # AJAX
+    path('api/departamentos/<int:direccion_id>/', views.obtener_departamentos_por_direccion, name='departamentos_por_direccion'),
+
     # Incidencias por estado
     path('incidencias/abiertas/', views.incidencias_abiertas, name='incidencias_abiertas'),
     path('incidencias/derivadas/', views.incidencias_derivadas, name='incidencias_derivadas'),

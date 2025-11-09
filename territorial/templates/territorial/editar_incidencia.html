@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Incidencia{% endblock %}
+
+{% block content %}
+<div class="formulario-departamento">
+    <h2>Editar Incidencia: {{ incidencia.nombre_incidencia }}</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Título de la Incidencia *</label>
+            <input type="text" name="nombre_incidencia" value="{{ incidencia.nombre_incidencia }}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Descripción *</label>
+            <textarea name="descripcion" rows="4" required>{{ incidencia.descripcion }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Tipo de Incidencia</label>
+            <select name="tipo_incidencia">
+                <option value="">Seleccione un tipo</option>
+                {% for tipo in tipos_incidencia %}
+                    <option value="{{ tipo.id }}" {% if incidencia.tipo_incidencia.id == tipo.id %}selected{% endif %}>
+                        {{ tipo.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Dirección *</label>
+            <select id="direccion_incidencia" name="direccion_incidencia" required onchange="cargarDepartamentos()">
+                <option value="">Seleccione una dirección</option>
+                {% for direccion in direcciones %}
+                    <option value="{{ direccion.id }}" {% if incidencia.direccion_incidencia.id == direccion.id %}selected{% endif %}>
+                        {{ direccion.nombre_direccion }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Departamento *</label>
+            <select id="departamento_incidencia" name="departamento_incidencia" required>
+                <option value="">Seleccione un departamento</option>
+                {% for departamento in departamentos %}
+                    <option value="{{ departamento.id }}" {% if incidencia.departamento_incidencia.id == departamento.id %}selected{% endif %}>
+                        {{ departamento.nombre_departamento }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Prioridad</label>
+            <select name="prioridad">
+                <option value="Baja" {% if incidencia.prioridad == 'Baja' %}selected{% endif %}>Baja</option>
+                <option value="Normal" {% if incidencia.prioridad == 'Normal' %}selected{% endif %}>Normal</option>
+                <option value="Alta" {% if incidencia.prioridad == 'Alta' %}selected{% endif %}>Alta</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Ubicación</label>
+            <input type="text" name="ubicacion" value="{{ incidencia.ubicacion|default_if_none:'' }}" placeholder="Dirección exacta o referencia">
+        </div>
+
+        <div class="form-group">
+            <label>Datos del Vecino (Nombre - Celular - Email)</label>
+            <input type="text" name="datos_vecino" value="{{ incidencia.datos_vecino|default_if_none:'' }}" placeholder="Ej: Juan Pérez - 912345678 - juan@email.com">
+        </div>
+
+        <div class="form-group">
+            <label>Imagen actual:</label>
+            {% if incidencia.imagen %}
+                <div>
+                    <img src="{{ incidencia.imagen.url }}" alt="Imagen actual" width="200" style="display: block; margin: 10px 0;">
+                    <small>Imagen actual - Subir nueva imagen para reemplazar</small>
+                </div>
+            {% else %}
+                <p>No hay imagen actual</p>
+            {% endif %}
+            <input type="file" name="imagen" accept="image/*">
+        </div>
+
+        <div class="form-group">
+            <label>Estado actual: 
+                <strong>
+                    {% if incidencia.estado == "Abierta" %}
+                        <span style="color: #28a745;">🟢 {{ incidencia.estado }}</span>
+                    {% elif incidencia.estado == "Rechazada" %}
+                        <span style="color: #dc3545;">🔴 {{ incidencia.estado }}</span>
+                    {% else %}
+                        {{ incidencia.estado }}
+                    {% endif %}
+                </strong>
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit">Guardar Cambios</button>
+            <button type="button" onclick="window.location.href='{% url 'dashboard_territorial' %}'">Cancelar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+function cargarDepartamentos() {
+    const direccionId = document.getElementById('direccion_incidencia').value;
+    const departamentoSelect = document.getElementById('departamento_incidencia');
+
+    if (!direccionId) {
+        departamentoSelect.innerHTML = '<option value="">Seleccione una dirección primero</option>';
+        departamentoSelect.disabled = true;
+        return;
+    }
+
+    departamentoSelect.innerHTML = '<option value="">Cargando...</option>';
+    
+    fetch(`/territorial/api/departamentos/${direccionId}/`)
+        .then(response => response.json())
+        .then(data => {
+            departamentoSelect.innerHTML = '<option value="">Seleccione un departamento</option>';
+            
+            data.forEach(dep => {
+                const option = document.createElement('option');
+                option.value = dep.id;
+                option.text = dep.nombre;
+                departamentoSelect.appendChild(option);
+            });
+
+            departamentoSelect.disabled = false;
+            
+            // Seleccionar el departamento actual si existe
+            const currentDeptId = "{{ incidencia.departamento_incidencia.id }}";
+            if (currentDeptId) {
+                departamentoSelect.value = currentDeptId;
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            departamentoSelect.innerHTML = '<option value="">Error al cargar departamentos</option>';
+        });
+}
+
+// Cargar departamentos al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    cargarDepartamentos();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Incidencias en Proceso{% endblock %}
+
+{% block content %}
+<h2>Incidencias en Proceso</h2>
+
+<table class="user-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Nombre Incidencia</th>
+      <th>Descripción</th>
+      <th>Dirección</th>
+      <th>Departamento</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for incidencia in incidencias %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ incidencia.nombre_incidencia }}</td>
+        <td>{{ incidencia.descripcion }}</td>
+        <td>{{ incidencia.direccion_incidencia.nombre_direccion }}</td>
+        <td>{{ incidencia.departamento_incidencia.nombre_departamento }}</td>
+        <td>
+          <a href="{% url 'responder_incidencia' incidencia.id %}" class="btn">Trabajar</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6">No hay incidencias en proceso.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div style="margin-top: 20px;">
+  <a href="{% url 'dashboard_cuadrilla' %}" class="btn">⬅️ Volver al Dashboard</a>
+</div>
+{% endblock %}

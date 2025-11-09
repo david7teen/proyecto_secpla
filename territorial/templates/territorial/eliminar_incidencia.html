@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Eliminar Incidencia{% endblock %}
+
+{% block content %}
+<div class="formulario-departamento">
+    <h2>Eliminar Incidencia</h2>
+
+    <div class="alert alert-warning">
+        <strong>⚠️ Advertencia:</strong> Está a punto de eliminar la siguiente incidencia. Esta acción no se puede deshacer.
+    </div>
+
+    <div class="incidencia-info" style="background: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+        <h3>{{ incidencia.nombre_incidencia }}</h3>
+        <p><strong>Descripción:</strong> {{ incidencia.descripcion }}</p>
+        <p><strong>Dirección:</strong> {{ incidencia.direccion_incidencia.nombre_direccion }}</p>
+        <p><strong>Departamento:</strong> {{ incidencia.departamento_incidencia.nombre_departamento }}</p>
+        <p><strong>Estado:</strong> 
+            {% if incidencia.estado == "Abierta" %}
+                <span style="color: #28a745;">🟢 {{ incidencia.estado }}</span>
+            {% else %}
+                {{ incidencia.estado }}
+            {% endif %}
+        </p>
+        <p><strong>Fecha creación:</strong> {{ incidencia.fecha_creacion|date:"d/m/Y H:i" }}</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" style="background-color: #dc3545;">Eliminar Incidencia</button>
+            <button type="button" onclick="window.location.href='{% url 'dashboard_territorial' %}'">Cancelar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

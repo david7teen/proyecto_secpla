@@ -1,4 +1,5 @@
 from django.db import models
+from departamento.models import Departamento
 
 class Usuario(models.Model):
     nombre = models.CharField(max_length=100)
@@ -14,6 +15,12 @@ class Usuario(models.Model):
     ])
     contraseña = models.CharField(max_length=100)
     estado = models.CharField(max_length=20, default='Activo')
+    departamento_asociado = models.ForeignKey(
+    Departamento,
+    on_delete=models.SET_NULL,  # Si se borra el depto, no se borra el usuario
+    null=True,
+    blank=True,
+    related_name="usuarios_asociados")
 
 class RecuperacionIntento(models.Model):
     correo = models.EmailField()

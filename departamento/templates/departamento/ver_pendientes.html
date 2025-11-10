@@ -9,7 +9,12 @@
     <p><strong>Departamento:</strong> {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</p>
     <p><strong>Total Pendientes:</strong> {{ incidencias|length }}</p>
   </div>
-
+  
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
   {% if incidencias %}
   <div class="table-container">
     <table class="user-table">
@@ -39,10 +44,25 @@
           <td>{{ incidencia.fecha_creacion|date:"d/m/Y H:i" }}</td>
           <td>
             <div class="acciones-container">
-              <a href="{% url 'derivar_incidencia' incidencia.id %}" class="btn btn-primary btn-sm">📤 Derivar</a>
-              <a href="{% url 'rechazar_incidencia' incidencia.id %}" class="btn btn-warning btn-sm">❌ Rechazar</a>
-              <a href="{% url 'ver_incidencia_departamento' incidencia.id %}" class="btn btn-info btn-sm">👁️ Ver</a>
-            </div>
+              
+              <form method="POST" action="{% url 'derivar_incidencia' incidencia.id %}" style="display: flex; gap: 5px; align-items: center;">
+                {% csrf_token %}
+                
+                <select name="cuadrilla_id" required style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+                  <option value="" disabled selected>Asignar a...</option>
+                  {% for c in cuadrillas %}
+                    <option value="{{ c.id }}">{{ c.nombre }} {{ c.apellido }}</option>
+                  {% endfor %}
+                  {% if not cuadrillas %}
+                    <option value="" disabled>No hay cuadrillas</option>
+                  {% endif %}
+                </select>
+                
+                <button type="submit" class="btn btn-primary btn-sm">📤 Derivar</button>
+              </form>
+              <a href="{% url 'rechazar_incidencia' incidencia.id %}" class="btn btn-warning btn-sm" onclick="return confirm('¿Estás seguro de rechazar esta incidencia?')">❌ Rechazar</a>
+              
+              </div>
           </td>
         </tr>
         {% endfor %}
@@ -69,6 +89,7 @@
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
+  align-items: center; /* Para alinear el formulario y el botón */
 }
 
 .empty-state {
@@ -83,5 +104,36 @@
   border-radius: 8px;
   margin-bottom: 20px;
 }
+
+/* ==== AÑADIDO ==== */
+/* Estilos para los mensajes de alerta */
+.alert {
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+.alert-warning {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+}
+.alert-error {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+.alert-info {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+}
+/* ==== FIN AÑADIDO ==== */
+
 </style>
 {% endblock %}

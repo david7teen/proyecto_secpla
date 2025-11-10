@@ -473,9 +473,13 @@ def ver_usuario_2(request, usuario_id):
     usuario = get_object_or_404(Usuario, id=usuario_id)
     return render(request, 'SECPLA/ver_usuario_2.html', {'usuario': usuario})
 
+# =================================================================
+# ==== INICIO DE LA MODIFICACIÓN ====
+# =================================================================
 def editar_usuario(request, usuario_id):
     if request.session.get('perfil') != 'SECPLA':
         return redirect('/login/secpla/')
+    
     usuario = get_object_or_404(Usuario, id=usuario_id)
 
     if request.method == 'POST':
@@ -484,10 +488,35 @@ def editar_usuario(request, usuario_id):
         usuario.correo = request.POST.get('correo')
         usuario.telefono = request.POST.get('telefono')
         usuario.perfil = request.POST.get('perfil')
-        usuario.save()
-        return redirect('vista_secpla')
+        
+        # --- LÓGICA AÑADIDA ---
+        # Obtenemos el ID del departamento desde el formulario
+        departamento_id = request.POST.get('departamento_asociado')
+        if departamento_id:
+            # Buscamos el objeto Departamento y lo asignamos
+            usuario.departamento_asociado = Departamento.objects.get(id=departamento_id)
+        else:
+            # Si no se selecciona ninguno (ej. "Ninguno"), lo dejamos en None
+            usuario.departamento_asociado = None
+        # --- FIN DE LA LÓGICA AÑADIDA ---
 
-    return render(request, 'SECPLA/editar_usuario.html', {'usuario': usuario})
+        usuario.save()
+        return redirect('vista_secpla') # Redirige al dashboard de SECPLA
+
+    # --- LÍNEA AÑADIDA ---
+    # Obtenemos todos los departamentos para mostrarlos en el <select>
+    departamentos = Departamento.objects.filter(estado='Activo')
+    # ---------------------
+
+    # --- LÍNEA MODIFICADA ---
+    # Pasamos la lista de departamentos al template
+    return render(request, 'SECPLA/editar_usuario.html', {
+        'usuario': usuario,
+        'departamentos': departamentos  
+    })
+# =================================================================
+# ==== FIN DE LA MODIFICACIÓN ====
+# =================================================================
 
 def bloquear_usuario(request, usuario_id):
     if request.session.get('perfil') != 'SECPLA':
@@ -766,8 +795,3 @@ def listar_encuestas(request):
 @require_POST
 def crear_tipo_incidencia_ajax(request):
     return redirect('/perfil/secpla/')
-
-
-
-
-

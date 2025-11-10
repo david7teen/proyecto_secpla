@@ -2,22 +2,27 @@ from django.shortcuts import render, redirect, get_object_or_404
 from SECPLA.models import Usuario
 from incidencia.models import Incidencia
 from departamento.models import Departamento
+from django.contrib import messages
+from django.utils import timezone
 
 def vista_departamento(request):
     usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Departamento':
         return redirect('/secpla/login/departamento/')
     
     usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
 
-    # Obtener el departamento del usuario
-    try:
-        departamento_usuario = Departamento.objects.get(encargado_departamento=usuario_activo.nombre + " " + usuario_activo.apellido)
-    except Departamento.DoesNotExist:
-        # Si no encuentra por nombre, usar el primero disponible (temporal)
-        departamento_usuario = Departamento.objects.first()
+    departamento_usuario = usuario_activo.departamento_asociado
 
-    # Filtrar incidencias del departamento
+    if not departamento_usuario:
+        # Si el admin de SECPLA no te ha asignado un depto, mostramos un error
+        return render(request, 'departamento/dashboard_departamento.html', {
+            'usuario_activo': usuario_activo,
+            'resumen': {},
+            'error': 'Este usuario no tiene un departamento asociado.'
+        })
+
+    # Filtrar incidencias de ESE departamento
     incidencias = Incidencia.objects.filter(departamento_incidencia=departamento_usuario)
 
     resumen = {
@@ -35,16 +40,15 @@ def vista_departamento(request):
 
 def ver_pendientes_departamento(request):
     usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Departamento':
         return redirect('/secpla/login/departamento/')
     
     usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
     
-    # Obtener departamento del usuario
-    try:
-        departamento_usuario = Departamento.objects.get(encargado_departamento=usuario_activo.nombre + " " + usuario_activo.apellido)
-    except Departamento.DoesNotExist:
-        departamento_usuario = Departamento.objects.first()
+    departamento_usuario = usuario_activo.departamento_asociado
+    if not departamento_usuario:
+        messages.error(request, 'No tienes un departamento asociado.')
+        return redirect('vista_departamento') # Lo mandamos de vuelta al dashboard de depto
     
     # Filtrar incidencias del departamento con estado Abierta (Pendiente)
     incidencias = Incidencia.objects.filter(
@@ -52,23 +56,33 @@ def ver_pendientes_departamento(request):
         estado='Abierta'
     ).order_by('-id')
     
+    # Buscamos todos los usuarios que sean 'Cuadrilla' Y que pertenezcan
+    # a nuestro mismo departamento.
+    cuadrillas = Usuario.objects.filter(
+        perfil='Cuadrilla',
+        estado='Activo',
+        departamento_asociado=departamento_usuario 
+    )
+    # -----------------------------------------------------------
+    
     return render(request, 'departamento/ver_pendientes.html', {
         'usuario_activo': usuario_activo,
         'departamento': departamento_usuario,
-        'incidencias': incidencias
+        'incidencias': incidencias,
+        'cuadrillas': cuadrillas  #
     })
 
 def ver_derivadas_departamento(request):
     usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Departamento':
         return redirect('/secpla/login/departamento/')
     
     usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
     
-    try:
-        departamento_usuario = Departamento.objects.get(encargado_departamento=usuario_activo.nombre + " " + usuario_activo.apellido)
-    except Departamento.DoesNotExist:
-        departamento_usuario = Departamento.objects.first()
+    departamento_usuario = usuario_activo.departamento_asociado
+    if not departamento_usuario:
+        messages.error(request, 'No tienes un departamento asociado.')
+        return redirect('vista_departamento')
     
     incidencias = Incidencia.objects.filter(
         departamento_incidencia=departamento_usuario,
@@ -83,15 +97,16 @@ def ver_derivadas_departamento(request):
 
 def ver_rechazadas_departamento(request):
     usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Departamento':
         return redirect('/secpla/login/departamento/')
     
     usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
     
-    try:
-        departamento_usuario = Departamento.objects.get(encargado_departamento=usuario_activo.nombre + " " + usuario_activo.apellido)
-    except Departamento.DoesNotExist:
-        departamento_usuario = Departamento.objects.first()
+    departamento_usuario = usuario_activo.departamento_asociado
+    if not departamento_usuario:
+        messages.error(request, 'No tienes un departamento asociado.')
+        return redirect('vista_departamento')
+  
     
     incidencias = Incidencia.objects.filter(
         departamento_incidencia=departamento_usuario,
@@ -106,17 +121,19 @@ def ver_rechazadas_departamento(request):
 
 def ver_finalizadas_departamento(request):
     usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Departamento':
         return redirect('/secpla/login/departamento/')
     
     usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
     
-    try:
-        departamento_usuario = Departamento.objects.get(encargado_departamento=usuario_activo.nombre + " " + usuario_activo.apellido)
-    except Departamento.DoesNotExist:
-        departamento_usuario = Departamento.objects.first()
+
+    departamento_usuario = usuario_activo.departamento_asociado
+    if not departamento_usuario:
+        messages.error(request, 'No tienes un departamento asociado.')
+        return redirect('vista_departamento')
+
     
-    incidencias = Incidencia.objects.filter(
+    incidencias_finalizadas = Incidencia.objects.filter(
         departamento_incidencia=departamento_usuario,
         estado='Finalizada'
     ).order_by('-id')
@@ -128,27 +145,29 @@ def ver_finalizadas_departamento(request):
     
     porcentaje_eficiencia = 0
     if total_incidencias > 0:
-        porcentaje_eficiencia = (incidencias.count() / total_incidencias) * 100
+        porcentaje_eficiencia = (incidencias_finalizadas.count() / total_incidencias) * 100
     
     return render(request, 'departamento/ver_finalizadas.html', {
         'usuario_activo': usuario_activo,
         'departamento': departamento_usuario,
-        'incidencias': incidencias,
+        'incidencias': incidencias_finalizadas,
         'porcentaje_eficiencia': round(porcentaje_eficiencia, 1)
     })
     
     
 def reporte_finalizadas(request):
     usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Departamento':
         return redirect('/secpla/login/departamento/')
     
     usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
     
-    try:
-        departamento_usuario = Departamento.objects.get(encargado_departamento=usuario_activo.nombre + " " + usuario_activo.apellido)
-    except Departamento.DoesNotExist:
-        departamento_usuario = Departamento.objects.first()
+  
+    departamento_usuario = usuario_activo.departamento_asociado
+    if not departamento_usuario:
+        messages.error(request, 'No tienes un departamento asociado.')
+        return redirect('vista_departamento')
+  
     
     incidencias = Incidencia.objects.filter(
         departamento_incidencia=departamento_usuario,
@@ -160,3 +179,74 @@ def reporte_finalizadas(request):
         'departamento': departamento_usuario,
         'incidencias': incidencias
     })
+
+
+
+def derivar_incidencia(request, incidencia_id):
+    if request.method != 'POST':
+        return redirect('ver_pendientes_departamento')
+
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/departamento/')
+        
+    usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
+    if usuario_activo.perfil != 'Departamento':
+        messages.error(request, 'No tienes permisos de Departamento.')
+        return redirect('/secpla/login/departamento/')
+    
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+    
+    # Validar que la incidencia pertenezca al depto del usuario 
+    if incidencia.departamento_incidencia != usuario_activo.departamento_asociado:
+        messages.error(request, 'No tienes permiso para derivar esta incidencia.')
+        return redirect('ver_pendientes_departamento')
+        
+    cuadrilla_id = request.POST.get('cuadrilla_id')
+    
+    if not cuadrilla_id:
+        messages.error(request, 'Debes seleccionar una cuadrilla.')
+        return redirect('ver_pendientes_departamento')
+
+    try:
+        cuadrilla_asignada = Usuario.objects.get(id=cuadrilla_id, perfil='Cuadrilla', departamento_asociado=usuario_activo.departamento_asociado)
+        
+        # Actualizamos la incidencia
+        incidencia.cuadrilla_asignada = cuadrilla_asignada
+        incidencia.estado = 'Derivada' # Cambiamos el estado
+        incidencia.fecha_derivacion = timezone.now() # Marcamos la fecha
+        incidencia.save()
+        
+        messages.success(request, f'Incidencia #{incidencia.id} derivada correctamente a {cuadrilla_asignada.nombre}.')
+        
+    except Usuario.DoesNotExist:
+        messages.error(request, 'La cuadrilla seleccionada no es válida o no pertenece a tu departamento.')
+    
+    return redirect('ver_pendientes_departamento')
+
+
+def rechazar_incidencia(request, incidencia_id):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/departamento/')
+
+    usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
+    if usuario_activo.perfil != 'Departamento':
+        messages.error(request, 'No tienes permisos de Departamento.')
+        return redirect('/secpla/login/departamento/')
+    
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+    
+    # Validación de seguridad
+    if incidencia.departamento_incidencia != usuario_activo.departamento_asociado:
+        messages.error(request, 'No tienes permiso para esta acción.')
+        return redirect('ver_pendientes_departamento')
+
+    # Cambiamos el estado
+    incidencia.estado = 'Rechazada'
+
+    incidencia.save()
+    
+    messages.warning(request, f'Incidencia #{incidencia.id} ha sido rechazada.')
+    
+    return redirect('ver_pendientes_departamento')

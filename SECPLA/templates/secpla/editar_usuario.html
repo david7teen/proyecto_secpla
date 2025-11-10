@@ -39,6 +39,19 @@
       </select>
     </div>
 
+    {% if usuario.perfil == 'Departamento' or usuario.perfil == 'Cuadrilla' %}
+    <div class="form-group">
+      <label for="departamento_asociado">Departamento asociado:</label>
+      <select id="departamento_asociado" name="departamento_asociado">
+        <option value="">(Ninguno)</option>
+        {% for depto in departamentos %}
+          <option value="{{ depto.id }}" {% if usuario.departamento_asociado.id == depto.id %}selected{% endif %}>
+            {{ depto.nombre_departamento }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endif %}
     <div class="form-actions">
       <button type="submit" class="btn btn-editar"> Guardar cambios</button>
       <a href="{% url 'vista_secpla' %}" class="btn btn-volver"> Cancelar</a>

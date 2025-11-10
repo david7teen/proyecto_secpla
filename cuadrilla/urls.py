@@ -2,13 +2,20 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # Dashboard (Página principal del perfil)
     path('', views.vista_cuadrilla, name='dashboard_cuadrilla'),
-    path('incidencias/activas/', views.incidencias_activas_cuadrilla, name='incidencias_activas_cuadrilla'),
-    path('incidencias/responder/<int:incidencia_id>/', views.responder_incidencia, name='responder_incidencia'),
-    path('incidencias/', views.listado_incidencias_cuadrilla, name='listado_incidencias_cuadrilla'),
-    path('incidencias/tomar/<int:incidencia_id>/', views.tomar_incidencia, name='tomar_incidencia'),
-    path('incidencias/rechazar/<int:incidencia_id>/', views.rechazar_incidencia, name='rechazar_incidencia'),
-    path('incidencias/proceso/', views.incidencias_proceso, name='incidencias_proceso'),
-    path('incidencias/finalizadas/', views.incidencias_finalizadas_cuadrilla, name='incidencias_finalizadas_cuadrilla'),
-    path('reporte/trabajo/', views.reporte_trabajo, name='reporte_trabajo'),
+    
+    # El "Listado" principal (El requisito mínimo)
+    path('incidencias/pendientes/', views.listar_incidencias_cuadrilla, name='cuadrilla_incidencias_pendientes'),
+    
+    # Las 2 acciones del requisito mínimo
+    path('incidencias/responder/<int:incidencia_id>/', views.responder_incidencia, name='cuadrilla_responder_incidencia'),
+    path('incidencias/rechazar/<int:incidencia_id>/', views.rechazar_incidencia, name='cuadrilla_rechazar_incidencia'),
+    
+    # Acción extra (buena para el flujo)
+    path('incidencias/tomar/<int:incidencia_id>/', views.tomar_incidencia, name='cuadrilla_tomar_incidencia'),
+    
+    # Listados secundarios (opcionales pero útiles)
+    path('incidencias/en-proceso/', views.incidencias_en_proceso, name='cuadrilla_incidencias_proceso'),
+    path('incidencias/finalizadas/', views.incidencias_finalizadas, name='cuadrilla_incidencias_finalizadas'),
 ]

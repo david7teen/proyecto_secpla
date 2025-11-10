@@ -1,24 +1,40 @@
-{% extends 'base.html' %}
-{% block title %}Responder incidencia{% endblock %}
+{% extends 'base_cuadrilla.html' %} {% load static %}
+
+{% block title %}Responder Incidencia #{{ incidencia.id }}{% endblock %}
 
 {% block content %}
-<h2>Responder incidencia: {{ incidencia.nombre_incidencia }}</h2>
-
-<form method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
-  <div class="form-group">
-    <label for="descripcion">Descripción de la solución:</label>
-    <textarea name="descripcion" required></textarea>
-  </div>
-
-  <div class="form-group">
-    <label for="imagen">Subir imagen de resolución:</label>
-    <input type="file" name="imagen" accept="image/*" required>
-  </div>
-
-  <div class="form-actions">
-    <button type="submit">Enviar respuesta</button>
-    <a href="/cuadrilla/incidencias/activas/" class="btn">Cancelar</a>
-  </div>
-</form>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Finalizar Incidencia: {{ incidencia.nombre_incidencia }}</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Descripción del Problema:</strong><br>{{ incidencia.descripcion }}</p>
+                    <p><strong>Ubicación:</strong> {{ incidencia.ubicacion }}</p>
+                    <hr>
+                    
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label"><b>Descripción de la Solución:</b></label>
+                            <textarea name="descripcion" id="descripcion" class="form-control" rows="5" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="imagen" class="form-label"><b>Subir Imagen de Evidencia:</b></label>
+                            <input type="file" name="imagen" id="imagen" class="form-control" accept="image/*">
+                        </div>
+                        
+                        <hr>
+                        <button type="submit" class="btn btn-success">Completar y Finalizar Tarea</button>
+                        <a href="{% url 'dashboard_cuadrilla' %}" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

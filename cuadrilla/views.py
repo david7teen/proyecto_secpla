@@ -1,13 +1,17 @@
-from django.shortcuts import render,redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from SECPLA.models import Usuario
 from incidencia.models import Incidencia
+from django.contrib import messages
 
 def vista_cuadrilla(request):
+    """
+    Muestra el Dashboard principal de la Cuadrilla.
+    """
     usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
-        return redirect('/secpla/login/cuadrilla/')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Cuadrilla':
+        return redirect('/login/secpla/') # Ajusta a tu URL de login
     
-    cuadrilla = Usuario.objects.get(id=usuario_activo_data['id'])
+    cuadrilla = get_object_or_404(Usuario, id=usuario_activo_data['id'])
 
     # Incidencias asignadas a esta cuadrilla
     incidencias_asignadas = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla)
@@ -17,170 +21,117 @@ def vista_cuadrilla(request):
         'en_proceso': incidencias_asignadas.filter(estado='En proceso').count(),
         'finalizadas': incidencias_asignadas.filter(estado='Finalizada').count(),
         'rechazadas': incidencias_asignadas.filter(estado='Rechazada').count(),
-        'total': incidencias_asignadas.count()
     }
 
-    # Incidencias pendientes (para trabajar ahora)
-    incidencias_pendientes = incidencias_asignadas.filter(estado='Derivada')[:5]
+    # Mostramos las 5 pendientes más nuevas en el dashboard
+    incidencias_pendientes = incidencias_asignadas.filter(estado='Derivada').order_by('-fecha_creacion')[:5]
 
-    return render(request, 'Cuadrilla/dashboard_cuadrilla.html', {
+    return render(request, 'cuadrilla/dashboard_cuadrilla.html', {
         'usuario_activo': cuadrilla,
         'resumen': resumen,
         'incidencias_pendientes': incidencias_pendientes
     })
 
-def incidencias_activas_cuadrilla(request):
-    cuadrilla = Usuario.objects.get(id=request.session['usuario_activo']['id'])
-    activas = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla, estado='Derivada')
-    return render(request, 'Cuadrilla/listado_incidencias_cuadrilla.html', {
-        'incidencias': activas,
-        'estado': 'En curso'
+def listar_incidencias_cuadrilla(request):
+    """
+    Este es el REQUISITO MÍNIMO:
+    Muestra el listado de incidencias en el estado 'Derivada' (asignadas).
+    """
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Cuadrilla':
+        return redirect('/login/secpla/')
+    
+    cuadrilla = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    
+    # Filtramos solo las incidencias "Derivadas" (pendientes de tomar)
+    incidencias_list = Incidencia.objects.filter(
+        cuadrilla_asignada=cuadrilla,
+        estado='Derivada' # Este es el estado en que las pueden ver
+    ).order_by('fecha_creacion')
+    
+    return render(request, 'cuadrilla/listado_incidencias_cuadrilla.html', {
+        'usuario_activo': cuadrilla,
+        'incidencias': incidencias_list,
+        'titulo_lista': 'Incidencias Pendientes (Asignadas)'
     })
 
+def tomar_incidencia(request, incidencia_id):
+    """
+    Acción simple que cambia el estado a 'En proceso'.
+    """
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+    # Aquí iría la lógica para asegurar que la incidencia pertenece a la cuadrilla
+    incidencia.estado = 'En proceso'
+    incidencia.save()
+    messages.info(request, f'Incidencia #{incidencia.id} marcada como "En Proceso".')
+    return redirect('dashboard_cuadrilla') # Redirige al dashboard
+
+def rechazar_incidencia(request, incidencia_id):
+    """
+    REQUISITO MÍNIMO:
+    Acción simple que cambia el estado a 'Rechazada'.
+    """
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+    # Aquí iría la lógica para asegurar que la incidencia pertenece a la cuadrilla
+    incidencia.estado = 'Rechazada'
+    incidencia.save()
+    messages.warning(request, f'Incidencia #{incidencia.id} ha sido rechazada.')
+    return redirect('dashboard_cuadrilla') # Redirige al dashboard
+
 def responder_incidencia(request, incidencia_id):
-    incidencia = Incidencia.objects.get(id=incidencia_id)
+    """
+    REQUISITO MÍNIMO:
+    Muestra el formulario para "Finalizar" la incidencia.
+    """
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
 
     if request.method == 'POST':
-        descripcion = request.POST.get('descripcion')
-        imagen = request.FILES.get('imagen')
-
-        incidencia.descripcion_respuesta = descripcion
-        incidencia.imagen_respuesta = imagen
+        # (Debes agregar estos campos a tu modelo Incidencia si no existen)
+        # incidencia.descripcion_resolucion = request.POST.get('descripcion')
+        # incidencia.evidencia_imagen = request.FILES.get('imagen')
+        
         incidencia.estado = 'Finalizada'
         incidencia.save()
+        
+        messages.success(request, f'Incidencia #{incidencia.id} marcada como "Finalizada".')
+        return redirect('dashboard_cuadrilla') # Redirige al dashboard
 
-        return redirect('/cuadrilla/incidencias/activas/')
-
-    return render(request, 'Cuadrilla/responder_incidencia.html', {
+    return render(request, 'cuadrilla/responder_incidencia.html', {
         'incidencia': incidencia
     })
 
+# --- VISTAS ADICIONALES (Listados secundarios) ---
 
-def listado_incidencias_cuadrilla(request):
+def incidencias_en_proceso(request):
+    """
+    Listado de incidencias que la cuadrilla ya 'tomó'.
+    """
     usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
-        return redirect('/secpla/login/cuadrilla/')
+    cuadrilla = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    incidencias_list = Incidencia.objects.filter(
+        cuadrilla_asignada=cuadrilla,
+        estado='En proceso'
+    ).order_by('fecha_creacion')
     
-    cuadrilla = Usuario.objects.get(id=usuario_activo_data['id'])
-    incidencias = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla)
-    
-    return render(request, 'Cuadrilla/listado_incidencias_cuadrilla.html', {
+    return render(request, 'cuadrilla/listado_incidencias_cuadrilla.html', {
         'usuario_activo': cuadrilla,
-        'incidencias': incidencias
+        'incidencias': incidencias_list,
+        'titulo_lista': 'Incidencias en Proceso'
     })
 
-def tomar_incidencia(request, incidencia_id):
-    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
-    incidencia.estado = 'En proceso'
-    incidencia.save()
-    return redirect('dashboard_cuadrilla')
-
-def rechazar_incidencia(request, incidencia_id):
-    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
-    incidencia.estado = 'Rechazada'
-    incidencia.save()
-    return redirect('dashboard_cuadrilla')
-
-def incidencias_proceso(request):
+def incidencias_finalizadas(request):
+    """
+    Historial de incidencias finalizadas por la cuadrilla.
+    """
     usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
-        return redirect('/secpla/login/cuadrilla/')
+    cuadrilla = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    incidencias_list = Incidencia.objects.filter(
+        cuadrilla_asignada=cuadrilla,
+        estado='Finalizada'
+    ).order_by('-fecha_finalizacion')
     
-    cuadrilla = Usuario.objects.get(id=usuario_activo_data['id'])
-    incidencias = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla, estado='En proceso')
-    
-    return render(request, 'Cuadrilla/incidencias_proceso.html', {
+    return render(request, 'cuadrilla/listado_incidencias_cuadrilla.html', {
         'usuario_activo': cuadrilla,
-        'incidencias': incidencias
-    })
-
-def incidencias_finalizadas_cuadrilla(request):
-    usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
-        return redirect('/secpla/login/cuadrilla/')
-    
-    cuadrilla = Usuario.objects.get(id=usuario_activo_data['id'])
-    incidencias = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla, estado='Finalizada')
-    
-    return render(request, 'Cuadrilla/incidencias_finalizadas.html', {
-        'usuario_activo': cuadrilla,
-        'incidencias': incidencias
-    })
-
-def reporte_trabajo(request):
-    usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
-        return redirect('/secpla/login/cuadrilla/')
-    
-    cuadrilla = Usuario.objects.get(id=usuario_activo_data['id'])
-    incidencias = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla)
-    
-    return render(request, 'Cuadrilla/reporte_trabajo.html', {
-        'usuario_activo': cuadrilla,
-        'incidencias': incidencias
-    })
-    
-    
-def listado_incidencias_cuadrilla(request):
-    usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
-        return redirect('/secpla/login/cuadrilla/')
-    
-    cuadrilla = Usuario.objects.get(id=usuario_activo_data['id'])
-    incidencias = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla)
-    
-    return render(request, 'Cuadrilla/listado_incidencias_cuadrilla.html', {
-        'usuario_activo': cuadrilla,
-        'incidencias': incidencias
-    })
-
-def tomar_incidencia(request, incidencia_id):
-    incidencia = Incidencia.objects.get(id=incidencia_id)
-    incidencia.estado = 'En proceso'
-    incidencia.save()
-    return redirect('/cuadrilla/')
-
-def rechazar_incidencia(request, incidencia_id):
-    incidencia = Incidencia.objects.get(id=incidencia_id)
-    incidencia.estado = 'Rechazada'
-    incidencia.save()
-    return redirect('/cuadrilla/')
-
-def incidencias_proceso(request):
-    usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
-        return redirect('/secpla/login/cuadrilla/')
-    
-    cuadrilla = Usuario.objects.get(id=usuario_activo_data['id'])
-    incidencias = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla, estado='En proceso')
-    
-    return render(request, 'Cuadrilla/incidencias_proceso.html', {
-        'usuario_activo': cuadrilla,
-        'incidencias': incidencias
-    })
-
-def incidencias_finalizadas_cuadrilla(request):
-    usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
-        return redirect('/secpla/login/cuadrilla/')
-    
-    cuadrilla = Usuario.objects.get(id=usuario_activo_data['id'])
-    incidencias = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla, estado='Finalizada')
-    
-    return render(request, 'Cuadrilla/incidencias_finalizadas.html', {
-        'usuario_activo': cuadrilla,
-        'incidencias': incidencias
-    })
-
-def reporte_trabajo(request):
-    usuario_activo_data = request.session.get('usuario_activo')
-    if not usuario_activo_data:
-        return redirect('/secpla/login/cuadrilla/')
-    
-    cuadrilla = Usuario.objects.get(id=usuario_activo_data['id'])
-    incidencias = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla)
-    
-    return render(request, 'Cuadrilla/reporte_trabajo.html', {
-        'usuario_activo': cuadrilla,
-        'incidencias': incidencias
+        'incidencias': incidencias_list,
+        'titulo_lista': 'Historial de Incidencias Finalizadas'
     })

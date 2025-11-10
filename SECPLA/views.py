@@ -518,21 +518,19 @@ def editar_usuario(request, usuario_id):
 # ==== FIN DE LA MODIFICACIÓN ====
 # =================================================================
 
-def bloquear_usuario(request, usuario_id):
+def eliminar_usuario(request, usuario_id):
     if request.session.get('perfil') != 'SECPLA':
         return redirect('/login/secpla/')
+    
     usuario = get_object_or_404(Usuario, id=usuario_id)
-    usuario.estado = 'Inactivo'
-    usuario.save()
-    return redirect('vista_secpla')
+    sesion_id = request.session.get('usuario_activo', {}).get('id')
+    if usuario.id == sesion_id:
+        messages.error(request, 'No puedes eliminar tu propia cuenta de administrador.')
+        return redirect('ver_usuario')
 
-def activar_usuario(request, usuario_id):
-    if request.session.get('perfil') != 'SECPLA':
-        return redirect('/login/secpla/')
-    usuario = get_object_or_404(Usuario, id=usuario_id)
-    usuario.estado = 'Activo'
-    usuario.save()
-    return redirect('vista_secpla')
+    messages.success(request, f'Usuario {usuario.correo} ({usuario.perfil}) ha sido eliminado.')
+    usuario.delete()
+    return redirect('ver_usuario')
 
 def ver_direccion(request, id):
     if request.session.get('perfil') != 'SECPLA':
@@ -680,20 +678,54 @@ def listar_departamentos(request):
         'perfil': 'SECPLA',
     })
 
-def ver_incidencia(request, incidencia_id):
-    return redirect('/perfil/secpla/')
-
-def editar_incidencia(request, incidencia_id):
-    return redirect('/perfil/secpla/')
-
-def activar_incidencia(request, incidencia_id):
-    return redirect('/perfil/secpla/')
-
-def bloquear_incidencia(request, incidencia_id):
-    return redirect('/perfil/secpla/')
-
 def listar_incidencias(request):
-    return redirect('/perfil/secpla/')
+    if request.session.get('perfil') != 'SECPLA':
+        perfil = request.session.get('perfil')
+        return redirect(f"/perfil/{redirecciones.get(perfil, perfil.lower())}/")
+
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('/login/secpla/')
+
+    try:
+        usuario_activo = Usuario.objects.get(id=usuario_id)
+    except Usuario.DoesNotExist:
+        return redirect('/login/secpla/')
+
+    incidencias_list = Incidencia.objects.all().order_by('-fecha_creacion')
+    estado_choices = Incidencia._meta.get_field('estado').choices
+
+    resumen = {
+        'incidencias_activas': incidencias_list.filter(estado='Abierta').count(),
+        'incidencias_finalizadas': incidencias_list.filter(estado='Finalizada').count(),
+    }
+
+    return render(request, 'SECPLA/listar_incidencias.html', {
+        'usuario_activo': usuario_activo,
+        'incidencias': incidencias_list,
+        'resumen': resumen,
+        'perfil': 'SECPLA',
+        'estado_choices': estado_choices,
+    })
+
+def actualizar_estado_incidencia(request, incidencia_id):
+    if request.session.get('perfil') != 'SECPLA':
+        messages.error(request, 'No tienes permisos.')
+        return redirect('/') 
+
+    if request.method == 'POST':
+        incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+        nuevo_estado = request.POST.get('estado')
+        valid_states = [choice[0] for choice in Incidencia._meta.get_field('estado').choices]
+        
+        if nuevo_estado in valid_states:
+            incidencia.estado = nuevo_estado
+            incidencia.save()
+            messages.success(request, f'Estado de la Incidencia #{incidencia.id} actualizado a "{nuevo_estado}".')
+        else:
+            messages.error(request, 'El estado seleccionado no es válido.')
+
+    return redirect('listar_incidencias')
 
 def ver_encuesta(request, encuesta_id):
     if request.session.get('perfil') != 'SECPLA':

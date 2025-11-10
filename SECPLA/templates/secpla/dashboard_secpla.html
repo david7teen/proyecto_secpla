@@ -125,6 +125,37 @@
 
 <a href="{% url 'listar_departamentos' %}" class="ver-todo">Ver todos los Departamentos →</a>
 
+<h2>Listado de Incidencias/Solicitudes</h2>
+<table class="user-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Título</th>
+      <th>Departamento</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for inc in incidencias %}
+      <tr>
+        <td>{{ inc.id }}</td>
+        <td>{{ inc.nombre_incidencia }}</td>
+        <td>{{ inc.departamento_incidencia.nombre_departamento }}</td>
+        <td>
+          {{ inc.get_estado_display }}
+        </td>
+        <td>
+          <a href="{% url 'ver_incidencia' inc.id %}">Ver</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5">No hay incidencias registradas.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="{% url 'listar_incidencias' %}" class="ver-todo">Ver todas las Incidencias →</a>
+
 <h2>Listado de Encuestas</h2>
 <a href="/secpla/secpla/crear_encuesta/" class="btn">Crear nueva Encuesta</a>
 <table class="user-table">

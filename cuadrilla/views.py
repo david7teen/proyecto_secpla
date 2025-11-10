@@ -12,8 +12,6 @@ def vista_cuadrilla(request):
         return redirect('/login/secpla/') # Ajusta a tu URL de login
     
     cuadrilla = get_object_or_404(Usuario, id=usuario_activo_data['id'])
-
-    # Incidencias asignadas a esta cuadrilla
     incidencias_asignadas = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla)
     
     resumen = {
@@ -23,7 +21,6 @@ def vista_cuadrilla(request):
         'rechazadas': incidencias_asignadas.filter(estado='Rechazada').count(),
     }
 
-    # Mostramos las 5 pendientes más nuevas en el dashboard
     incidencias_pendientes = incidencias_asignadas.filter(estado='Derivada').order_by('-fecha_creacion')[:5]
 
     return render(request, 'cuadrilla/dashboard_cuadrilla.html', {
@@ -42,11 +39,9 @@ def listar_incidencias_cuadrilla(request):
         return redirect('/login/secpla/')
     
     cuadrilla = get_object_or_404(Usuario, id=usuario_activo_data['id'])
-    
-    # Filtramos solo las incidencias "Derivadas" (pendientes de tomar)
     incidencias_list = Incidencia.objects.filter(
         cuadrilla_asignada=cuadrilla,
-        estado='Derivada' # Este es el estado en que las pueden ver
+        estado='Derivada'
     ).order_by('fecha_creacion')
     
     return render(request, 'cuadrilla/listado_incidencias_cuadrilla.html', {
@@ -60,11 +55,10 @@ def tomar_incidencia(request, incidencia_id):
     Acción simple que cambia el estado a 'En proceso'.
     """
     incidencia = get_object_or_404(Incidencia, id=incidencia_id)
-    # Aquí iría la lógica para asegurar que la incidencia pertenece a la cuadrilla
     incidencia.estado = 'En proceso'
     incidencia.save()
     messages.info(request, f'Incidencia #{incidencia.id} marcada como "En Proceso".')
-    return redirect('dashboard_cuadrilla') # Redirige al dashboard
+    return redirect('dashboard_cuadrilla')
 
 def rechazar_incidencia(request, incidencia_id):
     """
@@ -72,11 +66,10 @@ def rechazar_incidencia(request, incidencia_id):
     Acción simple que cambia el estado a 'Rechazada'.
     """
     incidencia = get_object_or_404(Incidencia, id=incidencia_id)
-    # Aquí iría la lógica para asegurar que la incidencia pertenece a la cuadrilla
     incidencia.estado = 'Rechazada'
     incidencia.save()
     messages.warning(request, f'Incidencia #{incidencia.id} ha sido rechazada.')
-    return redirect('dashboard_cuadrilla') # Redirige al dashboard
+    return redirect('dashboard_cuadrilla')
 
 def responder_incidencia(request, incidencia_id):
     """
@@ -94,13 +87,12 @@ def responder_incidencia(request, incidencia_id):
         incidencia.save()
         
         messages.success(request, f'Incidencia #{incidencia.id} marcada como "Finalizada".')
-        return redirect('dashboard_cuadrilla') # Redirige al dashboard
+        return redirect('dashboard_cuadrilla')
 
     return render(request, 'cuadrilla/responder_incidencia.html', {
         'incidencia': incidencia
     })
 
-# --- VISTAS ADICIONALES (Listados secundarios) ---
 
 def incidencias_en_proceso(request):
     """

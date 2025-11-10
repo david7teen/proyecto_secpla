@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Detalle de Incidencia{% endblock %}
+
+{% block content %}
+<div class="usuario-detalle-card">
+    <h2>🔍 Detalle de Incidencia</h2>
+
+    <div class="usuario-info">
+        <p><strong>Nombre Incidencia:</strong> {{ incidencia.nombre_incidencia }}</p>
+        <p><strong>Descripción:</strong> {{ incidencia.descripcion }}</p>
+        <p><strong>Dirección:</strong> {{ incidencia.direccion_incidencia.nombre_direccion }}</p>
+        <p><strong>Departamento:</strong> {{ incidencia.departamento_incidencia.nombre_departamento }}</p>
+        <p><strong>Tipo de Incidencia:</strong> {{ incidencia.tipo_incidencia.nombre|default:"No especificado" }}</p>
+        <p><strong>Prioridad:</strong> {{ incidencia.prioridad }}</p>
+        <p><strong>Ubicación:</strong> {{ incidencia.ubicacion|default:"No especificada" }}</p>
+        <p><strong>Datos del Vecino:</strong> {{ incidencia.datos_vecino|default:"No especificados" }}</p>
+        <p><strong>Estado:</strong> 
+            {% if incidencia.estado == 'Abierta' %}
+                <span style="color: #17a2b8;">● Abierta</span>
+            {% elif incidencia.estado == 'Derivada' %}
+                <span style="color: #ffc107;">● Derivada</span>
+            {% elif incidencia.estado == 'En proceso' %}
+                <span style="color: #007bff;">● En proceso</span>
+            {% elif incidencia.estado == 'Finalizada' %}
+                <span style="color: #28a745;">● Finalizada</span>
+            {% elif incidencia.estado == 'Rechazada' %}
+                <span style="color: #dc3545;">● Rechazada</span>
+            {% elif incidencia.estado == 'Cerrada' %}
+                <span style="color: #6c757d;">● Cerrada</span>
+            {% endif %}
+        </p>
+        <p><strong>Fecha Creación:</strong> {{ incidencia.fecha_creacion|date:"d/m/Y H:i" }}</p>
+        
+        {% if incidencia.imagen %}
+        <p><strong>Imagen:</strong><br>
+            <img src="{{ incidencia.imagen.url }}" alt="Imagen de incidencia" width="300" style="margin-top: 10px;">
+        </p>
+        {% endif %}
+    </div>
+
+    <div class="usuario-acciones">
+        <a href="{% url 'dashboard_territorial' %}" class="btn">⬅️ Volver al Dashboard</a>
+        {% if incidencia.estado == 'Abierta' or incidencia.estado == 'Rechazada' %}
+            <a href="{% url 'editar_incidencia' incidencia.id %}" class="btn">✏️ Editar</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

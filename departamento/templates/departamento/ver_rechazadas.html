@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Incidencias Rechazadas - Departamento{% endblock %}
+
+{% block content %}
+<div class="usuario-detalle-card">
+  <h2>❌ Incidencias Rechazadas - Departamento</h2>
+  
+  <div class="stats-header">
+    <p><strong>Departamento:</strong> {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</p>
+    <p><strong>Total Rechazadas:</strong> {{ incidencias|length }}</p>
+  </div>
+
+  {% if incidencias %}
+  <div class="table-container">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Incidencia</th>
+          <th>Descripción</th>
+          <th>Motivo Rechazo</th>
+          <th>Fecha Rechazo</th>
+          <th>Rechazada Por</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for incidencia in incidencias %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ incidencia.nombre_incidencia }}</td>
+          <td>{{ incidencia.descripcion }}</td>
+          <td>{{ incidencia.motivo_rechazo|default:"No especificado" }}</td>
+          <td>{{ incidencia.fecha_rechazo|date:"d/m/Y H:i" }}</td>
+          <td>{{ incidencia.rechazada_por.nombre|default:"Sistema" }}</td>
+          <td>
+            <div class="acciones-container">
+              <a href="{% url 'ver_incidencia_departamento' incidencia.id %}" class="btn btn-info btn-sm">👁️ Ver</a>
+              <a href="{% url 'reabrir_incidencia' incidencia.id %}" class="btn btn-success btn-sm">🔄 Reabrir</a>
+              <a href="{% url 'editar_incidencia_departamento' incidencia.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>✅ No hay incidencias rechazadas. ¡Excelente!</p>
+  </div>
+  {% endif %}
+
+  <div class="usuario-acciones">
+    <a href="{% url 'dashboard_departamento' %}" class="btn btn-volver">⬅️ Volver al Dashboard</a>
+  </div>
+</div>
+
+<style>
+.estado-rechazada {
+  color: #dc3545;
+  font-weight: bold;
+  background: #f8d7da;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+</style>
+{% endblock %}

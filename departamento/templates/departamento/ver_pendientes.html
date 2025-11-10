@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Incidencias Pendientes - Departamento{% endblock %}
+
+{% block content %}
+<div class="usuario-detalle-card">
+  <h2>📋 Incidencias Pendientes - Departamento</h2>
+  
+  <div class="stats-header">
+    <p><strong>Departamento:</strong> {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</p>
+    <p><strong>Total Pendientes:</strong> {{ incidencias|length }}</p>
+  </div>
+
+  {% if incidencias %}
+  <div class="table-container">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Incidencia</th>
+          <th>Descripción</th>
+          <th>Dirección</th>
+          <th>Prioridad</th>
+          <th>Fecha Creación</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for incidencia in incidencias %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ incidencia.nombre_incidencia }}</td>
+          <td>{{ incidencia.descripcion }}</td>
+          <td>{{ incidencia.direccion_incidencia.nombre_direccion }}</td>
+          <td>
+            <span class="prioridad-{{ incidencia.prioridad|lower }}">
+              {{ incidencia.prioridad }}
+            </span>
+          </td>
+          <td>{{ incidencia.fecha_creacion|date:"d/m/Y H:i" }}</td>
+          <td>
+            <div class="acciones-container">
+              <a href="{% url 'derivar_incidencia' incidencia.id %}" class="btn btn-primary btn-sm">📤 Derivar</a>
+              <a href="{% url 'rechazar_incidencia' incidencia.id %}" class="btn btn-warning btn-sm">❌ Rechazar</a>
+              <a href="{% url 'ver_incidencia_departamento' incidencia.id %}" class="btn btn-info btn-sm">👁️ Ver</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>🎉 No hay incidencias pendientes en este momento.</p>
+  </div>
+  {% endif %}
+
+  <div class="usuario-acciones">
+    <a href="{% url 'dashboard_departamento' %}" class="btn btn-volver">⬅️ Volver al Dashboard</a>
+  </div>
+</div>
+
+<style>
+.prioridad-alta { color: #dc3545; font-weight: bold; }
+.prioridad-normal { color: #ffc107; font-weight: bold; }
+.prioridad-baja { color: #28a745; font-weight: bold; }
+
+.acciones-container {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+}
+
+.stats-header {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+</style>
+{% endblock %}

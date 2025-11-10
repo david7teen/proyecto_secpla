@@ -63,10 +63,11 @@ DATABASES = {
     "default": {
         'HOST':'localhost',
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": 'proyecto_secpla',
+        "NAME": 'prueba02',
+        "NAME": 'prueba05',
         'USER': 'postgres',
-        'PASSWORD': '12345',
-        'PORT': '5432',
+        'PASSWORD': 'maxi1',
+        'PORT': '5433',
     }
 }
 

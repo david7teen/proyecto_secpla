@@ -824,6 +824,36 @@ def listar_encuestas(request):
         'perfil': 'SECPLA',
     })
 
+def bloquear_usuario(request, usuario_id):
+    # Solo SECPLA puede ejecutar esta acción
+    if request.session.get('perfil') != 'SECPLA':
+        return redirect('/login/secpla/')
+
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+    usuario.estado = 'Inactivo'
+    usuario.save()
+    messages.success(request, f'Usuario {usuario.nombre} bloqueado.')
+    return redirect('ver_usuario')
+
+def activar_usuario(request, usuario_id):
+    if request.session.get('perfil') != 'SECPLA':
+        return redirect('/login/secpla/')
+
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+    usuario.estado = 'Activo'
+    usuario.save()
+    messages.success(request, f'Usuario {usuario.nombre} activado.')
+    return redirect('ver_usuario')
+
+def eliminar_usuario(request, usuario_id):
+    if request.session.get('perfil') != 'SECPLA':
+        return redirect('/login/secpla/')
+
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+    usuario.delete()
+    messages.success(request, 'Usuario eliminado.')
+    return redirect('ver_usuario')
+
 @require_POST
 def crear_tipo_incidencia_ajax(request):
     return redirect('/perfil/secpla/')

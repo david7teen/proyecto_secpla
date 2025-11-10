@@ -846,12 +846,23 @@ def activar_usuario(request, usuario_id):
     return redirect('ver_usuario')
 
 def eliminar_usuario(request, usuario_id):
+
     if request.session.get('perfil') != 'SECPLA':
+        messages.error(request, "No tienes permisos para realizar esta acción.")
         return redirect('/login/secpla/')
 
-    usuario = get_object_or_404(Usuario, id=usuario_id)
+    usuario = Usuario.objects.filter(id=usuario_id).first()
+    if not usuario:
+        messages.error(request, f"Usuario con id {usuario_id} no existe.")
+        return redirect('ver_usuario')
+
+    if request.session.get('usuario_id') == usuario.id:
+        messages.error(request, "No puedes eliminar tu propia cuenta.")
+        return redirect('ver_usuario')
+
+    nombre = f"{usuario.nombre} {usuario.apellido}".strip() or usuario.correo
     usuario.delete()
-    messages.success(request, 'Usuario eliminado.')
+    messages.success(request, f"El usuario {nombre} ha sido eliminado correctamente.")
     return redirect('ver_usuario')
 
 @require_POST

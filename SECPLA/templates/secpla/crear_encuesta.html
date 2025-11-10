@@ -116,7 +116,7 @@
       </div>
     </div>
     <button type="button" onclick="agregarCampoPregunta()"> Agregar otra pregunta</button>
-    <button type="button" onclick="window.location.href='{% url 'crear_pregunta_desde_encuesta' %}'">
+    <a href="{% url 'crear_pregunta_desde_encuesta' %}" class="btn">Crear nueva pregunta</a>
        Crear nueva pregunta
     </button>
   </div>

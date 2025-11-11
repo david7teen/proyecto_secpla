@@ -1,6 +1,6 @@
 from django.db import models
 from departamento.models import Departamento
-
+from direccion.models import Direccion
 class Usuario(models.Model):
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
@@ -15,6 +15,12 @@ class Usuario(models.Model):
     ])
     contraseña = models.CharField(max_length=100)
     estado = models.CharField(max_length=20, default='Activo')
+    direccion_asociada = models.ForeignKey(
+        Direccion, 
+        on_delete=models.SET_NULL,  # Si se borra la dirección, el usuario no se borra
+        null=True, 
+        blank=True
+    )
     departamento_asociado = models.ForeignKey(
     Departamento,
     on_delete=models.SET_NULL,  # Si se borra el depto, no se borra el usuario

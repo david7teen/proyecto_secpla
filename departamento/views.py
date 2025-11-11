@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from SECPLA.models import Usuario
 from incidencia.models import Incidencia
+from direccion.models import Direccion
 from departamento.models import Departamento
 from django.contrib import messages
 from django.utils import timezone
@@ -250,3 +251,99 @@ def rechazar_incidencia(request, incidencia_id):
     messages.warning(request, f'Incidencia #{incidencia.id} ha sido rechazada.')
     
     return redirect('ver_pendientes_departamento')
+
+
+def ver_incidencia_departamento(request, incidencia_id):
+    """
+    FUNCIONALIDAD 1: Muestra el detalle de una incidencia.
+    """
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Departamento':
+        return redirect('/secpla/login/departamento/')
+        
+    usuario_activo = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+
+    if incidencia.departamento_incidencia != usuario_activo.departamento_asociado:
+        messages.error(request, 'No tienes permisos para ver esta incidencia.')
+        return redirect('ver_rechazadas_departamento')
+
+    return render(request, 'departamento/ver_incidencia.html', {
+        'usuario_activo': usuario_activo,
+        'inc': incidencia
+    })
+
+
+def reabrir_incidencia(request, incidencia_id):
+
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Departamento':
+        return redirect('/secpla/login/departamento/')
+        
+    usuario_activo = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+
+    if incidencia.departamento_incidencia != usuario_activo.departamento_asociado:
+        messages.error(request, 'No tienes permisos para esta acción.')
+        return redirect('ver_rechazadas_departamento')
+    incidencia.estado = 'Abierta'
+    incidencia.save()
+    
+    messages.success(request, f'Incidencia #{incidencia.id} ha sido re-abierta.')
+    return redirect('ver_rechazadas_departamento')
+
+from direccion.models import Direccion
+from departamento.models import Departamento
+
+
+def editar_incidencia_departamento(request, incidencia_id):
+
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Departamento':
+        return redirect('/secpla/login/departamento/')
+        
+    usuario_activo = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+
+    if incidencia.departamento_incidencia != usuario_activo.departamento_asociado:
+        messages.error(request, 'No tienes permisos para editar esta incidencia.')
+        return redirect('ver_rechazadas_departamento')
+    
+    if request.method == 'POST':
+        try:
+            incidencia.nombre_incidencia = request.POST.get('nombre_incidencia')
+            incidencia.descripcion = request.POST.get('descripcion')
+            incidencia.prioridad = request.POST.get('prioridad')
+            incidencia.ubicacion = request.POST.get('ubicacion')
+            incidencia.datos_vecino = request.POST.get('datos_vecino')
+
+            direccion_id = request.POST.get('direccion_incidencia')
+            departamento_id = request.POST.get('departamento_incidencia')
+            
+            if direccion_id:
+                incidencia.direccion_incidencia = Direccion.objects.get(id=direccion_id)
+            if departamento_id:
+                incidencia.departamento_incidencia = Departamento.objects.get(id=departamento_id)
+
+            if 'imagen' in request.FILES:
+                incidencia.imagen = request.FILES['imagen']
+            incidencia.estado = 'Abierta' 
+
+            incidencia.save()
+            messages.success(request, 'Incidencia actualizada y marcada como "Abierta".')
+            return redirect('ver_pendientes_departamento')
+
+        except (Direccion.DoesNotExist, Departamento.DoesNotExist):
+            messages.error(request, 'La dirección o departamento seleccionado no es válido.')
+        except Exception as e:
+            messages.error(request, f'Ocurrió un error: {e}')
+    
+    direcciones = Direccion.objects.filter(estado='Activo')
+    departamentos = Departamento.objects.filter(estado='Activo')
+
+    return render(request, 'departamento/editar_incidencia.html', {
+        'usuario_activo': usuario_activo,
+        'inc': incidencia,
+        'direcciones': direcciones,
+        'departamentos': departamentos,
+    })

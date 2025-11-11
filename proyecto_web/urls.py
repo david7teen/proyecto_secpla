@@ -20,6 +20,7 @@ urlpatterns = [
     # Módulos principales
     path('secpla/', include('SECPLA.urls')),
     path('territorial/', include('territorial.urls')),
+    path('direccion/', include('direccion.urls')),
     path('departamento/', include('departamento.urls')),
     path('cuadrilla/', include('cuadrilla.urls')),
     path('tipo_incidencia/', include('tipo_incidencia.urls')),

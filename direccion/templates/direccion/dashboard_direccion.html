@@ -1,28 +1,36 @@
-{% extends 'base_direccion.html' %}
-
-{% block title %}Dirección{% endblock %}
+{% extends 'base_direccion.html' %} {% block title %}Dashboard Dirección{% endblock %}
 
 {% block content %}
 <h1>Bienvenido(a), {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</h1>
-<h3>Correo: {{ usuario_activo.correo }}</h3>
-<h3>Dirección: {{ direccion.nombre_direccion }}</h3>
+
+{% if error %}
+    <h3 class="advertencia">{{ error }}</h3>
+{% elif direccion %}
+    <h3>Dirección: {{ direccion.nombre_direccion }}</h3>
+{% endif %}
 
 <h2>Resumen de Incidencias</h2>
 <div class="stats-container">
-  <div class="card">Creadas: {{ resumen.pcreadas }}</div>
-  <div class="card">Pendientes: {{ resumen.pendientes }}</div>
+  <div class="card">Abiertas: {{ resumen.abiertas }}</div>
   <div class="card">Derivadas: {{ resumen.derivadas }}</div>
   <div class="card">Rechazadas: {{ resumen.rechazadas }}</div>
   <div class="card">Finalizadas: {{ resumen.finalizadas }}</div>
 </div>
 
-<h2>Incidencias asociadas a esta dirección</h2>
+<h2>Acceso a listados por estado</h2>
+<div class="form-actions">
+  <a href="{% url 'dir_incidencias_pendientes' %}" class="btn">Ver Pendientes (Abiertas)</a>
+  <a href="{% url 'dir_incidencias_derivadas' %}" class="btn">Ver Derivadas</a>
+  <a href="{% url 'dir_incidencias_rechazadas' %}" class="btn"> Ver Rechazadas</a>
+  <a href="{% url 'dir_incidencias_finalizadas' %}" class="btn">Ver Finalizadas</a>
+</div>
+
+<h3 style="margin-top: 30px;">Últimas Incidencias de la Dirección (Supervisión)</h3>
 <table class="user-table">
   <thead>
     <tr>
       <th>#</th>
       <th>Nombre</th>
-      <th>Descripción</th>
       <th>Departamento</th>
       <th>Estado</th>
     </tr>
@@ -30,28 +38,18 @@
   <tbody>
     {% for i in incidencias %}
       <tr>
-        <td>{{ forloop.counter }}</td>
+        <td>{{ i.id }}</td>
         <td>{{ i.nombre_incidencia }}</td>
-        <td>{{ i.descripcion }}</td>
         <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
-        <td>{{ i.estado }}</td>
+        <td>{{ i.get_estado_display }}</td>
       </tr>
     {% empty %}
-      <tr><td colspan="5">No hay incidencias registradas para esta dirección.</td></tr>
+      <tr><td colspan="4">No hay incidencias registradas para esta dirección.</td></tr>
     {% endfor %}
   </tbody>
 </table>
 
-<h2>Acceso a listados por estado</h2>
-<div class="form-actions">
-  <a href="/direccion/incidencias_creadas/" class="btn">Ver Incidencias Creadas</a>
-  <a href="/direccion/incidencias_pendientes/" class="btn">Ver Incidencias Pendientes</a>
-  <a href="/direccion/incidencias_derivadas/" class="btn">Ver Incidencias Derivadas</a>
-  <a href="/direccion/incidencias/_rechazadas/" class="btn">Ver Incidencias Rechazadas</a>
-  <a href="/direccion/incidencias_finalizadas/" class="btn">Ver Incidencias Finalizadas</a>
-</div>
-
 <div style="margin-top: 10px; margin-bottom: 20px;">
-  <a href="/" class="btn" style="margin-top: 15px;">🏠 Volver al inicio</a>
+  <a href="/" class="btn" style="margin-top: 15px;">Volver al inicio</a>
 </div>
 {% endblock %}

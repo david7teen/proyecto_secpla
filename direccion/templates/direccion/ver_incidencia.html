@@ -1,0 +1,40 @@
+{% extends 'base_direccion.html' %} {% block title %}Detalle Incidencia{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; padding: 20px;">
+
+    <div class="usuario-detalle-card">
+      <h2><i class="fas fa-file-alt"></i> Detalle de Incidencia (Supervisión)</h2>
+    
+      <div class="usuario-info">
+        <p><strong>ID Incidencia:</strong> {{ inc.id }}</p>
+        <p><strong>Título:</strong> {{ inc.nombre_incidencia }}</p>
+        <p><strong>Descripción:</strong></p>
+        <p style="white-space: pre-wrap; padding-left: 15px;">{{ inc.descripcion|default:"Sin descripción" }}</p>
+        <p><strong>Ubicación:</strong> {{ inc.ubicacion|default:"No especificada" }}</p>
+        
+        <hr>
+        <p><strong>Estado:</strong> 
+          {% if inc.estado == "Finalizada" or inc.estado == "Cerrada" %}
+            <span class="estado-activo">🟢 {{ inc.get_estado_display }}</span>
+          {% elif inc.estado == "Rechazada" %}
+            <span class="estado-inactivo">🔴 {{ inc.get_estado_display }}</span>
+          {% else %}
+            <span style="color: #E67E22;">🟡 {{ inc.get_estado_display }}</span>
+          {% endif %}
+        </p>
+        <p><strong>Prioridad:</strong> {{ inc.get_prioridad_display }}</p>
+        
+        <hr>
+        <p><strong>Creador (Territorial):</strong> {{ inc.territorial_creador.nombre|default:'N/A' }}</p>
+        <p><strong>Departamento:</strong> {{ inc.departamento_incidencia.nombre_departamento }}</p>
+        <p><strong>Cuadrilla Asignada:</strong> {{ inc.cuadrilla_asignada.nombre|default:"Sin asignar" }}</S></p>
+      </div>
+    
+      <div class="usuario-acciones">
+        <a href="{{ request.META.HTTP_REFERER|default:'dashboard_direccion' }}" class="btn btn-volver">Volver</a>
+      </div>
+    </div>
+
+</div>
+{% endblock %}

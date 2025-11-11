@@ -1,139 +1,60 @@
-{% extends 'base.html' %}
-{% block title %}Incidencias Pendientes - Departamento{% endblock %}
+{% extends 'base.html' %} {% block title %}Incidencias Pendientes{% endblock %}
 
 {% block content %}
-<div class="usuario-detalle-card">
-  <h2>📋 Incidencias Pendientes - Departamento</h2>
-  
-  <div class="stats-header">
-    <p><strong>Departamento:</strong> {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</p>
-    <p><strong>Total Pendientes:</strong> {{ incidencias|length }}</p>
-  </div>
-  
-  {% if messages %}
+<h2>Listado de Incidencias Pendientes</h2>
+<p>Incidencias con estado "Abierta" asignadas a tu departamento.</p>
+
+{% if messages %}
     {% for message in messages %}
-      <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+        <p style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %}; font-weight: bold;">
+            {{ message }}
+        </p>
     {% endfor %}
-  {% endif %}
-  {% if incidencias %}
-  <div class="table-container">
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre Incidencia</th>
-          <th>Descripción</th>
-          <th>Dirección</th>
-          <th>Prioridad</th>
-          <th>Fecha Creación</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for incidencia in incidencias %}
-        <tr>
-          <td>{{ forloop.counter }}</td>
-          <td>{{ incidencia.nombre_incidencia }}</td>
-          <td>{{ incidencia.descripcion }}</td>
-          <td>{{ incidencia.direccion_incidencia.nombre_direccion }}</td>
-          <td>
-            <span class="prioridad-{{ incidencia.prioridad|lower }}">
-              {{ incidencia.prioridad }}
-            </span>
-          </td>
-          <td>{{ incidencia.fecha_creacion|date:"d/m/Y H:i" }}</td>
-          <td>
-            <div class="acciones-container">
-              
-              <form method="POST" action="{% url 'derivar_incidencia' incidencia.id %}" style="display: flex; gap: 5px; align-items: center;">
-                {% csrf_token %}
-                
-                <select name="cuadrilla_id" required style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
-                  <option value="" disabled selected>Asignar a...</option>
-                  {% for c in cuadrillas %}
-                    <option value="{{ c.id }}">{{ c.nombre }} {{ c.apellido }}</option>
-                  {% endfor %}
-                  {% if not cuadrillas %}
-                    <option value="" disabled>No hay cuadrillas</option>
-                  {% endif %}
-                </select>
-                
-                <button type="submit" class="btn btn-primary btn-sm">📤 Derivar</button>
-              </form>
-              <a href="{% url 'rechazar_incidencia' incidencia.id %}" class="btn btn-warning btn-sm" onclick="return confirm('¿Estás seguro de rechazar esta incidencia?')">❌ Rechazar</a>
-              
-              </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% else %}
-  <div class="empty-state">
-    <p>🎉 No hay incidencias pendientes en este momento.</p>
-  </div>
-  {% endif %}
+{% endif %}
 
-  <div class="usuario-acciones">
-    <a href="{% url 'dashboard_departamento' %}" class="btn btn-volver">⬅️ Volver al Dashboard</a>
-  </div>
-</div>
+<table class="user-table"> <thead>
+    <tr>
+      <th>#</th>
+      <th>Título</th>
+      <th>Territorial</th>
+      <th>Prioridad</th>
+      <th>Fecha Creación</th>
+      <th style="width: 350px;">Acciones (Funcionalidades)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for inc in incidencias %}
+      <tr>
+        <td>{{ inc.id }}</td>
+        <td>{{ inc.nombre_incidencia }}</td>
+        <td>{{ inc.territorial_creador.nombre|default:'N/A' }}</td>
+        <td>{{ inc.get_prioridad_display }}</td>
+        <td>{{ inc.fecha_creacion|date:"d/m/Y" }}</td>
+        <td>
+          
+          <form action="{% url 'derivar_incidencia' inc.id %}" method="POST" style="display: inline-block;">
+            {% csrf_token %}
+            <select name="cuadrilla_id" style="padding: 2px;" required>
+                <option value="">Seleccionar Cuadrilla...</option>
+                {% for c in cuadrillas %} <option value="{{ c.id }}">{{ c.nombre }} {{ c.apellido }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-success btn-sm" style="padding: 2px 5px; font-size: 12px;">Derivar</button>
+          </form>
 
-<style>
-.prioridad-alta { color: #dc3545; font-weight: bold; }
-.prioridad-normal { color: #ffc107; font-weight: bold; }
-.prioridad-baja { color: #28a745; font-weight: bold; }
+          |
 
-.acciones-container {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-  align-items: center; /* Para alinear el formulario y el botón */
-}
+          <a href="{% url 'rechazar_incidencia' inc.id %}" class="btn btn-danger btn-sm" style="padding: 2px 5px; font-size: 12px; text-decoration: none;" onclick="return confirm('¿Seguro que deseas rechazar esta incidencia?');">
+            Rechazar
+          </a>
 
-.empty-state {
-  text-align: center;
-  padding: 40px;
-  color: #6c757d;
-}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6">No hay incidencias pendientes.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
 
-.stats-header {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-/* ==== AÑADIDO ==== */
-/* Estilos para los mensajes de alerta */
-.alert {
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-}
-.alert-success {
-  color: #155724;
-  background-color: #d4edda;
-  border-color: #c3e6cb;
-}
-.alert-warning {
-  color: #856404;
-  background-color: #fff3cd;
-  border-color: #ffeeba;
-}
-.alert-error {
-  color: #721c24;
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
-}
-.alert-info {
-  color: #0c5460;
-  background-color: #d1ecf1;
-  border-color: #bee5eb;
-}
-/* ==== FIN AÑADIDO ==== */
-
-</style>
+<a href="{% url 'vista_departamento' %}" class="ver-todo">Volver al panel principal</a>
 {% endblock %}

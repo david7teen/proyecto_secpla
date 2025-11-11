@@ -1,25 +1,39 @@
-{% extends 'base.html' %}
-{% block title %}Incidencias {{ estado }}{% endblock %}
+{% extends 'base_direccion.html' %} {% block title %}Incidencias {{ estado_titulo }}{% endblock %}
 
 {% block content %}
-<h2>Incidencias {{ estado }} asignadas a {{ usuario_activo.nombre }}</h2>
+<h2>Listado de Incidencias: {{ estado_titulo }}</h2>
+<p>Mostrando todas las incidencias de tu dirección con estado "{{ estado_titulo }}".</p>
 
 <table class="user-table">
   <thead>
     <tr>
-      <th>#</th><th>Nombre</th><th>Descripción</th><th>Departamento</th><th>Acciones</th>
+      <th>#</th>
+      <th>Nombre Incidencia</th>
+      <th>Departamento</th>
+      <th>Creador (Territorial)</th>
+      <th>Fecha Creación</th>
+      <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
     {% for i in incidencias %}
       <tr>
-        <td>{{ forloop.counter }}</td>
+        <td>{{ i.id }}</td>
         <td>{{ i.nombre_incidencia }}</td>
-        <td>{{ i.descripcion }}</td>
         <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
-        <td><a href="/direccion/ver_incidencia/{{ i.id }}">Ver</a></td>
+        <td>{{ i.territorial_creador.nombre|default:'N/A' }}</td>
+        <td>{{ i.fecha_creacion|date:"d/m/Y" }}</td>
+        <td>
+          <a href="{% url 'dir_ver_incidencia' i.id %}">Ver Detalle</a>
+          </td>
       </tr>
+    {% empty %}
+      <tr><td colspan="6">No hay incidencias con este estado.</td></tr>
     {% endfor %}
   </tbody>
 </table>
+
+<a href="{% url 'dashboard_direccion' %}" class="ver-todo" style="margin-top: 20px;">
+    Volver al Dashboard
+</a>
 {% endblock %}

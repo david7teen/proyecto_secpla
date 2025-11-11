@@ -101,6 +101,7 @@ def vista_secpla(request):
     departamentos = Departamento.objects.filter(estado='Activo').order_by('-id')[:3]
     territoriales = Territorial.objects.filter(estado='Activo').order_by('-id')[:3]
     encuestas = Encuesta.objects.all().order_by('-id')[:3]
+    incidencias = Incidencia.objects.all().order_by('-id')[:3]
 
     resumen = {
         'usuarios_activos': Usuario.objects.filter(estado='Activo').count(),
@@ -117,6 +118,7 @@ def vista_secpla(request):
         'encuestas':encuestas,
         'resumen': resumen,
         'perfil':'SECPLA',
+        'incidencias': incidencias,
     })
 
 def vista_direccion(request):
@@ -270,10 +272,6 @@ def crear_departamento(request):
     return render(request, 'SECPLA/crear_departamento.html', {
         'direcciones': direcciones_disponibles
     })
-
-
-def crear_incidencia(request):
-    return redirect('/perfil/secpla/') #lo redirige al dashboard
 
 def obtener_departamentos_por_direccion(request, direccion_id):
     departamentos = Departamento.objects.filter(direccion_departamento_id=direccion_id, estado='Activo')
@@ -651,6 +649,19 @@ def activar_departamento(request, id):
     departamento.save()
     
     return redirect('vista_secpla')
+
+def ver_incidencia(request, incidencia_id):
+    if request.session.get('perfil') != 'SECPLA':
+        messages.error(request, 'No tienes permisos.')
+        return redirect('/login/secpla/')
+
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+    
+    context = {
+        'usuario_activo': request.session.get('usuario_activo'),
+        'inc': incidencia,
+    }
+    return render(request, 'SECPLA/ver_incidencia.html', context)
 
 def listar_departamentos(request):
     if request.session.get('perfil') != 'SECPLA':

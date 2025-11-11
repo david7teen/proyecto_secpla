@@ -40,9 +40,9 @@ urlpatterns = [
     path('listar_departamentos/', views.listar_departamentos, name='listar_departamentos'),
 
     # ---------- CRUD INCIDENCIAS ----------
-    path('secpla/crear_incidencia/', views.crear_incidencia, name='crear_incidencia'),
     path('listar_incidencias/', views.listar_incidencias, name='listar_incidencias'),
     path('incidencia/actualizar-estado/<int:incidencia_id>/', views.actualizar_estado_incidencia, name='actualizar_estado_incidencia'),
+    path('ver_incidencia/<int:incidencia_id>/', views.ver_incidencia, name='ver_incidencia'),
 
     # ---------- CRUD ENCUESTAS ----------
     path('secpla/crear_encuesta/', views.crear_encuesta, name='crear_encuesta'),

@@ -141,8 +141,33 @@ def vista_territorial(request):
     if request.session.get('perfil') != 'Territorial':
         perfil = request.session.get('perfil')
         return redirect(f"/perfil/{redirecciones.get(perfil, perfil.lower())}/")
-    return render(request, 'territorial/dashboard_territorial.html',{
-        'perfil':'Territorial',
+    
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/territorial/')
+    
+    try:
+        usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
+    except Usuario.DoesNotExist:
+        return redirect('/secpla/login/territorial/')
+
+    incidencias = Incidencia.objects.filter(territorial_creador=usuario_activo).order_by('-fecha_creacion')[:10]
+    
+    todas_incidencias = Incidencia.objects.filter(territorial_creador=usuario_activo)
+    resumen = {
+        'abiertas': todas_incidencias.filter(estado='Abierta').count(),
+        'derivadas': todas_incidencias.filter(estado='Derivada').count(),
+        'rechazadas': todas_incidencias.filter(estado='Rechazada').count(),
+        'proceso': todas_incidencias.filter(estado='En proceso').count(),
+        'finalizadas': todas_incidencias.filter(estado='Finalizada').count(),
+        'cerradas': todas_incidencias.filter(estado='Cerrada').count(),
+        'total': todas_incidencias.count()
+    }
+
+    return render(request, 'territorial/dashboard_territorial.html', {
+        'usuario_activo': usuario_activo,
+        'resumen': resumen,
+        'incidencias': incidencias
     })
 
 def vista_cuadrilla(request):

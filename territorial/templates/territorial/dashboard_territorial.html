@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'base_territorial.html' %}
 {% block title %}Dashboard Territorial{% endblock %}
 
 {% block content %}
-<h1>Bienvenido/a, {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</h1>
+<h1>Bienvenido/a, {{ request.session.usuario_activo.nombre }} {{ request.session.usuario_activo.apellido }}</h1>
 <h3>Perfil: Territorial</h3>
 
 <div class="stats-container">
@@ -15,21 +15,21 @@
   <div class="card">Cerradas: {{ resumen.cerradas }}</div>
 </div>
 
-<h2>Listado de Incidencias/Solicitudes</h2>
+<h2>Incidencias Recientes</h2>
 <a href="{% url 'crear_incidencia' %}" class="btn">Crear nueva Incidencia</a>
 
 <table class="user-table">
   <thead>
-    <tr>
-      <th>#</th>
-      <th>Nombre Incidencia</th>
-      <th>Descripción</th>
-      <th>Dirección</th>
-      <th>Departamento</th>
-      <th>Prioridad</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
+	<tr>
+	  <th>#</th>
+	  <th>Nombre Incidencia</th>
+	  <th>Descripción</th>
+	  <th>Dirección</th>
+	  <th>Departamento</th>
+	  <th>Prioridad</th>
+	  <th>Estado</th>
+	  <th>Acciones</th>
+	</tr>
   </thead>
   <tbody>
     {% for i in incidencias %}
@@ -41,22 +41,15 @@
         <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
         <td>{{ i.prioridad }}</td>
         <td>
-          {% if i.estado == 'Abierta' %}
-            <span style="color: #17a2b8;">Abierta</span>
-          {% elif i.estado == 'Derivada' %}
-            <span style="color: #ffc107;">Derivada</span>
-          {% elif i.estado == 'En proceso' %}
-            <span style="color: #007bff;">En proceso</span>
-          {% elif i.estado == 'Finalizada' %}
-            <span style="color: #28a745;">Finalizada</span>
-          {% elif i.estado == 'Rechazada' %}
-            <span style="color: #dc3545;">Rechazada</span>
-          {% elif i.estado == 'Cerrada' %}
-            <span style="color: #6c757d;">Cerrada</span>
-          {% endif %}
-        </td>
+		  {% if i.estado == "Finalizada" or i.estado == "Cerrada" %}
+			<span class="estado-activo">🟢 {{ i.estado }}</span>
+		  {% elif i.estado == "Rechazada" %}
+			<span class="estado-inactivo">🔴 {{ i.estado }}</span>
+		  {% else %}
+			<span style="color: #E67E22;">🟡 {{ i.estado }}</span>
+		  {% endif %}
+		</td>
         <td>
-          <!-- SOLO ACCIONES BÁSICAS QUE FUNCIONAN -->
           {% if i.estado == 'Abierta' or i.estado == 'Rechazada' %}
             <a href="{% url 'editar_incidencia' i.id %}">Editar</a>
             {% if i.estado == 'Abierta' %}
@@ -68,10 +61,12 @@
         </td>
       </tr>
     {% empty %}
-      <tr><td colspan="8">No hay incidencias registradas.</td></tr>
+      <tr><td colspan="7">No hay incidencias registradas.</td></tr>
     {% endfor %}
   </tbody>
 </table>
+
+<a href="{% url 'listar_incidencias_territorial' %}" class="ver-todo">Ver todas las Incidencias</a>
 
 <h2>Acceso rápido por estado</h2>
 <div class="form-actions">

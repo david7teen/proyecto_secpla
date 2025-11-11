@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_territorial.html' %}
 {% load static %}
 
 {% block title %}Crear Nueva Incidencia{% endblock %}
@@ -9,7 +9,7 @@
 
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            <div class="alert alert-{{ message.tags }}"></div>
         {% endfor %}
     {% endif %}
 

@@ -20,6 +20,7 @@ urlpatterns = [
     path('incidencias/finalizadas/', views.incidencias_finalizadas, name='incidencias_finalizadas'),
     path('incidencias/cerradas/', views.incidencias_cerradas, name='incidencias_cerradas'),
 	path('ver_solicitudes/', views.ver_todas_solicitudes, name='ver_solicitudes'),
+	path('incidencias/todas/', views.listar_incidencias_territorial, name='listar_incidencias_territorial'),
 
     # Encuestas
     #path('ver_solicitudes/', views.ver_solicitudes, name='ver_solicitudes'),

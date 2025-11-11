@@ -403,4 +403,24 @@ def obtener_departamentos_por_direccion(request, direccion_id):
         return JsonResponse({'error': str(e)}, status=400)
 
 
+def listar_incidencias_territorial(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/territorial/')
+    
+    usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
+    
+    incidencias_list = Incidencia.objects.filter(territorial_creador=usuario_activo).order_by('-fecha_creacion')
+    
+    estado_filtro = request.GET.get('estado')
+    if estado_filtro:
+        incidencias_list = incidencias_list.filter(estado=estado_filtro)
+    
+    estado_choices = Incidencia._meta.get_field('estado').choices
 
+    return render(request, 'territorial/listar_incidencias_territorial.html', {
+        'usuario_activo': usuario_activo,
+        'incidencias': incidencias_list,
+        'estado_choices': estado_choices,
+        'estado_filtro': estado_filtro
+    })

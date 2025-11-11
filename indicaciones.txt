@@ -7,7 +7,7 @@ python manage.py makemigrations
 python manage.py migrate
 
 --------------------------------- PGADMIN ---------------------------------
-INSERT INTO "SECPLA_usuario" (nombre, apellido, correo, telefono, perfil, contraseña, estado) VALUES ('nombre_1','apellido_1','secpla@m.com','+56912345678','SECPLA','123','Activo');
+INSERT INTO "SECPLA_usuario" (nombre, apellido, correo, telefono, perfil, contraseña, estado) VALUES ('nombre_1','apellido_1','secpla1@m.com','+56912345678','SECPLA','123','Activo');
 
 -------------------- CMD EN EL DIRECTORIO DEL PROYECTO --------------------
 python manage.py runserver

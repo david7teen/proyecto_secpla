@@ -2,8 +2,10 @@
 {% block title %}Incidencias Derivadas - Departamento{% endblock %}
 
 {% block content %}
-<div class="usuario-detalle-card">
-  <h2>📤 Incidencias Derivadas - Departamento</h2>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Incidencias Derivadas - Departamento</h2>
+  </div>
   
   <div class="stats-header">
     <p><strong>Departamento:</strong> {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</p>
@@ -11,7 +13,7 @@
   </div>
 
   {% if incidencias %}
-  <div class="table-container">
+  <div class="table-responsive">
     <table class="user-table">
       <thead>
         <tr>
@@ -34,18 +36,16 @@
             {% if incidencia.cuadrilla_asignada %}
               {{ incidencia.cuadrilla_asignada.nombre }} {{ incidencia.cuadrilla_asignada.apellido }}
             {% else %}
-              <span class="advertencia">Sin asignar</span>
+              <span class="text-muted">Sin asignar</span>
             {% endif %}
           </td>
           <td>{{ incidencia.fecha_derivacion|date:"d/m/Y H:i" }}</td>
           <td>
-            <span class="estado-derivada">🟡 Derivada</span>
+            <span class="estado-pendiente">Derivada</span>
           </td>
-          <td>
-            <div class="acciones-container">
-              <a href="{% url 'ver_incidencia_departamento' incidencia.id %}" class="btn btn-info btn-sm">👁️ Ver</a>
-              <a href="{% url 'seguimiento_incidencia' incidencia.id %}" class="btn btn-secondary btn-sm">📊 Seguimiento</a>
-            </div>
+          <td class="action-buttons">
+            <a href="{% url 'ver_incidencia_departamento' incidencia.id %}" class="btn btn-sm btn-info">Ver</a>
+            <a href="{% url 'seguimiento_incidencia' incidencia.id %}" class="btn btn-sm btn-secondary">Seguimiento</a>
           </td>
         </tr>
         {% endfor %}
@@ -54,22 +54,12 @@
   </div>
   {% else %}
   <div class="empty-state">
-    <p>📭 No hay incidencias derivadas en este momento.</p>
+    <p>No hay incidencias derivadas en este momento.</p>
   </div>
   {% endif %}
 
-  <div class="usuario-acciones">
-    <a href="{% url 'dashboard_departamento' %}" class="btn btn-volver">⬅️ Volver al Dashboard</a>
+  <div class="form-actions">
+    <a href="{% url 'dashboard_departamento' %}" class="btn btn-secondary">Volver al Dashboard</a>
   </div>
 </div>
-
-<style>
-.estado-derivada {
-  color: #ffc107;
-  font-weight: bold;
-  background: #fff3cd;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-</style>
 {% endblock %}

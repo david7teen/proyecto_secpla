@@ -1,60 +1,71 @@
-{% extends 'base.html' %} {% block title %}Incidencias Pendientes{% endblock %}
+{% extends 'base.html' %} 
+{% block title %}Incidencias Pendientes{% endblock %}
 
 {% block content %}
-<h2>Listado de Incidencias Pendientes</h2>
-<p>Incidencias con estado "Abierta" asignadas a tu departamento.</p>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Listado de Incidencias Pendientes</h2>
+    <p>Incidencias con estado "Abierta" asignadas a tu departamento.</p>
+  </div>
 
-{% if messages %}
+  {% if messages %}
     {% for message in messages %}
-        <p style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %}; font-weight: bold;">
-            {{ message }}
-        </p>
+      <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}">
+        {{ message }}
+      </div>
     {% endfor %}
-{% endif %}
+  {% endif %}
 
-<table class="user-table"> <thead>
-    <tr>
-      <th>#</th>
-      <th>Título</th>
-      <th>Territorial</th>
-      <th>Prioridad</th>
-      <th>Fecha Creación</th>
-      <th style="width: 350px;">Acciones (Funcionalidades)</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for inc in incidencias %}
-      <tr>
-        <td>{{ inc.id }}</td>
-        <td>{{ inc.nombre_incidencia }}</td>
-        <td>{{ inc.territorial_creador.nombre|default:'N/A' }}</td>
-        <td>{{ inc.get_prioridad_display }}</td>
-        <td>{{ inc.fecha_creacion|date:"d/m/Y" }}</td>
-        <td>
-          
-          <form action="{% url 'derivar_incidencia' inc.id %}" method="POST" style="display: inline-block;">
-            {% csrf_token %}
-            <select name="cuadrilla_id" style="padding: 2px;" required>
-                <option value="">Seleccionar Cuadrilla...</option>
-                {% for c in cuadrillas %} <option value="{{ c.id }}">{{ c.nombre }} {{ c.apellido }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit" class="btn btn-success btn-sm" style="padding: 2px 5px; font-size: 12px;">Derivar</button>
-          </form>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Título</th>
+          <th>Territorial</th>
+          <th>Prioridad</th>
+          <th>Fecha Creación</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inc in incidencias %}
+          <tr>
+            <td>{{ inc.id }}</td>
+            <td>{{ inc.nombre_incidencia }}</td>
+            <td>{{ inc.territorial_creador.nombre|default:'N/A' }}</td>
+            <td>{{ inc.get_prioridad_display }}</td>
+            <td>{{ inc.fecha_creacion|date:"d/m/Y" }}</td>
+            <td class="action-buttons">
+              <form action="{% url 'derivar_incidencia' inc.id %}" method="POST" class="inline-form">
+                {% csrf_token %}
+                <select name="cuadrilla_id" class="form-control" required>
+                  <option value="">Seleccionar Cuadrilla...</option>
+                  {% for c in cuadrillas %}
+                    <option value="{{ c.id }}">{{ c.nombre }} {{ c.apellido }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary">Derivar</button>
+              </form>
+              
+              <a href="{% url 'rechazar_incidencia' inc.id %}" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas rechazar esta incidencia?');">
+                Rechazar
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="text-center">
+              No hay incidencias pendientes.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-          |
-
-          <a href="{% url 'rechazar_incidencia' inc.id %}" class="btn btn-danger btn-sm" style="padding: 2px 5px; font-size: 12px; text-decoration: none;" onclick="return confirm('¿Seguro que deseas rechazar esta incidencia?');">
-            Rechazar
-          </a>
-
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="6">No hay incidencias pendientes.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
-
-<a href="{% url 'vista_departamento' %}" class="ver-todo">Volver al panel principal</a>
+  <div class="form-actions">
+    <a href="{% url 'vista_departamento' %}" class="btn btn-secondary">Volver al panel principal</a>
+  </div>
+</div>
 {% endblock %}

@@ -1,0 +1,29 @@
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin card-style {
+  background: #fff;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: 20px;
+}
+
+@mixin button-style($bg-color) {
+  background-color: $bg-color;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-block;
+  transition: $transition;
+  font-weight: bold;
+  
+  &:hover {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
+}

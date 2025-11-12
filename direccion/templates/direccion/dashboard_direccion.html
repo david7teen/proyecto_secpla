@@ -1,55 +1,78 @@
-{% extends 'base_direccion.html' %} {% block title %}Dashboard Dirección{% endblock %}
+{% extends 'base_direccion.html' %} 
+{% block title %}Dashboard Dirección{% endblock %}
 
 {% block content %}
-<h1>Bienvenido(a), {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</h1>
-
-{% if error %}
-    <h3 class="advertencia">{{ error }}</h3>
-{% elif direccion %}
-    <h3>Dirección: {{ direccion.nombre_direccion }}</h3>
-{% endif %}
-
-<h2>Resumen de Incidencias</h2>
-<div class="stats-container">
-  <div class="card">Abiertas: {{ resumen.abiertas }}</div>
-  <div class="card">Derivadas: {{ resumen.derivadas }}</div>
-  <div class="card">Rechazadas: {{ resumen.rechazadas }}</div>
-  <div class="card">Finalizadas: {{ resumen.finalizadas }}</div>
+<div class="dashboard-header">
+  <h1>Bienvenido/a, {{ request.session.usuario_activo.nombre }} {{ request.session.usuario_activo.apellido }}
+  
+  {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+  {% elif direccion %}
+      <h3>Dirección: {{ direccion.nombre_direccion }}</h3>
+  {% endif %}
 </div>
 
-<h2>Acceso a listados por estado</h2>
+<div class="section-container">
+  <h2>Resumen de Incidencias</h2>
+  <div class="stats-container">
+    <div class="card">Abiertas: {{ resumen.abiertas }}</div>
+    <div class="card">Derivadas: {{ resumen.derivadas }}</div>
+    <div class="card">Rechazadas: {{ resumen.rechazadas }}</div>
+    <div class="card">Finalizadas: {{ resumen.finalizadas }}</div>
+  </div>
+</div>
+
+<div class="section-container">
+  <h2>Acceso a listados por estado</h2>
+  <div class="form-actions">
+    <a href="{% url 'dir_incidencias_pendientes' %}" class="btn btn-primary">Ver Pendientes (Abiertas)</a>
+    <a href="{% url 'dir_incidencias_derivadas' %}" class="btn btn-primary">Ver Derivadas</a>
+    <a href="{% url 'dir_incidencias_rechazadas' %}" class="btn btn-primary">Ver Rechazadas</a>
+    <a href="{% url 'dir_incidencias_finalizadas' %}" class="btn btn-primary">Ver Finalizadas</a>
+  </div>
+</div>
+
+<div class="section-container">
+  <h3>Últimas Incidencias de la Dirección (Supervisión)</h3>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Departamento</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in incidencias %}
+          <tr>
+            <td>{{ i.id }}</td>
+            <td>{{ i.nombre_incidencia }}</td>
+            <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
+            <td>
+              {% if i.estado == "Finalizada" or i.estado == "Cerrada" %}
+                <span class="estado-activo">{{ i.get_estado_display }}</span>
+              {% elif i.estado == "Rechazada" %}
+                <span class="estado-inactivo">{{ i.get_estado_display }}</span>
+              {% else %}
+                <span class="estado-pendiente">{{ i.get_estado_display }}</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="text-center">
+              No hay incidencias registradas para esta dirección.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 <div class="form-actions">
-  <a href="{% url 'dir_incidencias_pendientes' %}" class="btn">Ver Pendientes (Abiertas)</a>
-  <a href="{% url 'dir_incidencias_derivadas' %}" class="btn">Ver Derivadas</a>
-  <a href="{% url 'dir_incidencias_rechazadas' %}" class="btn"> Ver Rechazadas</a>
-  <a href="{% url 'dir_incidencias_finalizadas' %}" class="btn">Ver Finalizadas</a>
-</div>
-
-<h3 style="margin-top: 30px;">Últimas Incidencias de la Dirección (Supervisión)</h3>
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Nombre</th>
-      <th>Departamento</th>
-      <th>Estado</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for i in incidencias %}
-      <tr>
-        <td>{{ i.id }}</td>
-        <td>{{ i.nombre_incidencia }}</td>
-        <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
-        <td>{{ i.get_estado_display }}</td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="4">No hay incidencias registradas para esta dirección.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
-
-<div style="margin-top: 10px; margin-bottom: 20px;">
-  <a href="/" class="btn" style="margin-top: 15px;">Volver al inicio</a>
+  <a href="/" class="btn btn-secondary">Volver al inicio</a>
 </div>
 {% endblock %}

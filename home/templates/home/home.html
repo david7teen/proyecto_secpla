@@ -4,15 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Ingreso a la Plataforma Municipal</title>
+  <link rel="stylesheet" href="{% static 'css/compiled.css' %}">
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #e2e2e2;
-      color: #333;
-    }
-
-    header {
+    .home-header {
       background-color: #1e3a5f;
       color: white;
       padding: 20px;
@@ -43,6 +37,7 @@
     .header-title h1 {
       margin: 0;
       font-size: 28px;
+      color: white;
     }
 
     .main-container {
@@ -51,6 +46,8 @@
       align-items: flex-start;
       padding: 40px;
       gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     .perfil-box {
@@ -109,7 +106,7 @@
       color: #555;
     }
 
-    footer {
+    .home-footer {
       background-color: #1e3a5f;
       color: white;
       text-align: center;
@@ -118,20 +115,42 @@
       margin-top: 40px;
     }
 
-    footer a {
+    .home-footer a {
       color: #ccc;
       margin: 0 10px;
       text-decoration: none;
     }
 
-    footer a:hover {
+    .home-footer a:hover {
       text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+        padding: 20px;
+        gap: 20px;
+      }
+      
+      .perfil-box {
+        max-width: 100%;
+      }
+      
+      .home-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+      
+      .header-title {
+        text-align: center;
+      }
     }
   </style>
 </head>
 <body>
 
-  <header>
+  <header class="home-header">
     <div class="logo-header">
       <img src="{% static 'img/logo.png' %}" alt="Logo Municipalidad">
       <span>GESTIÓN MUNICIPAL</span>
@@ -157,11 +176,11 @@
     </div>
 
     <div class="imagen-lateral">
-      <img src="{% static 'img/infraestructura_comunal.png' %}" alt="Descripción" style="max-width:100%; border-radius:8px;">
+      <img src="{% static 'img/infraestructura_comunal.png' %}" alt="Infraestructura Comunal" style="max-width:100%; border-radius:8px;">
     </div>
   </div>
 
-  <footer>
+  <footer class="home-footer">
     © 2025 Municipalidad. Todos los derechos reservados.
     <br>
     <a href="#">Política de privacidad</a> |

@@ -4,206 +4,264 @@
 {% block title %}SECPLA{% endblock %}
 
 {% block content %}
-<h1>Bienvenido/a, {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</h1>
-<h3>Perfil: {{ usuario_activo.perfil }}</h3>
+<div class="dashboard-header">
+  <h1>Bienvenido/a, {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</h1>
+  <h3>Perfil: {{ usuario_activo.perfil }}</h3>
+</div>
 
+<div class="stats-container">
+  <div class="card">Total Usuarios: {{ usuarios|length }}</div>
+  <div class="card">Total Direcciones: {{ direcciones|length }}</div>
+  <div class="card">Total Departamentos: {{ departamentos|length }}</div>
+  <div class="card">Total Incidencias: {{ incidencias|length }}</div>
+</div>
 
-<h2>Gestión de solicitudes de recuperación</h2>
-<a href="/secpla/ver_intentos_recuperacion/" class="btn">Ver solicitudes de recuperación</a>
+<div class="section-container">
+  <h2>Gestión de solicitudes de recuperación</h2>
+  <a href="/secpla/ver_intentos_recuperacion/" class="btn">Ver solicitudes de recuperación</a>
+</div>
 
-<h2>Listado de usuarios/perfiles</h2>
-<a href="/secpla/crear_usuario/" class="btn">Crear nuevo usuario</a>
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th><th>Nombre</th><th>Apellido</th><th>Correo</th><th>Teléfono</th><th>Perfil</th><th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for u in usuarios %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ u.nombre }}</td>
-        <td>{{ u.apellido }}</td>
-        <td>{{ u.correo }}</td>
-        <td>{{ u.telefono }}</td>
-        <td>{{ u.perfil }}</td>
-        <td>
-          <a href="/secpla/ver_usuario_2/{{ u.id }}">Ver</a> |
-          <a href="/secpla/editar_usuario/{{ u.id }}">Editar</a> |
-          {% if u.estado == 'Activo' %}
-            <a href="/secpla/bloquear_usuario/{{ u.id }}">Bloquear</a>
-          {% else %}
-            <a href="/secpla/activar_usuario/{{ u.id }}">Activar</a>  
-          {% endif %}
-          <a href="{% url 'cambiar_contraseña' u.id %}" class="btn">Cambiar contraseña</a>
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<a href="{% url 'ver_usuario' %}" class="ver-todo">Ver todos los Usuarios →</a>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Listado de usuarios/perfiles</h2>
+    <a href="/secpla/crear_usuario/" class="btn btn-primary">Crear nuevo usuario</a>
+  </div>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Nombre</th><th>Apellido</th><th>Correo</th><th>Teléfono</th><th>Perfil</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in usuarios %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ u.nombre }}</td>
+            <td>{{ u.apellido }}</td>
+            <td>{{ u.correo }}</td>
+            <td>{{ u.telefono }}</td>
+            <td>{{ u.perfil }}</td>
+            <td class="action-buttons">
+              <a href="/secpla/ver_usuario_2/{{ u.id }}" class="btn btn-sm btn-info">Ver</a>
+              <a href="/secpla/editar_usuario/{{ u.id }}" class="btn btn-sm btn-warning">Editar</a>
+              {% if u.estado == 'Activo' %}
+                <a href="/secpla/bloquear_usuario/{{ u.id }}" class="btn btn-sm btn-danger">Bloquear</a>
+              {% else %}
+                <a href="/secpla/activar_usuario/{{ u.id }}" class="btn btn-sm btn-success">Activar</a>  
+              {% endif %}
+              <a href="{% url 'cambiar_contraseña' u.id %}" class="btn btn-sm btn-secondary">Cambiar contraseña</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <a href="{% url 'ver_usuario' %}" class="ver-todo">Ver todos los Usuarios →</a>
+</div>
 
-<h2>Listado de Direcciones</h2>
-<a href="/secpla/secpla/crear_direccion/" class="btn">Crear nueva dirección</a>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Listado de Direcciones</h2>
+    <a href="/secpla/secpla/crear_direccion/" class="btn btn-primary">Crear nueva dirección</a>
+  </div>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Dirección</th>
+          <th>Encargado</th>
+          <th>Correo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in direcciones %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ d.nombre_direccion }}</td>
+            <td>{{ d.nombre_encargado }}</td>
+            <td>{{ d.correo_encargado }}</td>
+            <td>
+              {% if d.estado == "Activo" %}
+                <span class="estado-activo">{{ d.estado }}</span>
+              {% else %}
+                <span class="estado-inactivo">{{ d.estado }}</span>
+              {% endif %}
+            </td>
+            <td class="action-buttons">
+              {% if d.id %}
+                <a href="{% url 'ver_direccion' d.id %}" class="btn btn-sm btn-info">Ver</a>
+                <a href="{% url 'editar_direccion' d.id %}" class="btn btn-sm btn-warning">Editar</a>
+                {% if d.estado == "Activo" %}
+                  <a href="{% url 'bloquear_direccion' d.id %}" class="btn btn-sm btn-danger">Bloquear</a>
+                {% else %}
+                  <a href="{% url 'activar_direccion' d.id %}" class="btn btn-sm btn-success">Activar</a>
+                {% endif %}
+              {% else %}
+                <span class="advertencia">⚠️ Sin ID</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <a href="{% url 'listar_direcciones' %}" class="ver-todo">Ver todas las Direcciones →</a>
+</div>
 
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Nombre Dirección</th>
-      <th>Encargado</th>
-      <th>Correo</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for d in direcciones %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ d.nombre_direccion }}</td>
-        <td>{{ d.nombre_encargado }}</td>
-        <td>{{ d.correo_encargado }}</td>
-        <td>{{ d.estado }}</td>
-        <td>
-          {% if d.id %}
-            <a href="{% url 'ver_direccion' d.id %}">Ver</a> |
-            <a href="{% url 'editar_direccion' d.id %}" > Editar</a>
-            {% if d.estado == "Activo" %}
-              <a href="{% url 'bloquear_direccion' d.id %}">Bloquear</a>
-            {% else %}
-              <a href="{% url 'activar_direccion' d.id %}">Activar</a>
-            {% endif %}
-          {% else %}
-            <span class="advertencia">⚠️ Dirección sin ID</span>
-          {% endif %}
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<a href="{% url 'listar_direcciones' %}" class="ver-todo">Ver todas las Direcciones →</a>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Listado de Departamentos</h2>
+    <a href="/secpla/secpla/crear_departamento/" class="btn btn-primary">Crear nuevo departamento</a>
+  </div>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Departamento</th>
+          <th>Encargado</th>
+          <th>Correo</th>
+          <th>Dirección Asociada</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in departamentos %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ d.nombre_departamento }}</td>
+            <td>{{ d.encargado_departamento }}</td>
+            <td>{{ d.correo_encargado }}</td>
+            <td>{{ d.direccion_departamento }}</td>
+            <td>
+              {% if d.estado == "Activo" %}
+                <span class="estado-activo">{{ d.estado }}</span>
+              {% else %}
+                <span class="estado-inactivo">{{ d.estado }}</span>
+              {% endif %}
+            </td>
+            <td class="action-buttons">
+              <a href="{% url 'ver_departamento' d.id %}" class="btn btn-sm btn-info">Ver</a>
+              <a href="{% url 'editar_departamento' d.id %}" class="btn btn-sm btn-warning">Editar</a>
+              {% if d.estado == 'Activo' %}
+                <a href="{% url 'bloquear_departamento' d.id %}" class="btn btn-sm btn-danger">Bloquear</a>
+              {% else %}
+                <a href="{% url 'activar_departamento' d.id %}" class="btn btn-sm btn-success">Activar</a>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <a href="{% url 'listar_departamentos' %}" class="ver-todo">Ver todos los Departamentos →</a>
+</div>
 
-<h2>Listado de Departamentos</h2>
-<a href="/secpla/secpla/crear_departamento/" class="btn">Crear nuevo departamento</a>
+<div class="section-container">
+  <h2>Listado de Incidencias/Solicitudes</h2>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Título</th>
+          <th>Departamento</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inc in incidencias %}
+          <tr>
+            <td>{{ inc.id }}</td>
+            <td>{{ inc.nombre_incidencia }}</td>
+            <td>{{ inc.departamento_incidencia.nombre_departamento }}</td>
+            <td>
+              {% if inc.estado == "Finalizada" or inc.estado == "Cerrada" %}
+                <span class="estado-activo">{{ inc.get_estado_display }}</span>
+              {% elif inc.estado == "Rechazada" %}
+                <span class="estado-inactivo">{{ inc.get_estado_display }}</span>
+              {% else %}
+                <span class="estado-pendiente">{{ inc.get_estado_display }}</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'ver_incidencia' inc.id %}" class="btn btn-sm btn-info">Ver</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5">No hay incidencias registradas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <a href="{% url 'listar_incidencias' %}" class="ver-todo">Ver todas las Incidencias →</a>
+</div>
 
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Nombre Departamento</th>
-      <th>Encargado</th>
-      <th>Correo</th>
-      <th>Dirección Asociada</th>
-      <th>Estado</th> <!-- Agregado -->
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for d in departamentos %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ d.nombre_departamento }}</td>
-        <td>{{ d.encargado_departamento }}</td>
-        <td>{{ d.correo_encargado }}</td>
-        <td>{{ d.direccion_departamento }}</td>
-        <td>{{ d.estado }}</td>
-        <td>
-          <a href="{% url 'ver_departamento' d.id %}">Ver</a> |
-          <a href="{% url 'editar_departamento' d.id %}">Editar</a> |
-          {% if d.estado == 'Activo' %}
-            <a href="{% url 'bloquear_departamento' d.id %}">Bloquear</a>
-          {% else %}
-            <a href="{% url 'activar_departamento' d.id %}">Activar</a>
-          {% endif %}
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Listado de Encuestas</h2>
+    <a href="/secpla/secpla/crear_encuesta/" class="btn btn-primary">Crear nueva Encuesta</a>
+  </div>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Nombre</th><th>Ubicación</th><th>Prioridad</th><th>Estado</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in encuestas %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>
+              {{ e.nombre_encuesta }}<br>
+              {% if e.imagen %}
+                <img src="{{ e.imagen.url }}" alt="Imagen de encuesta" width="150">
+              {% else %}
+                <span class="text-muted">Sin imagen</span>
+              {% endif %}
+            </td>
+            <td>{{ e.ubicacion }}</td>
+            <td>{{ e.prioridad }}</td>
+            <td>
+              {% if e.categoria == 'Vigente' %}
+                <span class="estado-activo">{{ e.categoria }}</span>
+              {% else %}
+                <span class="estado-inactivo">{{ e.categoria }}</span>
+              {% endif %}
+            </td>
+            <td class="action-buttons">
+              <a href="{% url 'ver_encuesta' e.id %}" class="btn btn-sm btn-info">Ver</a>
+              {% if e.categoria == 'Bloqueada' %}
+                <a href="{% url 'editar_encuesta' e.id %}" class="btn btn-sm btn-warning">Editar</a>
+                <form method="post" action="{% url 'activar_encuesta' e.id %}" class="inline-form">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-success">Activar</button>
+                </form>
+              {% elif e.categoria == 'Vigente' %}
+                <form method="post" action="{% url 'bloquear_encuesta' e.id %}" class="inline-form">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-warning">Bloquear</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6">No hay encuestas registradas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <a href="{% url 'listar_encuestas' %}" class="ver-todo">Ver todas las Encuestas →</a>
+</div>
 
-<a href="{% url 'listar_departamentos' %}" class="ver-todo">Ver todos los Departamentos →</a>
-
-<h2>Listado de Incidencias/Solicitudes</h2>
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Título</th>
-      <th>Departamento</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for inc in incidencias %}
-      <tr>
-        <td>{{ inc.id }}</td>
-        <td>{{ inc.nombre_incidencia }}</td>
-        <td>{{ inc.departamento_incidencia.nombre_departamento }}</td>
-        <td>
-          {{ inc.get_estado_display }}
-        </td>
-        <td>
-          <a href="{% url 'ver_incidencia' inc.id %}">Ver</a>
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="5">No hay incidencias registradas.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
-<a href="{% url 'listar_incidencias' %}" class="ver-todo">Ver todas las Incidencias →</a>
-
-<h2>Listado de Encuestas</h2>
-<a href="/secpla/secpla/crear_encuesta/" class="btn">Crear nueva Encuesta</a>
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th><th>Nombre</th><th>Ubicación</th><th>Prioridad</th><th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for e in encuestas %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>
-          {{ e.nombre_encuesta }}<br>
-          {% if e.imagen %}
-            <img src="{{ e.imagen.url }}" alt="Imagen de encuesta" width="150">
-          {% else %}
-            <p>Sin imagen</p>
-          {% endif %}
-        </td>
-        <td>{{ e.ubicacion }}</td>
-        <td>{{ e.prioridad }}</td>
-        <td>
-          {% if e.categoria == 'Bloqueada' %}
-            | <a href="{% url 'editar_encuesta' e.id %}">Editar</a>
-          {% endif %}
-          {% if e.categoria == 'Vigente' %}
-              <a href="{% url 'ver_encuesta' e.id %}">Ver</a>
-            | <form method="post" action="{% url 'bloquear_encuesta' e.id %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-warning btn-sm">Bloquear</button>
-              </form>
-          {% elif e.categoria == 'Bloqueada' %}
-            | <form method="post" action="{% url 'activar_encuesta' e.id %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-success btn-sm">Activar</button>
-              </form>
-          {% endif %}
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="5">No hay encuestas registradas.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
-<a href="{% url 'listar_encuestas' %}" class="ver-todo">Ver todas las Encuestas →</a>
-
-<div style="margin-top: 10px; margin-bottom: 20px;">
-  <a href="/" class="btn" style="margin-top: 15px;">Volver al inicio</a>
+<div class="form-actions">
+  <a href="/" class="btn btn-secondary">Volver al inicio</a>
 </div>
 {% endblock %}

@@ -2,33 +2,48 @@
 {% block title %}Incidencias {{ estado }}{% endblock %}
 
 {% block content %}
-<h2>Incidencias {{ estado }} asignadas a tu departamento</h2>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Incidencias {{ estado }} asignadas a tu departamento</h2>
+  </div>
 
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th><th>Nombre</th><th>Descripción</th><th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for i in incidencias %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ i.nombre_incidencia }}</td>
-        <td>{{ i.descripcion }}</td>
-        <td>
-          <form method="POST" action="/departamento/derivar_incidencia/{{ i.id }}/">
-            {% csrf_token %}
-            <select name="cuadrilla_id">
-              {% for c in cuadrillas %}
-                <option value="{{ c.id }}">{{ c.nombre }} {{ c.apellido }}</option>
-              {% endfor %}
-            </select>
-            <button type="submit">Derivar</button>
-          </form>
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in incidencias %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ i.nombre_incidencia }}</td>
+            <td>{{ i.descripcion }}</td>
+            <td class="action-buttons">
+              <form method="POST" action="/departamento/derivar_incidencia/{{ i.id }}/" class="inline-form">
+                {% csrf_token %}
+                <select name="cuadrilla_id" class="form-control" style="display: inline-block; width: auto; margin-right: 10px;">
+                  {% for c in cuadrillas %}
+                    <option value="{{ c.id }}">{{ c.nombre }} {{ c.apellido }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary">Derivar</button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="text-center">
+              No hay incidencias {{ estado|lower }} asignadas a tu departamento.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock %}

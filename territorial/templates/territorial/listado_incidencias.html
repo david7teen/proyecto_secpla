@@ -2,36 +2,48 @@
 {% block title %}Incidencias {{ estado }}{% endblock %}
 
 {% block content %}
-<h2>Incidencias {{ estado }}</h2>
+<div class="section-container">
+  <h2>Incidencias {{ estado }}</h2>
 
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Nombre</th>
-      <th>Descripción</th>
-      <th>Dirección</th>
-      <th>Departamento</th>
-      <th>Estado</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for i in incidencias %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ i.nombre_incidencia }}</td>
-        <td>{{ i.descripcion }}</td>
-        <td>{{ i.direccion_incidencia.nombre_direccion }}</td>
-        <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
-        <td>{{ i.estado }}</td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="6">No hay incidencias {{ estado|lower }}.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Dirección</th>
+          <th>Departamento</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in incidencias %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ i.nombre_incidencia }}</td>
+            <td>{{ i.descripcion }}</td>
+            <td>{{ i.direccion_incidencia.nombre_direccion }}</td>
+            <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
+            <td>
+              {% if i.estado == "Finalizada" or i.estado == "Cerrada" %}
+                <span class="estado-activo">{{ i.estado }}</span>
+              {% elif i.estado == "Rechazada" %}
+                <span class="estado-inactivo">{{ i.estado }}</span>
+              {% else %}
+                {{ i.estado }}
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6">No hay incidencias {{ estado|lower }}.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-<div style="margin-top: 20px;">
-  <a href="{% url 'dashboard_territorial' %}" class="btn">⬅️ Volver al Dashboard</a>
+  <div class="form-actions">
+    <a href="{% url 'dashboard_territorial' %}" class="btn btn-secondary">Volver al Dashboard</a>
+  </div>
 </div>
 {% endblock %}

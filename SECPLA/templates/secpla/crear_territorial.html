@@ -2,40 +2,42 @@
 {% block title %}Crear nuevo Territorial{% endblock %}
 
 {% block content %}
-<div class="formulario-departamento">
-  <h2>Crear nuevo Territorial</h2>
+<div class="form-container">
+  <div class="formulario-departamento">
+    <h2>Crear nuevo Territorial</h2>
 
-  {% if error %}
-    <p class="alert alert-danger">{{ error }}</p>
-  {% endif %}
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
 
-  <form method="POST">
-    {% csrf_token %}
+    <form method="POST">
+      {% csrf_token %}
 
-    <div class="form-group">
-      <label>Nombre:</label>
-      <input type="text" name="nombre_territorial" required>
-    </div>
+      <div class="form-group">
+        <label>Nombre:</label>
+        <input type="text" name="nombre_territorial" required>
+      </div>
 
-    <div class="form-group">
-      <label>Apellido:</label>
-      <input type="text" name="apellido_territorial" required>
-    </div>
+      <div class="form-group">
+        <label>Apellido:</label>
+        <input type="text" name="apellido_territorial" required>
+      </div>
 
-    <div class="form-group">
-      <label>Correo:</label>
-      <input type="email" name="correo_territorial" required>
-    </div>
+      <div class="form-group">
+        <label>Correo:</label>
+        <input type="email" name="correo_territorial" required>
+      </div>
 
-    <div class="form-group">
-      <label>Teléfono:</label>
-      <input type="text" name="telefono_territorial" required>
-    </div>
+      <div class="form-group">
+        <label>Teléfono:</label>
+        <input type="text" name="telefono_territorial" required>
+      </div>
 
-    <div class="form-actions">
-      <button type="submit">Crear Territorial</button>
-      <button type="button" onclick="window.location.href='/perfil/secpla/'">Cancelar</button>
-    </div>
-  </form>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Crear Territorial</button>
+        <a href="/perfil/secpla/" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

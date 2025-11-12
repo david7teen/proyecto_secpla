@@ -1,173 +1,97 @@
 {% extends 'base_secpla.html' %}
 {% block title %}Crear nueva Encuesta{% endblock %}
 {% block content %}
-<style>
-  .formulario-encuesta {
-    max-width: 700px;
-    margin: 40px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
+<div class="form-container">
+  <form method="POST" action="{% url 'crear_encuesta' %}" enctype="multipart/form-data" class="formulario-encuesta">
+    <h2>Crear nueva Encuesta</h2>
+    {% csrf_token %}
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
 
-  .formulario-encuesta h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
+    <div class="form-group">
+      <label>Nombre:</label>
+      <input type="text" name="nombre_encuesta" required>
+    </div>
 
-  .form-group {
-    margin-bottom: 15px;
-  }
+    <div class="form-group">
+      <label>Descripción:</label>
+      <textarea name="descripcion_incidente"></textarea>
+    </div>
 
-  .form-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
+    <div class="form-group">
+      <label>Ubicación:</label>
+      <input type="text" name="ubicacion" required>
+    </div>
 
-  .form-group input,
-  .form-group textarea,
-  .form-group select {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-  }
+    <div class="form-group">
+      <label>Imagen:</label>
+      <input type="file" name="imagen">
+    </div>
 
-  .form-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-  }
+    <div class="form-group">
+      <label>Video:</label>
+      <input type="file" name="video">
+    </div>
 
-  #modalPregunta {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
+    <div class="form-group">
+      <label>Audio:</label>
+      <input type="file" name="audio">
+    </div>
 
-  #modalPregunta form {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 300px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-  }
-
-  #modalPregunta button {
-    margin-right: 10px;
-  }
-</style>
-
-<form method="POST" action="{% url 'crear_encuesta' %}" enctype="multipart/form-data" class="formulario-encuesta">
-  <h2>Crear nueva Encuesta</h2>
-  {% csrf_token %}
-  {% if error %}
-    <p style="color:red;">{{ error }}</p>
-  {% endif %}
-
-  <div class="form-group">
-    <label>Nombre:</label>
-    <input type="text" name="nombre_encuesta" required>
-  </div>
-
-  <div class="form-group">
-    <label>Descripción:</label>
-    <textarea name="descripcion_incidente"></textarea>
-  </div>
-
-  <div class="form-group">
-    <label>Ubicación:</label>
-    <input type="text" name="ubicacion" required>
-  </div>
-
-  <div class="form-group">
-    <label>Imagen:</label>
-    <input type="file" name="imagen">
-  </div>
-
-  <div class="form-group">
-    <label>Video:</label>
-    <input type="file" name="video">
-  </div>
-
-  <div class="form-group">
-    <label>Audio:</label>
-    <input type="file" name="audio">
-  </div>
-
-  <div class="form-group">
-    <label>Preguntas:</label>
-    <div id="contenedorPreguntas">
-      <div class="bloque-pregunta">
-        <select name="preguntas[]">
-          <option value="" disabled selected>Seleccione una pregunta</option>
-          {% for p in preguntas %}
-            <option value="{{ p.id }}">{{ p.nombre_pregunta }}</option>
-          {% endfor %}
-        </select>
+    <div class="form-group">
+      <label>Preguntas:</label>
+      <div id="contenedorPreguntas">
+        <div class="bloque-pregunta">
+          <select name="preguntas[]">
+            <option value="" disabled selected>Seleccione una pregunta</option>
+            {% for p in preguntas %}
+              <option value="{{ p.id }}">{{ p.nombre_pregunta }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="pregunta-actions">
+        <button type="button" onclick="agregarCampoPregunta()" class="btn btn-sm btn-secondary">Agregar otra pregunta</button>
+        <a href="{% url 'crear_pregunta_desde_encuesta' %}" class="btn btn-sm btn-primary">Crear nueva pregunta</a>
       </div>
     </div>
-    <button type="button" onclick="agregarCampoPregunta()"> Agregar otra pregunta</button>
-    <a href="{% url 'crear_pregunta_desde_encuesta' %}" class="btn">Crear nueva pregunta</a>
-       Crear nueva pregunta
-    </button>
-  </div>
 
+    <div class="form-group">
+      <label for="prioridad">Prioridad:</label>
+      <select id="prioridad" name="prioridad" required>
+        <option value="">Seleccione una opción</option>
+        <option value="Alta">Alta</option>
+        <option value="Normal">Normal</option>
+        <option value="Baja">Baja</option>
+      </select>
+    </div>
 
-  <div class="form-group">
-    <label for="prioridad">Prioridad:</label>
-    <select id="prioridad" name="prioridad" required>
-      <option value="">Seleccione una opción</option>
-      <option value="Alta">Alta</option>
-      <option value="Normal">Normal</option>
-      <option value="Baja">Baja</option>
-    </select>
-  </div>
+    <div class="form-group">
+      <label for="datos_vecino">Datos del vecino (Nombre - Celular - Email):</label>
+      <input type="text" name="datos_vecino" id="datos_vecino" pattern=".+ - .+ - .+">
+    </div>
 
-  <div class="form-group">
-    <label for="datos_vecino">Datos del vecino (Nombre - Celular - Email):</label>
-    <input type="text" name="datos_vecino" id="datos_vecino" pattern=".+ - .+ - .+">
-  </div>
+    <div class="form-group">
+      <label for="tipo_incidencia">Tipo de incidencia:</label>
+      <select id="tipo_incidencia" name="tipo_incidencia" required>
+        <option value="">Seleccione una incidencia</option>
+        {% for i in incidencias %}
+          <option value="{{ i.id }}">{{ i.nombre }}</option>
+        {% endfor %}
+      </select>
+      <button type="button" onclick="abrirModalTipo()" class="btn btn-sm btn-primary">Crear nuevo tipo</button>
+    </div>
 
-  <div class="form-group">
-    <label for="tipo_incidencia">Tipo de incidencia:</label>
-    <select id="tipo_incidencia" name="tipo_incidencia" required>
-      <option value="">Seleccione una incidencia</option>
-      {% for i in incidencias %}
-        <option value="{{ i.id }}">{{ i.nombre }}</option>
-      {% endfor %}
-    </select>
-    <button type="button" onclick="abrirModalTipo()">➕ Crear nuevo tipo</button>
-  </div>
-
-
-  <div class="form-actions">
-    <button type="submit">Crear Encuesta</button>
-    <button type="button" onclick="window.location.href='/perfil/secpla/'">Cancelar</button>
-  </div>
-</form>
-
-<div id="modalPregunta">
-  <form id="formPregunta" method="post" action="{% url 'crear_pregunta_ajax' %}">
-    {% csrf_token %}
-    <label for="nombre_pregunta">Nombre de la nueva pregunta:</label>
-    <input type="text" name="nombre_pregunta" id="nombre_pregunta" required>
-    <br><br>
-    <button type="button" onclick="cerrarModal()">Cancelar</button>
-    <button type="submit">Guardar</button>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Crear Encuesta</button>
+      <a href="/perfil/secpla/" class="btn btn-secondary">Cancelar</a>
+    </div>
   </form>
 </div>
 
-<div id="modalTipo" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
-  <form id="formTipo" method="post" action="{% url 'crear_tipo_incidencia_ajax' %}" style="background:white; padding:20px; border-radius:8px; width:300px;">
+<div id="modalTipo" class="modal">
+  <form id="formTipo" method="post" action="{% url 'crear_tipo_incidencia_ajax' %}">
     {% csrf_token %}
     <label for="nombre_tipo">Nombre del nuevo tipo:</label>
     <input type="text" name="nombre_tipo" id="nombre_tipo" required>
@@ -185,61 +109,12 @@
       <option value="">Seleccione un departamento</option>
     </select>
     
-    <br><br>
-    <button type="button" onclick="cerrarModalTipo()">Cancelar</button>
-    <button type="submit">Guardar</button>
+    <div class="modal-actions">
+      <button type="button" onclick="cerrarModalTipo()" class="btn btn-secondary">Cancelar</button>
+      <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
   </form>
 </div>
-
-<script>
-function abrirModal() {
-  document.getElementById("modalPregunta").style.display = "flex";
-}
-
-function cerrarModal() {
-  document.getElementById("modalPregunta").style.display = "none";
-}
-
-document.getElementById("formPregunta").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const form = e.target;
-  const nombre = document.getElementById("nombre_pregunta").value.trim();
-
-  if (!nombre) {
-    alert("Debes ingresar el nombre de la pregunta.");
-    return;
-  }
-
-  const data = new FormData(form);
-
-  fetch(form.action, {
-    method: "POST",
-    headers: {
-      "X-CSRFToken": data.get("csrfmiddlewaretoken")
-    },
-    body: data
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.id) {
-      // Buscar el último select agregado
-      const selects = document.querySelectorAll("select[name='preguntas[]']");
-      const ultimoSelect = selects[selects.length - 1];
-
-      const option = document.createElement("option");
-      option.value = data.id;
-      option.text = data.nombre;
-      option.selected = true;
-      ultimoSelect.appendChild(option);
-      cerrarModal();
-    } else {
-      alert("Error al crear la pregunta.");
-    }
-  })
-  .catch(() => alert("Error de conexión al crear la pregunta."));
-});
-
-</script>
 
 <script>
 function agregarCampoPregunta() {
@@ -258,9 +133,7 @@ function agregarCampoPregunta() {
 
   contenedor.appendChild(nuevoBloque);
 }
-</script>
 
-<script>
 function abrirModalTipo() {
   document.getElementById("modalTipo").style.display = "flex";
 }
@@ -281,34 +154,31 @@ document.getElementById("formTipo").addEventListener("submit", function(e) {
 
   const data = new FormData(form);
 
-fetch(form.action, {
-  method: "POST",
-  headers: {
-    "X-CSRFToken": data.get("csrfmiddlewaretoken")
-  },
-  body: data
-})
-.then(response => response.json()) // ✅ convierte la respuesta en JSON
-.then(data => {
-  console.log("Respuesta del backend:", data);
-  if (data.id) {
-    const select = document.getElementById("tipo_incidencia");
-    const option = document.createElement("option");
-    option.value = data.id;
-    option.text = data.nombre;
-    option.selected = true;
-    select.appendChild(option);
-    cerrarModalTipo();
-  } else if (data.error) {
-    alert(data.error);
-  }
-})
-.catch(() => alert("Error de conexión al crear el tipo."));
+  fetch(form.action, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": data.get("csrfmiddlewaretoken")
+    },
+    body: data
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Respuesta del backend:", data);
+    if (data.id) {
+      const select = document.getElementById("tipo_incidencia");
+      const option = document.createElement("option");
+      option.value = data.id;
+      option.text = data.nombre;
+      option.selected = true;
+      select.appendChild(option);
+      cerrarModalTipo();
+    } else if (data.error) {
+      alert(data.error);
+    }
+  })
+  .catch(() => alert("Error de conexión al crear el tipo."));
 });
 
-</script>
-
-<script>
 function cargarDepartamentos() {
   const direccionId = document.getElementById("direccion_tipo").value;
   const departamentoSelect = document.getElementById("departamento_tipo");
@@ -337,7 +207,5 @@ function cargarDepartamentos() {
       departamentoSelect.innerHTML = '<option value="">Error al cargar</option>';
     });
 }
-
 </script>
-
 {% endblock %}

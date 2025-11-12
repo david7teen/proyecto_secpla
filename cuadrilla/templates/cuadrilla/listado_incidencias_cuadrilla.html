@@ -3,12 +3,14 @@
 {% block title %}{{ titulo_lista }}{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <h2>{{ titulo_lista }}</h2>
-    <p>Listado de incidencias asignadas a tu cuadrilla.</p>
+<div class="section-container">
+    <div class="section-header">
+        <h2>{{ titulo_lista }}</h2>
+        <p>Listado de incidencias asignadas a tu cuadrilla.</p>
+    </div>
 
     <div class="table-responsive">
-        <table class="table table-striped table-hover">
+        <table class="user-table">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -28,21 +30,19 @@
                     <td>{{ inc.ubicacion|default:"No indicada" }}</td>
                     <td>{{ inc.fecha_derivacion|date:"d/m/Y H:i"|default:inc.fecha_creacion|date:"d/m/Y H:i" }}</td>
                     
-                    <td>
+                    <td class="action-buttons">
                         <a href="#" class="btn btn-sm btn-info">Ver</a>
                         
                         {% if inc.estado == 'Derivada' %}
                             <a href="{% url 'cuadrilla_tomar_incidencia' inc.id %}" class="btn btn-sm btn-primary">Tomar</a>
-                            
                             <a href="{% url 'cuadrilla_responder_incidencia' inc.id %}" class="btn btn-sm btn-success">Finalizar</a>
-                            
                             <a href="{% url 'cuadrilla_rechazar_incidencia' inc.id %}" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de RECHAZAR esta incidencia?');">Rechazar</a>
                         
                         {% elif inc.estado == 'En proceso' %}
                             <a href="{% url 'cuadrilla_responder_incidencia' inc.id %}" class="btn btn-sm btn-success">Finalizar Tarea</a>
                         
                         {% else %}
-                            <span class="badge bg-secondary">{{ inc.get_estado_display }}</span>
+                            <span class="text-muted">{{ inc.get_estado_display }}</span>
                         {% endif %}
                     </td>
                 </tr>

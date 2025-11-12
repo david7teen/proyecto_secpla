@@ -2,38 +2,48 @@
 {% block title %}Incidencias en Proceso{% endblock %}
 
 {% block content %}
-<h2>Incidencias en Proceso</h2>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Incidencias en Proceso</h2>
+  </div>
 
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Nombre Incidencia</th>
-      <th>Descripción</th>
-      <th>Dirección</th>
-      <th>Departamento</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for incidencia in incidencias %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ incidencia.nombre_incidencia }}</td>
-        <td>{{ incidencia.descripcion }}</td>
-        <td>{{ incidencia.direccion_incidencia.nombre_direccion }}</td>
-        <td>{{ incidencia.departamento_incidencia.nombre_departamento }}</td>
-        <td>
-          <a href="{% url 'responder_incidencia' incidencia.id %}" class="btn">Trabajar</a>
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="6">No hay incidencias en proceso.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Incidencia</th>
+          <th>Descripción</th>
+          <th>Dirección</th>
+          <th>Departamento</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for incidencia in incidencias %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ incidencia.nombre_incidencia }}</td>
+            <td>{{ incidencia.descripcion }}</td>
+            <td>{{ incidencia.direccion_incidencia.nombre_direccion }}</td>
+            <td>{{ incidencia.departamento_incidencia.nombre_departamento }}</td>
+            <td class="action-buttons">
+              <a href="{% url 'responder_incidencia' incidencia.id %}" class="btn btn-sm btn-primary">Trabajar</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="text-center">
+              No hay incidencias en proceso.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-<div style="margin-top: 20px;">
-  <a href="{% url 'dashboard_cuadrilla' %}" class="btn">⬅️ Volver al Dashboard</a>
+  <div class="form-actions">
+    <a href="{% url 'dashboard_cuadrilla' %}" class="btn btn-secondary">Volver al Dashboard</a>
+  </div>
 </div>
 {% endblock %}

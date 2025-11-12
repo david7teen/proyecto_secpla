@@ -4,137 +4,139 @@
 {% block title %}Crear Nueva Incidencia{% endblock %}
 
 {% block content %}
-<div class="formulario-departamento">
+<div class="form-container">
+  <div class="formulario-departamento">
     <h2>Crear Nueva Incidencia</h2>
 
     {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}"></div>
-        {% endfor %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
     {% endif %}
 
     <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
+      {% csrf_token %}
 
-        <div class="form-group">
-            <label>Título de la Incidencia *</label>
-            <input type="text" name="nombre_incidencia" required>
-        </div>
+      <div class="form-group">
+        <label>Título de la Incidencia *</label>
+        <input type="text" name="nombre_incidencia" required>
+      </div>
 
-        <div class="form-group">
-            <label>Descripción *</label>
-            <textarea name="descripcion" rows="4" required></textarea>
-        </div>
+      <div class="form-group">
+        <label>Descripción *</label>
+        <textarea name="descripcion" rows="4" required></textarea>
+      </div>
 
-        <div class="form-group">
-            <label>Tipo de Incidencia</label>
-            <select name="tipo_incidencia">
-                <option value="">Seleccione un tipo</option>
-                {% for tipo in tipos_incidencia %}
-                    <option value="{{ tipo.id }}">{{ tipo.nombre }}</option>
-                {% endfor %}
-            </select>
-        </div>
+      <div class="form-group">
+        <label>Tipo de Incidencia</label>
+        <select name="tipo_incidencia">
+          <option value="">Seleccione un tipo</option>
+          {% for tipo in tipos_incidencia %}
+            <option value="{{ tipo.id }}">{{ tipo.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
 
-        <div class="form-group">
-            <label>Dirección *</label>
-            <select id="direccion_incidencia" name="direccion_incidencia" required onchange="cargarDepartamentos()">
-                <option value="">Seleccione una dirección</option>
-                {% for direccion in direcciones %}
-                    <option value="{{ direccion.id }}">{{ direccion.nombre_direccion }}</option>
-                {% endfor %}
-            </select>
-        </div>
+      <div class="form-group">
+        <label>Dirección *</label>
+        <select id="direccion_incidencia" name="direccion_incidencia" required onchange="cargarDepartamentos()">
+          <option value="">Seleccione una dirección</option>
+          {% for direccion in direcciones %}
+            <option value="{{ direccion.id }}">{{ direccion.nombre_direccion }}</option>
+          {% endfor %}
+        </select>
+      </div>
 
-        <div class="form-group">
-            <label>Departamento *</label>
-            <select id="departamento_incidencia" name="departamento_incidencia" required>
-                <option value="">Primero seleccione una dirección</option>
-                {% for departamento in departamentos %}
-                    <option value="{{ departamento.id }}">{{ departamento.nombre_departamento }}</option>
-                {% endfor %}
-            </select>
-        </div>
+      <div class="form-group">
+        <label>Departamento *</label>
+        <select id="departamento_incidencia" name="departamento_incidencia" required>
+          <option value="">Primero seleccione una dirección</option>
+          {% for departamento in departamentos %}
+            <option value="{{ departamento.id }}">{{ departamento.nombre_departamento }}</option>
+          {% endfor %}
+        </select>
+      </div>
 
-        <div class="form-group">
-            <label>Prioridad</label>
-            <select name="prioridad">
-                <option value="Baja">Baja</option>
-                <option value="Normal" selected>Normal</option>
-                <option value="Alta">Alta</option>
-            </select>
-        </div>
+      <div class="form-group">
+        <label>Prioridad</label>
+        <select name="prioridad">
+          <option value="Baja">Baja</option>
+          <option value="Normal" selected>Normal</option>
+          <option value="Alta">Alta</option>
+        </select>
+      </div>
 
-        <div class="form-group">
-            <label>Ubicación</label>
-            <input type="text" name="ubicacion" placeholder="Dirección exacta o referencia">
-        </div>
+      <div class="form-group">
+        <label>Ubicación</label>
+        <input type="text" name="ubicacion" placeholder="Dirección exacta o referencia">
+      </div>
 
-        <div class="form-group">
-            <label>Datos del Vecino (Nombre - Celular - Email)</label>
-            <input type="text" name="datos_vecino" placeholder="Ej: Juan Pérez - 912345678 - juan@email.com">
-        </div>
+      <div class="form-group">
+        <label>Datos del Vecino (Nombre - Celular - Email)</label>
+        <input type="text" name="datos_vecino" placeholder="Ej: Juan Pérez - 912345678 - juan@email.com">
+      </div>
 
-        <div class="form-group">
-            <label>Imagen (opcional)</label>
-            <input type="file" name="imagen" accept="image/*">
-        </div>
+      <div class="form-group">
+        <label>Imagen (opcional)</label>
+        <input type="file" name="imagen" accept="image/*">
+      </div>
 
-        <div class="form-actions">
-            <button type="submit">Crear Incidencia</button>
-            <button type="button" onclick="window.location.href='{% url 'dashboard_territorial' %}'">Cancelar</button>
-        </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Crear Incidencia</button>
+        <a href="{% url 'dashboard_territorial' %}" class="btn btn-secondary">Cancelar</a>
+      </div>
     </form>
+  </div>
 </div>
 
 <script>
 function cargarDepartamentos() {
-    const direccionId = document.getElementById('direccion_incidencia').value;
-    const departamentoSelect = document.getElementById('departamento_incidencia');
+  const direccionId = document.getElementById('direccion_incidencia').value;
+  const departamentoSelect = document.getElementById('departamento_incidencia');
 
-    console.log('Cargando departamentos para dirección:', direccionId);
+  console.log('Cargando departamentos para dirección:', direccionId);
 
-    if (!direccionId) {
-        departamentoSelect.innerHTML = '<option value="">Seleccione una dirección primero</option>';
-        departamentoSelect.disabled = true;
-        return;
-    }
+  if (!direccionId) {
+    departamentoSelect.innerHTML = '<option value="">Seleccione una dirección primero</option>';
+    departamentoSelect.disabled = true;
+    return;
+  }
 
-    departamentoSelect.innerHTML = '<option value="">Cargando departamentos...</option>';
-    departamentoSelect.disabled = false;
+  departamentoSelect.innerHTML = '<option value="">Cargando departamentos...</option>';
+  departamentoSelect.disabled = false;
 
-    fetch(`/territorial/api/departamentos/${direccionId}/`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la respuesta del servidor');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Departamentos recibidos:', data);
-            
-            if (data.length === 0) {
-                departamentoSelect.innerHTML = '<option value="">No hay departamentos para esta dirección</option>';
-            } else {
-                departamentoSelect.innerHTML = '<option value="">Seleccione un departamento</option>';
-                
-                data.forEach(dep => {
-                    const option = document.createElement('option');
-                    option.value = dep.id;
-                    option.text = dep.nombre;
-                    departamentoSelect.appendChild(option);
-                });
-            }
-        })
-        .catch((error) => {
-            console.error('Error al cargar departamentos:', error);
-            departamentoSelect.innerHTML = '<option value="">Error al cargar departamentos</option>';
+  fetch(`/territorial/api/departamentos/${direccionId}/`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Departamentos recibidos:', data);
+      
+      if (data.length === 0) {
+        departamentoSelect.innerHTML = '<option value="">No hay departamentos para esta dirección</option>';
+      } else {
+        departamentoSelect.innerHTML = '<option value="">Seleccione un departamento</option>';
+        
+        data.forEach(dep => {
+          const option = document.createElement('option');
+          option.value = dep.id;
+          option.text = dep.nombre;
+          departamentoSelect.appendChild(option);
         });
+      }
+    })
+    .catch((error) => {
+      console.error('Error al cargar departamentos:', error);
+      departamentoSelect.innerHTML = '<option value="">Error al cargar departamentos</option>';
+    });
 }
 
 // Para debugging - verifica que el JavaScript se esté ejecutando
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Página de crear incidencia cargada');
+  console.log('Página de crear incidencia cargada');
 });
 </script>
 {% endblock %}

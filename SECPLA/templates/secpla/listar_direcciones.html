@@ -2,40 +2,50 @@
 {% block title %}Listado de Direcciones{% endblock %}
 
 {% block content %}
-<h2>📍 Listado de Direcciones</h2>
+<div class="section-container">
+  <h2>Listado de Direcciones</h2>
 
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Nombre Dirección</th>
-      <th>Encargado</th>
-      <th>Correo</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for d in direcciones %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ d.nombre_direccion }}</td>
-        <td>{{ d.nombre_encargado }}</td>
-        <td>{{ d.correo_encargado }}</td>
-        <td>{{ d.estado }}</td>
-        <td>
-          <a href="{% url 'ver_direccion' d.id %}">Ver</a> |
-          <a href="{% url 'editar_direccion' d.id %}">Editar</a> |
-          {% if d.estado == "Activo" %}
-            <a href="{% url 'bloquear_direccion' d.id %}">Bloquear</a>
-          {% else %}
-            <a href="{% url 'activar_direccion' d.id %}">Activar</a>
-          {% endif %}
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Dirección</th>
+          <th>Encargado</th>
+          <th>Correo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in direcciones %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ d.nombre_direccion }}</td>
+            <td>{{ d.nombre_encargado }}</td>
+            <td>{{ d.correo_encargado }}</td>
+            <td>
+              {% if d.estado == "Activo" %}
+                <span class="estado-activo">{{ d.estado }}</span>
+              {% else %}
+                <span class="estado-inactivo">{{ d.estado }}</span>
+              {% endif %}
+            </td>
+            <td class="action-buttons">
+              <a href="{% url 'ver_direccion' d.id %}" class="btn btn-sm btn-info">Ver</a>
+              <a href="{% url 'editar_direccion' d.id %}" class="btn btn-sm btn-warning">Editar</a>
+              {% if d.estado == "Activo" %}
+                <a href="{% url 'bloquear_direccion' d.id %}" class="btn btn-sm btn-danger">Bloquear</a>
+              {% else %}
+                <a href="{% url 'activar_direccion' d.id %}" class="btn btn-sm btn-success">Activar</a>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-<a href="{% url 'vista_secpla' %}" class="btn btn-volver">⬅️ Volver al panel</a>
+  <a href="{% url 'vista_secpla' %}" class="btn btn-secondary">Volver al panel</a>
+</div>
 {% endblock %}

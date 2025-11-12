@@ -1,19 +1,23 @@
 {% extends 'base_secpla.html' %}
 {% block title %}Agregar Pregunta{% endblock %}
 {% block content %}
-<div class="formulario-encuesta">
-  <h2>Agregar nueva pregunta</h2>
-  {% if error %}<p style="color:red;">{{ error }}</p>{% endif %}
-  <form method="POST">
-    {% csrf_token %}
-    <div class="form-group">
-      <label for="nombre_pregunta">Nombre de la pregunta:</label>
-      <input type="text" name="nombre_pregunta" required>
-    </div>
-    <div class="form-actions">
-      <button type="submit">Guardar</button>
-      <button type="button" onclick="window.location.href='{% url 'crear_encuesta' %}'">Cancelar</button>
-    </div>
-  </form>
+<div class="form-container">
+  <div class="formulario-encuesta">
+    <h2>Agregar nueva pregunta</h2>
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="nombre_pregunta">Nombre de la pregunta:</label>
+        <input type="text" name="nombre_pregunta" required>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'crear_encuesta' %}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

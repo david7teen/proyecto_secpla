@@ -2,65 +2,69 @@
 {% block title %}Listado de Incidencias{% endblock %}
 
 {% block content %}
-<h2>Listado de Incidencias/Solicitudes</h2>
+<div class="section-container">
+  <h2>Listado de Incidencias/Solicitudes</h2>
 
-{% if messages %}
+  {% if messages %}
     {% for message in messages %}
-        <p style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %}; font-weight: bold;">
-            {{ message }}
-        </p>
+      <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}">
+        {{ message }}
+      </div>
     {% endfor %}
-{% endif %}
+  {% endif %}
 
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Título</th>
-      <th>Creador (Territorial)</th>
-      <th>Departamento</th>
-      <th>Fecha Creación</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for inc in incidencias %}
-      <tr>
-        <td>{{ forloop.counter }}</td> <td>{{ inc.nombre_incidencia }}</td>
-        <td>{{ inc.territorial_creador.nombre|default:'N/A' }} {{ inc.territorial_creador.apellido|default:'' }}</td>
-        <td>{{ inc.departamento_incidencia.nombre_departamento }}</td>
-        <td>{{ inc.fecha_creacion|date:"d/m/Y H:i" }}</td>
-        <td>
-          {% if inc.estado == "Finalizada" or inc.estado == "Cerrada" %}
-            <span class="estado-activo">🟢 {{ inc.get_estado_display }}</span>
-          {% elif inc.estado == "Rechazada" %}
-            <span class="estado-inactivo">🔴 {{ inc.get_estado_display }}</span>
-          {% else %}
-            <span style="color: #E67E22;">🟡 {{ inc.get_estado_display }}</span>
-          {% endif %}
-        </td>
-        <td>
-          <a href="{% url 'ver_incidencia' inc.id %}">Ver</a> |
-
-          <form action="{% url 'actualizar_estado_incidencia' inc.id %}" method="POST" style="display: inline-block;">
-              {% csrf_token %}
-              <select name="estado" style="padding: 2px;">
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Título</th>
+          <th>Creador (Territorial)</th>
+          <th>Departamento</th>
+          <th>Fecha Creación</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inc in incidencias %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ inc.nombre_incidencia }}</td>
+            <td>{{ inc.territorial_creador.nombre|default:'N/A' }} {{ inc.territorial_creador.apellido|default:'' }}</td>
+            <td>{{ inc.departamento_incidencia.nombre_departamento }}</td>
+            <td>{{ inc.fecha_creacion|date:"d/m/Y H:i" }}</td>
+            <td>
+              {% if inc.estado == "Finalizada" or inc.estado == "Cerrada" %}
+                <span class="estado-activo">{{ inc.get_estado_display }}</span>
+              {% elif inc.estado == "Rechazada" %}
+                <span class="estado-inactivo">{{ inc.get_estado_display }}</span>
+              {% else %}
+                <span class="estado-pendiente">{{ inc.get_estado_display }}</span>
+              {% endif %}
+            </td>
+            <td class="action-buttons">
+              <a href="{% url 'ver_incidencia' inc.id %}" class="btn btn-sm btn-info">Ver</a>
+              <form action="{% url 'actualizar_estado_incidencia' inc.id %}" method="POST" class="inline-form">
+                {% csrf_token %}
+                <select name="estado" class="form-select-sm">
                   {% for value, display_name in estado_choices %}
-                      <option value="{{ value }}" {% if inc.estado == value %}selected{% endif %}>
-                          {{ display_name }}
-                      </option>
+                    <option value="{{ value }}" {% if inc.estado == value %}selected{% endif %}>
+                      {{ display_name }}
+                    </option>
                   {% endfor %}
-              </select>
-              <button type*="submit" style="padding: 2px 5px; font-size: 12px; cursor: pointer;">Actualizar</button>
-          </form>
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="7">No hay incidencias registradas.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary">Actualizar</button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7">No hay incidencias registradas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-<a href="{% url 'vista_secpla' %}" class="ver-todo">⬅️ Volver al panel principal</a>
+  <a href="{% url 'vista_secpla' %}" class="ver-todo">Volver al panel principal</a>
+</div>
 {% endblock %}

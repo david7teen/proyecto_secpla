@@ -3,142 +3,20 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>{% block title %}Panel SECPLA{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'SECPLA/estilos.css' %}">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      margin: 0;
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: 250px;
-      background-color: #1e3a5f;
-      color: white;
-      padding: 20px;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      z-index: 999;
-    }
-
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      display: block;
-      margin-bottom: 10px;
-      padding: 8px;
-      border-radius: 4px;
-      transition: background-color 0.2s ease;
-    }
-
-    .sidebar a:hover {
-      background-color: #2c6cb0;
-    }
-
-    .main-content {
-      margin-left: 50px;
-      padding: 10px;
-      flex: 1;
-    }
-
-    .formulario-departamento,
-    .formulario-encuesta {
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #1e3a5f;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
-    }
-
-    .form-actions {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-
-    .alert {
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 4px;
-    }
-
-    .alert-danger {
-      background-color: #f8d7da;
-      color: #721c24;
-    }
-
-    .alert-warning {
-      background-color: #fff3cd;
-      color: #856404;
-    }
-  </style>
+  <title>{% block title %}Panel Cuadrilla{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/compiled.css' %}">
   {% block extra_styles %}{% endblock %}
 </head>
 <body>
 <!-- Botón del menú -->
-<button id="menu-toggle" style="
-  position: fixed;
-  top: 15px;
-  left: 1px;
-  z-index: 1001;
-  background: none;
-  border: none;
-  font-size: 28px;
-  color: white;
-  cursor: pointer;
-">☰</button>
+<button id="menu-toggle" class="menu-toggle">☰</button>
 
-<div class="sidebar" id="sidebar-menu" style="
-  width: 250px;
-  background-color: #1e3a5f;
-  color: white;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-  position: fixed;
-  top: 0;
-  left: -250px; /* oculto inicialmente */
-  height: 100%;
-  z-index: 999;
-  transition: left 0.3s ease;">
-  <h2>Menú SECPLA</h2>
-  <a href="/perfil/direccion/">Inicio</a>
-  <a href="/secpla/secpla/ver_incidencias_creadas/">Ver Incidencias Creadas</a>  
-  <a href="/secpla/secpla/ver_incidencias_pendientes/">Ver Incidencias Pendientes</a>
-  <a href="/secpla/secpla/ver_incidencias_derivadas/">Ver Incidencias Derivadas</a>
-  <a href="/secpla/secpla/ver_incidencias_rechazadas/">Ver Incidencias Rechazadas</a>
-  <a href="/secpla/secpla/ver_incidencias_finalizadas/">Ver Incidencias Finalizadas</a>
-  <a href="/" style="margin-top: 20px;">Cerrar sesión</a>
+<div class="sidebar" id="sidebar-menu">
+  <h2></h2>   
+  <a href="/perfil/cuadrilla/">Inicio</a>
+  <a href="/cuadrilla/incidencias/activas/">Incidencias en curso</a>
+  <a href="/cuadrilla/incidencias/finalizadas/">Incidencias finalizadas</a>
+  <a href="/" class="logout-link">Cerrar sesión</a>
 </div>
 <div class="main-content">
   {% block content %}

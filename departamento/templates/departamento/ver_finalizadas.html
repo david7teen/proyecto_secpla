@@ -2,8 +2,10 @@
 {% block title %}Incidencias Finalizadas - Departamento{% endblock %}
 
 {% block content %}
-<div class="usuario-detalle-card">
-  <h2>✅ Incidencias Finalizadas - Departamento</h2>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Incidencias Finalizadas - Departamento</h2>
+  </div>
   
   <div class="stats-header">
     <p><strong>Departamento:</strong> {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</p>
@@ -12,7 +14,7 @@
   </div>
 
   {% if incidencias %}
-  <div class="table-container">
+  <div class="table-responsive">
     <table class="user-table">
       <thead>
         <tr>
@@ -35,19 +37,14 @@
             {% if incidencia.cuadrilla_asignada %}
               {{ incidencia.cuadrilla_asignada.nombre }} {{ incidencia.cuadrilla_asignada.apellido }}
             {% else %}
-              <span class="advertencia">No asignada</span>
+              <span class="text-muted">No asignada</span>
             {% endif %}
           </td>
           <td>{{ incidencia.fecha_finalizacion|date:"d/m/Y H:i" }}</td>
           <td>{{ incidencia.tiempo_resolucion }} días</td>
-          <td>
-            <div class="acciones-container">
-              <a href="{% url 'ver_incidencia_departamento' incidencia.id %}" class="btn btn-info btn-sm">👁️ Ver Detalles</a>
-              <a href="{% url 'ver_evidencia_incidencia' incidencia.id %}" class="btn btn-secondary btn-sm">📷 Evidencias</a>
-<!--
-              <a href="{% url 'cerrar_incidencia' incidencia.id %}" class="btn btn-success btn-sm">🔒 Cerrar</a>
--->
-            </div>
+          <td class="action-buttons">
+            <a href="{% url 'ver_incidencia_departamento' incidencia.id %}" class="btn btn-sm btn-info">Ver Detalles</a>
+            <a href="{% url 'ver_evidencia_incidencia' incidencia.id %}" class="btn btn-sm btn-secondary">Evidencias</a>
           </td>
         </tr>
         {% endfor %}
@@ -56,31 +53,13 @@
   </div>
   {% else %}
   <div class="empty-state">
-    <p>📊 Aún no hay incidencias finalizadas.</p>
+    <p>Aún no hay incidencias finalizadas.</p>
   </div>
   {% endif %}
 
-  <div class="usuario-acciones">
-    <a href="{% url 'dashboard_departamento' %}" class="btn btn-volver">⬅️ Volver al Dashboard</a>
-    <a href="{% url 'reporte_finalizadas' %}" class="btn btn-primary">📈 Generar Reporte</a>
+  <div class="form-actions">
+    <a href="{% url 'dashboard_departamento' %}" class="btn btn-secondary">Volver al Dashboard</a>
+    <a href="{% url 'reporte_finalizadas' %}" class="btn btn-primary">Generar Reporte</a>
   </div>
 </div>
-
-<style>
-.estado-finalizada {
-  color: #28a745;
-  font-weight: bold;
-  background: #d4edda;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-.stats-header {
-  background: linear-gradient(135deg, #d4edda, #f8f9fa);
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 25px;
-  border-left: 5px solid #28a745;
-}
-</style>
 {% endblock %}

@@ -1,33 +1,38 @@
 {% extends 'base_secpla.html' %}
 {% block title %}Tipos de Incidencia{% endblock %}
 {% block content %}
-<h2>Listado de Tipos de Incidencia</h2>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Listado de Tipos de Incidencia</h2>
+    <a href="{% url 'crear_tipo_incidencia' %}" class="btn btn-primary">Crear nuevo tipo</a>
+  </div>
 
-<a href="{% url 'crear_tipo_incidencia' %}" class="btn">➕ Crear nuevo tipo</a>
-
-<table>
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Descripción</th>
-      <th>Dirección</th>
-      <th>Departamento</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for tipo in tipos %}
-    <tr>
-      <td>{{ tipo.nombre }}</td>
-      <td>{{ tipo.descripcion }}</td>
-      <td>{{ tipo.direccion.nombre }}</td>
-      <td>{{ tipo.departamento.nombre }}</td>
-      <td>
-        <a href="{% url 'editar_tipo_incidencia' tipo.id %}">✏️ Editar</a> |
-        <a href="{% url 'eliminar_tipo_incidencia' tipo.id %}" onclick="return confirm('¿Eliminar este tipo?')">🗑️ Eliminar</a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Dirección</th>
+          <th>Departamento</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tipo in tipos %}
+        <tr>
+          <td>{{ tipo.nombre }}</td>
+          <td>{{ tipo.descripcion }}</td>
+          <td>{{ tipo.direccion.nombre }}</td>
+          <td>{{ tipo.departamento.nombre }}</td>
+          <td class="action-buttons">
+            <a href="{% url 'editar_tipo_incidencia' tipo.id %}" class="btn btn-sm btn-warning">Editar</a>
+            <a href="{% url 'eliminar_tipo_incidencia' tipo.id %}" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este tipo?')">Eliminar</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock %}

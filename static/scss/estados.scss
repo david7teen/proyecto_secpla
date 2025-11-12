@@ -1,0 +1,49 @@
+.estado-activo {
+  color: $success-color;
+  font-weight: bold;
+  background: #d4edda;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.estado-inactivo {
+  color: $danger-color;
+  font-weight: bold;
+  background: #f8d7da;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.estado-pendiente {
+  color: $warning-color;
+  font-weight: bold;
+  background: #fff3cd;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.alert {
+  &-danger {
+    @extend %alert-style;
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  &-warning {
+    @extend %alert-style;
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  &-success {
+    @extend %alert-style;
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  &-info {
+    @extend %alert-style;
+    background-color: #d1ecf1;
+    color: #0c5460;
+  }
+}

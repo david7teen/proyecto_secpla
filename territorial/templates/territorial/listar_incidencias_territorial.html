@@ -2,80 +2,85 @@
 {% block title %}Listado de Incidencias - Territorial{% endblock %}
 
 {% block content %}
-<h2>Listado de Incidencias/Solicitudes</h2>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Listado de Incidencias/Solicitudes</h2>
+  </div>
 
-<div style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 8px;">
+  <div class="stats-header">
     <h3>Filtrar por estado:</h3>
-    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-        <a href="{% url 'listar_incidencias_territorial' %}" 
-           class="btn {% if not estado_filtro %}btn-active{% endif %}">
-           Todas ({{ incidencias.count }})
-        </a>
-        {% for value, label in estado_choices %}
-        <a href="{% url 'listar_incidencias_territorial' %}?estado={{ value }}" 
-           class="btn {% if estado_filtro == value %}btn-active{% endif %}">
-           {{ label }}
-        </a>
-        {% endfor %}
+    <div class="form-actions">
+      <a href="{% url 'listar_incidencias_territorial' %}" 
+         class="btn {% if not estado_filtro %}btn-primary{% else %}btn-secondary{% endif %}">
+         Todas ({{ incidencias.count }})
+      </a>
+      {% for value, label in estado_choices %}
+      <a href="{% url 'listar_incidencias_territorial' %}?estado={{ value }}" 
+         class="btn {% if estado_filtro == value %}btn-primary{% else %}btn-secondary{% endif %}">
+         {{ label }}
+      </a>
+      {% endfor %}
     </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Incidencia</th>
+          <th>Descripción</th>
+          <th>Dirección</th>
+          <th>Departamento</th>
+          <th>Prioridad</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inc in incidencias %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ inc.nombre_incidencia }}</td>
+            <td>{{ inc.descripcion|truncatewords:15 }}</td>
+            <td>{{ inc.direccion_incidencia.nombre_direccion }}</td>
+            <td>{{ inc.departamento_incidencia.nombre_departamento }}</td>
+            <td>{{ inc.prioridad }}</td>
+            <td>{{ inc.fecha_creacion|date:"d/m/Y" }}</td>
+            <td>
+              {% if inc.estado == "Finalizada" or inc.estado == "Cerrada" %}
+                <span class="estado-activo">{{ inc.estado }}</span>
+              {% elif inc.estado == "Rechazada" %}
+                <span class="estado-inactivo">{{ inc.estado }}</span>
+              {% else %}
+                <span class="estado-pendiente">{{ inc.estado }}</span>
+              {% endif %}
+            </td>
+            <td class="action-buttons">
+              {% if inc.estado == 'Abierta' or inc.estado == 'Rechazada' %}
+                <a href="{% url 'editar_incidencia' inc.id %}" class="btn btn-sm btn-warning">Editar</a>
+                {% if inc.estado == 'Abierta' %}
+                  <a href="{% url 'eliminar_incidencia' inc.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                {% endif %}
+              {% else %}
+                <span class="text-muted">Solo lectura</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="9" class="text-center">
+              No hay incidencias {% if estado_filtro %}en estado {{ estado_filtro }}{% else %}registradas{% endif %}.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-actions">
+    <a href="{% url 'dashboard_territorial' %}" class="btn btn-secondary">Volver al Dashboard</a>
+  </div>
 </div>
-
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Nombre Incidencia</th>
-      <th>Descripción</th>
-      <th>Dirección</th>
-      <th>Departamento</th>
-      <th>Prioridad</th>
-      <th>Fecha</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for inc in incidencias %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ inc.nombre_incidencia }}</td>
-        <td>{{ inc.descripcion|truncatewords:15 }}</td>
-        <td>{{ inc.direccion_incidencia.nombre_direccion }}</td>
-        <td>{{ inc.departamento_incidencia.nombre_departamento }}</td>
-        <td>{{ inc.prioridad }}</td>
-        <td>{{ inc.fecha_creacion|date:"d/m/Y" }}</td>
-        <td>
-          {% if inc.estado == "Finalizada" or inc.estado == "Cerrada" %}
-            <span style="color: #28a745;">🟢 {{ inc.estado }}</span>
-          {% elif inc.estado == "Rechazada" %}
-            <span style="color: #dc3545;">🔴 {{ inc.estado }}</span>
-          {% else %}
-            <span style="color: #E67E22;">🟡 {{ inc.estado }}</span>
-          {% endif %}
-        </td>
-        <td>
-          {% if inc.estado == 'Abierta' or inc.estado == 'Rechazada' %}
-            <a href="{% url 'editar_incidencia' inc.id %}">Editar</a>
-            {% if inc.estado == 'Abierta' %}
-             | <a href="{% url 'eliminar_incidencia' inc.id %}">Eliminar</a>
-            {% endif %}
-          {% else %}
-            <span style="color: #6c757d;">Solo lectura</span>
-          {% endif %}
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="9">No hay incidencias {% if estado_filtro %}en estado {{ estado_filtro }}{% else %}registradas{% endif %}.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
-
-<a href="{% url 'dashboard_territorial' %}" class="ver-todo">Volver al Dashboard</a>
-
-<style>
-.btn-active {
-    background-color: #2c6cb0 !important;
-    font-weight: bold;
-}
-</style>
 {% endblock %}

@@ -3,37 +3,38 @@
 {% block title %}Login para perfil: {{ perfil }}{% endblock %}
 
 {% block content %}
-<div class="formulario-departamento">
-  <h2>Login para perfil: {{ perfil }}</h2>
+<div class="form-container">
+  <div class="formulario-departamento">
+    <h2>Login para perfil: {{ perfil }}</h2>
 
-  {% if error %}
-    <p class="alert alert-danger">{{ error }}</p>
-  {% endif %}
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
 
-  <form method="POST" action="{% url 'login_por_perfil' perfil=perfil %}">
-    {% csrf_token %}
+    <form method="POST" action="{% url 'login_por_perfil' perfil=perfil %}">
+      {% csrf_token %}
 
-    <div class="form-group">
-      <label for="correo">Correo:</label>
-      <input type="email" id="correo" name="correo" required>
+      <div class="form-group">
+        <label for="correo">Correo:</label>
+        <input type="email" id="correo" name="correo" required>
+      </div>
+
+      <div class="form-group">
+        <label for="contraseña">Contraseña:</label>
+        <input type="password" id="contraseña" name="contraseña" required>
+      </div>
+
+      <input type="hidden" name="perfil" value="{{ perfil }}">
+
+      <div class="form-actions">
+        <button type="submit" name="accion" value="ingresar" class="btn btn-primary">Ingresar</button>
+        <a href="/" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+
+    <div class="form-footer">
+      <a href="/secpla/recuperar_cuenta/?perfil={{ perfil }}" class="btn btn-link">¿Olvidaste tu contraseña?</a>
     </div>
-
-    <div class="form-group">
-      <label for="contraseña">Contraseña:</label>
-      <input type="password" id="contraseña" name="contraseña" required>
-    </div>
-
-    <input type="hidden" name="perfil" value="{{ perfil }}">
-
-    <div class="form-actions">
-      <button type="submit" name="accion" value="ingresar">Ingresar</button>
-      <a href="/" class="btn">Cancelar</a>
-    </div>
-  </form>
-
-  <div style="margin-top: 15px;">
-    <a href="/secpla/recuperar_cuenta/?perfil={{ perfil }}" class="btn">¿Olvidaste tu contraseña?</a>
   </div>
 </div>
 {% endblock %}
-

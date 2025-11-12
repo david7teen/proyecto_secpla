@@ -2,8 +2,10 @@
 {% block title %}Incidencias Rechazadas - Departamento{% endblock %}
 
 {% block content %}
-<div class="usuario-detalle-card">
-  <h2>❌ Incidencias Rechazadas - Departamento</h2>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Incidencias Rechazadas - Departamento</h2>
+  </div>
   
   <div class="stats-header">
     <p><strong>Departamento:</strong> {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</p>
@@ -11,7 +13,7 @@
   </div>
 
   {% if incidencias %}
-  <div class="table-container">
+  <div class="table-responsive">
     <table class="user-table">
       <thead>
         <tr>
@@ -33,12 +35,10 @@
           <td>{{ incidencia.motivo_rechazo|default:"No especificado" }}</td>
           <td>{{ incidencia.fecha_rechazo|date:"d/m/Y H:i" }}</td>
           <td>{{ incidencia.rechazada_por.nombre|default:"Sistema" }}</td>
-          <td>
-            <div class="acciones-container">
-              <a href="{% url 'ver_incidencia_departamento' incidencia.id %}" class="btn btn-info btn-sm">👁️ Ver</a>
-              <a href="{% url 'reabrir_incidencia' incidencia.id %}" class="btn btn-success btn-sm">🔄 Reabrir</a>
-              <a href="{% url 'editar_incidencia_departamento' incidencia.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
-            </div>
+          <td class="action-buttons">
+            <a href="{% url 'ver_incidencia_departamento' incidencia.id %}" class="btn btn-sm btn-info">Ver</a>
+            <a href="{% url 'reabrir_incidencia' incidencia.id %}" class="btn btn-sm btn-success">Reabrir</a>
+            <a href="{% url 'editar_incidencia_departamento' incidencia.id %}" class="btn btn-sm btn-warning">Editar</a>
           </td>
         </tr>
         {% endfor %}
@@ -47,22 +47,12 @@
   </div>
   {% else %}
   <div class="empty-state">
-    <p>✅ No hay incidencias rechazadas. ¡Excelente!</p>
+    <p>No hay incidencias rechazadas. ¡Excelente!</p>
   </div>
   {% endif %}
 
-  <div class="usuario-acciones">
-    <a href="{% url 'dashboard_departamento' %}" class="btn btn-volver">⬅️ Volver al Dashboard</a>
+  <div class="form-actions">
+    <a href="{% url 'dashboard_departamento' %}" class="btn btn-secondary">Volver al Dashboard</a>
   </div>
 </div>
-
-<style>
-.estado-rechazada {
-  color: #dc3545;
-  font-weight: bold;
-  background: #f8d7da;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-</style>
 {% endblock %}

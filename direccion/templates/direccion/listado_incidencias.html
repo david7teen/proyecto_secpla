@@ -1,39 +1,50 @@
-{% extends 'base_direccion.html' %} {% block title %}Incidencias {{ estado_titulo }}{% endblock %}
+{% extends 'base_direccion.html' %} 
+{% block title %}Incidencias {{ estado_titulo }}{% endblock %}
 
 {% block content %}
-<h2>Listado de Incidencias: {{ estado_titulo }}</h2>
-<p>Mostrando todas las incidencias de tu dirección con estado "{{ estado_titulo }}".</p>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Listado de Incidencias: {{ estado_titulo }}</h2>
+    <p>Mostrando todas las incidencias de tu dirección con estado "{{ estado_titulo }}".</p>
+  </div>
 
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Nombre Incidencia</th>
-      <th>Departamento</th>
-      <th>Creador (Territorial)</th>
-      <th>Fecha Creación</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for i in incidencias %}
-      <tr>
-        <td>{{ i.id }}</td>
-        <td>{{ i.nombre_incidencia }}</td>
-        <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
-        <td>{{ i.territorial_creador.nombre|default:'N/A' }}</td>
-        <td>{{ i.fecha_creacion|date:"d/m/Y" }}</td>
-        <td>
-          <a href="{% url 'dir_ver_incidencia' i.id %}">Ver Detalle</a>
-          </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="6">No hay incidencias con este estado.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Incidencia</th>
+          <th>Departamento</th>
+          <th>Creador (Territorial)</th>
+          <th>Fecha Creación</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in incidencias %}
+          <tr>
+            <td>{{ i.id }}</td>
+            <td>{{ i.nombre_incidencia }}</td>
+            <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
+            <td>{{ i.territorial_creador.nombre|default:'N/A' }}</td>
+            <td>{{ i.fecha_creacion|date:"d/m/Y" }}</td>
+            <td class="action-buttons">
+              <a href="{% url 'dir_ver_incidencia' i.id %}" class="btn btn-sm btn-info">Ver Detalle</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="text-center">
+              No hay incidencias con este estado.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-<a href="{% url 'dashboard_direccion' %}" class="ver-todo" style="margin-top: 20px;">
-    Volver al Dashboard
-</a>
+  <div class="form-actions">
+    <a href="{% url 'dashboard_direccion' %}" class="btn btn-secondary">Volver al Dashboard</a>
+  </div>
+</div>
 {% endblock %}

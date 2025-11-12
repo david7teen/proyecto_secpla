@@ -3,38 +3,38 @@
 {% block title %}Responder Incidencia #{{ incidencia.id }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Finalizar Incidencia: {{ incidencia.nombre_incidencia }}</h4>
-                </div>
-                <div class="card-body">
-                    <p><strong>Descripción del Problema:</strong><br>{{ incidencia.descripcion }}</p>
-                    <p><strong>Ubicación:</strong> {{ incidencia.ubicacion }}</p>
-                    <hr>
-                    
-                    <form method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            <label for="descripcion" class="form-label"><b>Descripción de la Solución:</b></label>
-                            <textarea name="descripcion" id="descripcion" class="form-control" rows="5" required></textarea>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="imagen" class="form-label"><b>Subir Imagen de Evidencia:</b></label>
-                            <input type="file" name="imagen" id="imagen" class="form-control" accept="image/*">
-                        </div>
-                        
-                        <hr>
-                        <button type="submit" class="btn btn-success">Completar y Finalizar Tarea</button>
-                        <a href="{% url 'dashboard_cuadrilla' %}" class="btn btn-secondary">Cancelar</a>
-                    </form>
-                </div>
-            </div>
+<div class="form-container">
+    <div class="formulario-departamento">
+        <div class="section-header">
+            <h2>Finalizar Incidencia: {{ incidencia.nombre_incidencia }}</h2>
         </div>
+        
+        <div class="usuario-info">
+            <p><strong>Descripción del Problema:</strong></p>
+            <div class="descripcion-texto">{{ incidencia.descripcion }}</div>
+            <p><strong>Ubicación:</strong> {{ incidencia.ubicacion }}</p>
+        </div>
+        
+        <hr>
+        
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="descripcion">Descripción de la Solución:</label>
+                <textarea name="descripcion" id="descripcion" class="form-control" rows="5" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="imagen">Subir Imagen de Evidencia:</label>
+                <input type="file" name="imagen" id="imagen" class="form-control" accept="image/*">
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Completar y Finalizar Tarea</button>
+                <a href="{% url 'dashboard_cuadrilla' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

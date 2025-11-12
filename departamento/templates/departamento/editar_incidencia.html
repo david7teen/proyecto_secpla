@@ -1,26 +1,27 @@
-{% extends 'base.html' %} {% block title %}Editar Incidencia{% endblock %}
+{% extends 'base.html' %} 
+{% block title %}Editar Incidencia{% endblock %}
 
 {% block content %}
-<div style="display: flex; justify-content: center; padding: 20px;">
-    <div class="usuario-detalle-card">
+<div class="form-container">
+    <div class="usuario-editar-card">
         <h2>Editar Incidencia #{{ inc.id }}</h2>
         
-        <form method="POST">
+        <form method="POST" class="form-edicion">
             {% csrf_token %}
             
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label for="nombre_incidencia" style="font-weight: bold;">Título:</label>
-                <input type="text" name="nombre_incidencia" value="{{ inc.nombre_incidencia }}" class="form-control" style="width: 100%; padding: 8px; box-sizing: border-box;">
+            <div class="form-group">
+                <label for="nombre_incidencia">Título:</label>
+                <input type="text" name="nombre_incidencia" value="{{ inc.nombre_incidencia }}" class="form-control" required>
             </div>
             
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label for="descripcion" style="font-weight: bold;">Descripción:</label>
-                <textarea name="descripcion" class="form-control" style="width: 100%; padding: 8px; box-sizing: border-box;" rows="5">{{ inc.descripcion }}</textarea>
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea name="descripcion" class="form-control" rows="5" required>{{ inc.descripcion }}</textarea>
             </div>
             
-            <div class="usuario-acciones">
-                <button type="submit" class="btn btn-success">Guardar Cambios</button>
-                <a href="{% url 'ver_rechazadas_departamento' %}" class="btn btn-volver">Cancelar</a>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <a href="{% url 'ver_rechazadas_departamento' %}" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </div>

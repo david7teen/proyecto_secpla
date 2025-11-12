@@ -1,56 +1,72 @@
 {% extends 'base_cuadrilla.html' %}
 {% block title %}Dashboard Cuadrilla{% endblock %}
 {% block menu %}
-  <a href="/cuadrilla/incidencias/activas/">🛠️ Incidencias en curso</a>
-  <a href="/cuadrilla/incidencias/finalizadas/">✅ Incidencias finalizadas</a>
-  <a href="/">🏠 Inicio</a>
-  <a href="/logout/">🔒 Cerrar sesión</a>
+  <a href="/cuadrilla/incidencias/activas/">Incidencias en curso</a>
+  <a href="/cuadrilla/incidencias/finalizadas/">Incidencias finalizadas</a>
+  <a href="/">Inicio</a>
+  <a href="/logout/">Cerrar sesión</a>
 {% endblock %}
 
 {% block content %}
-<h1>Bienvenido, {{ usuario_activo.nombre }} {{ usuario_activo.apellido }}</h1>
-<h3>Perfil: Cuadrilla</h3>
-
-<div class="stats-container">
-  <div class="card">Incidencias Pendientes: {{ resumen.pendientes }}</div>
-  <div class="card">Incidencias en Proceso: {{ resumen.en_proceso }}</div>
-  <div class="card">Incidencias Finalizadas: {{ resumen.finalizadas }}</div>
-  <div class="card">Incidencias Rechazadas: {{ resumen.rechazadas }}</div>
+<div class="dashboard-header">
+  <h1>Bienvenido/a, {{ request.session.usuario_activo.nombre }} {{ request.session.usuario_activo.apellido }}
+  <h3>Perfil: Cuadrilla</h3>
 </div>
 
-<h2>Incidencias Pendientes</h2>
-<a href="/cuadrilla/incidencias/pendientes/" class="btn">Ver todas las incidencias pendientes</a>
-<table class="user-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Nombre Incidencia</th>
-      <th>Descripción</th>
-      <th>Dirección</th>
-      <th>Departamento</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for i in incidencias_pendientes %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ i.nombre_incidencia }}</td>
-        <td>{{ i.descripcion }}</td>
-        <td>{{ i.direccion_incidencia.nombre_direccion }}</td>
-        <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
-        <td>
-          <a href="/cuadrilla/incidencias/responder/{{ i.id }}/">Trabajar</a> |
-          <a href="/cuadrilla/incidencias/rechazar/{{ i.id }}/">Rechazar</a>
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="6">No hay incidencias pendientes.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="section-container">
+  <h2>Resumen de Incidencias</h2>
+  <div class="stats-container">
+    <div class="card">Incidencias Pendientes: {{ resumen.pendientes }}</div>
+    <div class="card">Incidencias en Proceso: {{ resumen.en_proceso }}</div>
+    <div class="card">Incidencias Finalizadas: {{ resumen.finalizadas }}</div>
+    <div class="card">Incidencias Rechazadas: {{ resumen.rechazadas }}</div>
+  </div>
+</div>
 
-<div style="margin-top: 10px; margin-bottom: 20px;">
-  <a href="/" class="btn" style="margin-top: 15px;">🏠 Volver al inicio</a>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Incidencias Pendientes</h2>
+    <a href="/cuadrilla/incidencias/pendientes/" class="btn btn-primary">Ver todas las incidencias pendientes</a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Incidencia</th>
+          <th>Descripción</th>
+          <th>Dirección</th>
+          <th>Departamento</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in incidencias_pendientes %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ i.nombre_incidencia }}</td>
+            <td>{{ i.descripcion }}</td>
+            <td>{{ i.direccion_incidencia.nombre_direccion }}</td>
+            <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
+            <td class="action-buttons">
+              <a href="/cuadrilla/incidencias/responder/{{ i.id }}/" class="btn btn-sm btn-primary">Trabajar</a>
+              <a href="/cuadrilla/incidencias/rechazar/{{ i.id }}/" class="btn btn-sm btn-danger">Rechazar</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="text-center">
+              No hay incidencias pendientes.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="form-actions">
+  <a href="/" class="btn btn-secondary">Volver al inicio</a>
 </div>
 {% endblock %}

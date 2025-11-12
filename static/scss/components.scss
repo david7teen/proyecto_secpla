@@ -1,0 +1,64 @@
+.dashboard-header {
+  background: linear-gradient(135deg, $primary-color, $secondary-color);
+  color: white;
+  padding: 30px 20px;
+  margin-bottom: 30px;
+  border-radius: $border-radius;
+  
+  h1 {
+    margin: 0 0 10px 0;
+    font-size: 2em;
+  }
+  
+  h3 {
+    margin: 0;
+    opacity: 0.9;
+    font-weight: normal;
+  }
+}
+
+.usuario-detalle-card {
+  @extend %form-container;
+  
+  .usuario-info {
+    p {
+      margin: 10px 0;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+      
+      strong {
+        color: $primary-color;
+      }
+    }
+  }
+  
+  .usuario-acciones {
+    @extend %form-actions;
+    margin-top: 30px;
+  }
+}
+
+.stats-header {
+  background: linear-gradient(135deg, #d4edda, #f8f9fa);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  border-left: 5px solid $success-color;
+  
+  p {
+    margin: 5px 0;
+    font-size: 1.1em;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6c757d;
+  font-style: italic;
+  
+  p {
+    font-size: 1.2em;
+    margin: 0;
+  }
+}

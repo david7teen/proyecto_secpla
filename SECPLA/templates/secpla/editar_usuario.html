@@ -2,60 +2,63 @@
 {% block title %}Editar Usuario{% endblock %}
 
 {% block content %}
-<div class="usuario-editar-card">
-  <h2>✏️ Editar Usuario</h2>
+<div class="form-container">
+  <div class="usuario-editar-card">
+    <h2>Editar Usuario</h2>
 
-  <form method="POST" class="form-edicion">
-    {% csrf_token %}
+    <form method="POST" class="form-edicion">
+      {% csrf_token %}
 
-    <div class="form-group">
-      <label for="nombre">Nombre:</label>
-      <input type="text" id="nombre" name="nombre" value="{{ usuario.nombre }}" required>
-    </div>
+      <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" value="{{ usuario.nombre }}" required>
+      </div>
 
-    <div class="form-group">
-      <label for="apellido">Apellido:</label>
-      <input type="text" id="apellido" name="apellido" value="{{ usuario.apellido }}" required>
-    </div>
+      <div class="form-group">
+        <label for="apellido">Apellido:</label>
+        <input type="text" id="apellido" name="apellido" value="{{ usuario.apellido }}" required>
+      </div>
 
-    <div class="form-group">
-      <label for="correo">Correo:</label>
-      <input type="email" id="correo" name="correo" value="{{ usuario.correo }}" required>
-    </div>
+      <div class="form-group">
+        <label for="correo">Correo:</label>
+        <input type="email" id="correo" name="correo" value="{{ usuario.correo }}" required>
+      </div>
 
-    <div class="form-group">
-      <label for="telefono">Teléfono:</label>
-      <input type="text" id="telefono" name="telefono" value="{{ usuario.telefono }}" required>
-    </div>
+      <div class="form-group">
+        <label for="telefono">Teléfono:</label>
+        <input type="text" id="telefono" name="telefono" value="{{ usuario.telefono }}" required>
+      </div>
 
-    <div class="form-group">
-      <label for="perfil">Perfil:</label>
-      <select id="perfil" name="perfil" required>
-        <option value="SECPLA" {% if usuario.perfil == 'SECPLA' %}selected{% endif %}>SECPLA</option>
-        <option value="Dirección" {% if usuario.perfil == 'Dirección' %}selected{% endif %}>Dirección</option>
-        <option value="Departamento" {% if usuario.perfil == 'Departamento' %}selected{% endif %}>Departamento</option>
-        <option value="Territorial" {% if usuario.perfil == 'Territorial' %}selected{% endif %}>Territorial</option>
-        <option value="Cuadrilla" {% if usuario.perfil == 'Cuadrilla' %}selected{% endif %}>Cuadrilla</option>
-      </select>
-    </div>
+      <div class="form-group">
+        <label for="perfil">Perfil:</label>
+        <select id="perfil" name="perfil" required>
+          <option value="SECPLA" {% if usuario.perfil == 'SECPLA' %}selected{% endif %}>SECPLA</option>
+          <option value="Dirección" {% if usuario.perfil == 'Dirección' %}selected{% endif %}>Dirección</option>
+          <option value="Departamento" {% if usuario.perfil == 'Departamento' %}selected{% endif %}>Departamento</option>
+          <option value="Territorial" {% if usuario.perfil == 'Territorial' %}selected{% endif %}>Territorial</option>
+          <option value="Cuadrilla" {% if usuario.perfil == 'Cuadrilla' %}selected{% endif %}>Cuadrilla</option>
+        </select>
+      </div>
 
-    {% if usuario.perfil == 'Departamento' or usuario.perfil == 'Cuadrilla' %}
-    <div class="form-group">
-      <label for="departamento_asociado">Departamento asociado:</label>
-      <select id="departamento_asociado" name="departamento_asociado">
-        <option value="">(Ninguno)</option>
-        {% for depto in departamentos %}
-          <option value="{{ depto.id }}" {% if usuario.departamento_asociado.id == depto.id %}selected{% endif %}>
-            {{ depto.nombre_departamento }}
-          </option>
-        {% endfor %}
-      </select>
-    </div>
-    {% endif %}
-    <div class="form-actions">
-      <button type="submit" class="btn btn-editar"> Guardar cambios</button>
-      <a href="{% url 'vista_secpla' %}" class="btn btn-volver"> Cancelar</a>
-    </div>
-  </form>
+      {% if usuario.perfil == 'Departamento' or usuario.perfil == 'Cuadrilla' %}
+      <div class="form-group">
+        <label for="departamento_asociado">Departamento asociado:</label>
+        <select id="departamento_asociado" name="departamento_asociado">
+          <option value="">(Ninguno)</option>
+          {% for depto in departamentos %}
+            <option value="{{ depto.id }}" {% if usuario.departamento_asociado.id == depto.id %}selected{% endif %}>
+              {{ depto.nombre_departamento }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+      
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a href="{% url 'vista_secpla' %}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

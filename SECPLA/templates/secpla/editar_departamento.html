@@ -2,50 +2,52 @@
 {% block title %}Editar Departamento{% endblock %}
 
 {% block content %}
-<div class="usuario-editar-card">
-  <h2>✏️ Editar Departamento</h2>
+<div class="form-container">
+  <div class="usuario-editar-card">
+    <h2>Editar Departamento</h2>
 
-  <form method="POST" class="form-edicion">
-    {% csrf_token %}
+    <form method="POST" class="form-edicion">
+      {% csrf_token %}
 
-    <div class="form-group">
-      <label for="nombre_departamento">Nombre Departamento:</label>
-      <input type="text" id="nombre_departamento" name="nombre_departamento" value="{{ departamento.nombre_departamento|default_if_none:'' }}" required>
-    </div>
+      <div class="form-group">
+        <label for="nombre_departamento">Nombre Departamento:</label>
+        <input type="text" id="nombre_departamento" name="nombre_departamento" value="{{ departamento.nombre_departamento|default_if_none:'' }}" required>
+      </div>
 
-    <div class="form-group">
-      <label for="nombre_encargado">Nombre Encargado:</label>
-      <input type="text" id="nombre_encargado" name="nombre_encargado" value="{{ departamento.nombre_encargado|default_if_none:'' }}" required>
-    </div>
+      <div class="form-group">
+        <label for="nombre_encargado">Nombre Encargado:</label>
+        <input type="text" id="nombre_encargado" name="nombre_encargado" value="{{ departamento.nombre_encargado|default_if_none:'' }}" required>
+      </div>
 
-    <div class="form-group">
-      <label for="correo_encargado">Correo Encargado:</label>
-      <input type="email" id="correo_encargado" name="correo_encargado" value="{{ departamento.correo_encargado|default_if_none:'' }}" required>
-    </div>
+      <div class="form-group">
+        <label for="correo_encargado">Correo Encargado:</label>
+        <input type="email" id="correo_encargado" name="correo_encargado" value="{{ departamento.correo_encargado|default_if_none:'' }}" required>
+      </div>
 
-    <div class="form-group">
-      <label for="direccion_departamento">Dirección Asociada:</label>
-      <select id="direccion_departamento" name="direccion_departamento" required>
-        {% for d in direcciones %}
-          <option value="{{ d.id }}" {% if departamento.direccion_departamento.id == d.id %}selected{% endif %}>
-            {{ d.nombre_direccion }}
-          </option>
-        {% endfor %}
-      </select>
-    </div>
+      <div class="form-group">
+        <label for="direccion_departamento">Dirección Asociada:</label>
+        <select id="direccion_departamento" name="direccion_departamento" required>
+          {% for d in direcciones %}
+            <option value="{{ d.id }}" {% if departamento.direccion_departamento.id == d.id %}selected{% endif %}>
+              {{ d.nombre_direccion }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
 
-    <div class="form-group">
-      <label for="estado">Estado:</label>
-      <select id="estado" name="estado">
-        <option value="Activo" {% if departamento.estado == "Activo" %}selected{% endif %}>Activo</option>
-        <option value="Inactivo" {% if departamento.estado == "Inactivo" %}selected{% endif %}>Inactivo</option>
-      </select>
-    </div>
+      <div class="form-group">
+        <label for="estado">Estado:</label>
+        <select id="estado" name="estado">
+          <option value="Activo" {% if departamento.estado == "Activo" %}selected{% endif %}>Activo</option>
+          <option value="Inactivo" {% if departamento.estado == "Inactivo" %}selected{% endif %}>Inactivo</option>
+        </select>
+      </div>
 
-    <div class="form-actions">
-      <button type="submit" class="btn btn-editar">💾 Guardar cambios</button>
-      <a href="{% url 'vista_secpla' %}" class="btn btn-volver">⬅️ Cancelar</a>
-    </div>
-  </form>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a href="{% url 'vista_secpla' %}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

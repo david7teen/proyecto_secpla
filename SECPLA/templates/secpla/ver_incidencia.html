@@ -2,55 +2,53 @@
 {% block title %}Detalle Incidencia{% endblock %}
 
 {% block content %}
-<div style="display: flex; justify-content: center; padding: 20px;">
-
-    <div class="usuario-detalle-card">
-      <h2><i class="fas fa-file-alt"></i> Detalle de Incidencia</h2>
-    
-      <div class="usuario-info">
-        <p><strong>ID Incidencia:</strong> {{ inc.id }}</p>
-        <p><strong>Título:</strong> {{ inc.nombre_incidencia }}</p>
-        
-        <p><strong>Descripción:</strong></p>
-        <p style="white-space: pre-wrap; padding-left: 15px;">{{ inc.descripcion|default:"Sin descripción" }}</p>
-        
-        <p><strong>Ubicación:</strong> {{ inc.ubicacion|default:"No especificada" }}</p>
-        <p><strong>Datos Vecino:</strong> {{ inc.datos_vecino|default:"No especificados" }}</p>
-        
-        <hr>
-        <p><strong>Estado:</strong> 
-          {% if inc.estado == "Finalizada" or inc.estado == "Cerrada" %}
-            <span class="estado-activo">🟢 {{ inc.get_estado_display }}</span>
-          {% elif inc.estado == "Rechazada" %}
-            <span class="estado-inactivo">🔴 {{ inc.get_estado_display }}</span>
-          {% else %}
-            <span style="color: #E67E22;">🟡 {{ inc.get_estado_display }}</span>
-          {% endif %}
-        </p>
-        <p><strong>Prioridad:</strong> {{ inc.get_prioridad_display }}</p>
-        
-        <hr>
-        <p><strong>Creador (Territorial):</strong> {{ inc.territorial_creador.nombre|default:'N/A' }} {{ inc.territorial_creador.apellido|default:'' }}</p>
-        <p><strong>Dirección:</strong> {{ inc.direccion_incidencia.nombre_direccion }}</p>
-        <p><strong>Departamento:</strong> {{ inc.departamento_incidencia.nombre_departamento }}</p>
-        <p><strong>Cuadrilla Asignada:</strong> {{ inc.cuadrilla_asignada.nombre|default:"Sin asignar" }}</S></p>
-        
-        <hr>
-        <p><strong>Fecha Creación:</strong> {{ inc.fecha_creacion|date:"d/m/Y H:i" }}</p>
-        <p><strong>Fecha Derivación:</strong> {{ inc.fecha_derivacion|date:"d/m/Y H:i"|default:"-" }}</p>
-        <p><strong>Fecha Finalización:</strong> {{ inc.fecha_finalizacion|date:"d/m/Y H:i"|default:"-" }}</p>
-        
-        {% if inc.imagen %}
-            <hr>
-            <p><strong>Imagen Adjunta:</strong></p>
-            <img src="{{ inc.imagen.url }}" style="width: 100%; max-width: 400px; height: auto;" alt="Evidencia">
+<div class="form-container">
+  <div class="usuario-detalle-card">
+    <h2>Detalle de Incidencia</h2>
+  
+    <div class="usuario-info">
+      <p><strong>ID Incidencia:</strong> {{ inc.id }}</p>
+      <p><strong>Título:</strong> {{ inc.nombre_incidencia }}</p>
+      
+      <p><strong>Descripción:</strong></p>
+      <div class="descripcion-texto">{{ inc.descripcion|default:"Sin descripción" }}</div>
+      
+      <p><strong>Ubicación:</strong> {{ inc.ubicacion|default:"No especificada" }}</p>
+      <p><strong>Datos Vecino:</strong> {{ inc.datos_vecino|default:"No especificados" }}</p>
+      
+      <hr>
+      <p><strong>Estado:</strong> 
+        {% if inc.estado == "Finalizada" or inc.estado == "Cerrada" %}
+          <span class="estado-activo">{{ inc.get_estado_display }}</span>
+        {% elif inc.estado == "Rechazada" %}
+          <span class="estado-inactivo">{{ inc.get_estado_display }}</span>
+        {% else %}
+          <span class="estado-pendiente">{{ inc.get_estado_display }}</span>
         {% endif %}
-      </div>
-    
-      <div class="usuario-acciones">
-        <a href="{% url 'listar_incidencias' %}" class="btn btn-volver">Volver al Listado</a>
-      </div>
+      </p>
+      <p><strong>Prioridad:</strong> {{ inc.get_prioridad_display }}</p>
+      
+      <hr>
+      <p><strong>Creador (Territorial):</strong> {{ inc.territorial_creador.nombre|default:'N/A' }} {{ inc.territorial_creador.apellido|default:'' }}</p>
+      <p><strong>Dirección:</strong> {{ inc.direccion_incidencia.nombre_direccion }}</p>
+      <p><strong>Departamento:</strong> {{ inc.departamento_incidencia.nombre_departamento }}</p>
+      <p><strong>Cuadrilla Asignada:</strong> {{ inc.cuadrilla_asignada.nombre|default:"Sin asignar" }}</p>
+      
+      <hr>
+      <p><strong>Fecha Creación:</strong> {{ inc.fecha_creacion|date:"d/m/Y H:i" }}</p>
+      <p><strong>Fecha Derivación:</strong> {{ inc.fecha_derivacion|date:"d/m/Y H:i"|default:"-" }}</p>
+      <p><strong>Fecha Finalización:</strong> {{ inc.fecha_finalizacion|date:"d/m/Y H:i"|default:"-" }}</p>
+      
+      {% if inc.imagen %}
+        <hr>
+        <p><strong>Imagen Adjunta:</strong></p>
+        <img src="{{ inc.imagen.url }}" class="imagen-evidencia" alt="Evidencia">
+      {% endif %}
     </div>
-
+  
+    <div class="usuario-acciones">
+      <a href="{% url 'listar_incidencias' %}" class="btn btn-secondary">Volver al Listado</a>
+    </div>
+  </div>
 </div>
 {% endblock %}

@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="section-container">
-  <h2>Listado de Incidencias/Solicitudes</h2>
+  <h2>Listado de Incidencias</h2>
 
   {% if messages %}
     {% for message in messages %}
@@ -65,6 +65,6 @@
     </table>
   </div>
 
-  <a href="{% url 'vista_secpla' %}" class="ver-todo">Volver al panel principal</a>
+  <a href="{% url 'vista_secpla' %}" class="ver-todo">Volver al Dashboard</a>
 </div>
 {% endblock %}

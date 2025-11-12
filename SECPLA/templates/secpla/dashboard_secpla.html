@@ -18,13 +18,13 @@
 
 <div class="section-container">
   <h2>Gestión de solicitudes de recuperación</h2>
-  <a href="/secpla/ver_intentos_recuperacion/" class="btn">Ver solicitudes de recuperación</a>
+  <a href="/secpla/ver_intentos_recuperacion/" class="btn">Ver solicitudes</a>
 </div>
 
 <div class="section-container">
   <div class="section-header">
     <h2>Listado de usuarios/perfiles</h2>
-    <a href="/secpla/crear_usuario/" class="btn btn-primary">Crear nuevo usuario</a>
+    <a href="/secpla/crear_usuario/" class="btn btn-primary">Crear</a>
   </div>
   <div class="table-responsive">
     <table class="user-table">
@@ -57,13 +57,13 @@
       </tbody>
     </table>
   </div>
-  <a href="{% url 'ver_usuario' %}" class="ver-todo">Ver todos los Usuarios →</a>
+  <a href="{% url 'ver_usuario' %}" class="ver-todo">Ver todos los Usuarios</a>
 </div>
 
 <div class="section-container">
   <div class="section-header">
     <h2>Listado de Direcciones</h2>
-    <a href="/secpla/secpla/crear_direccion/" class="btn btn-primary">Crear nueva dirección</a>
+    <a href="/secpla/secpla/crear_direccion/" class="btn btn-primary">Crear</a>
   </div>
   <div class="table-responsive">
     <table class="user-table">
@@ -101,7 +101,7 @@
                   <a href="{% url 'activar_direccion' d.id %}" class="btn btn-sm btn-success">Activar</a>
                 {% endif %}
               {% else %}
-                <span class="advertencia">⚠️ Sin ID</span>
+                <span class="advertencia">Sin ID</span>
               {% endif %}
             </td>
           </tr>
@@ -109,13 +109,13 @@
       </tbody>
     </table>
   </div>
-  <a href="{% url 'listar_direcciones' %}" class="ver-todo">Ver todas las Direcciones →</a>
+  <a href="{% url 'listar_direcciones' %}" class="ver-todo">Ver todas las Direcciones</a>
 </div>
 
 <div class="section-container">
   <div class="section-header">
     <h2>Listado de Departamentos</h2>
-    <a href="/secpla/secpla/crear_departamento/" class="btn btn-primary">Crear nuevo departamento</a>
+    <a href="/secpla/secpla/crear_departamento/" class="btn btn-primary">Crear</a>
   </div>
   <div class="table-responsive">
     <table class="user-table">
@@ -159,7 +159,7 @@
       </tbody>
     </table>
   </div>
-  <a href="{% url 'listar_departamentos' %}" class="ver-todo">Ver todos los Departamentos →</a>
+  <a href="{% url 'listar_departamentos' %}" class="ver-todo">Ver todos los Departamentos</a>
 </div>
 
 <div class="section-container">
@@ -200,13 +200,13 @@
       </tbody>
     </table>
   </div>
-  <a href="{% url 'listar_incidencias' %}" class="ver-todo">Ver todas las Incidencias →</a>
+  <a href="{% url 'listar_incidencias' %}" class="ver-todo">Ver todas las Incidencias</a>
 </div>
 
 <div class="section-container">
   <div class="section-header">
     <h2>Listado de Encuestas</h2>
-    <a href="/secpla/secpla/crear_encuesta/" class="btn btn-primary">Crear nueva Encuesta</a>
+    <a href="/secpla/secpla/crear_encuesta/" class="btn btn-primary">Crear</a>
   </div>
   <div class="table-responsive">
     <table class="user-table">
@@ -258,7 +258,7 @@
       </tbody>
     </table>
   </div>
-  <a href="{% url 'listar_encuestas' %}" class="ver-todo">Ver todas las Encuestas →</a>
+  <a href="{% url 'listar_encuestas' %}" class="ver-todo">Ver todas las Encuestas</a>
 </div>
 
 <div class="form-actions">

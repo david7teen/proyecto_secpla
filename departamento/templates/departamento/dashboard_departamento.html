@@ -1,10 +1,10 @@
-{% extends 'base.html' %} 
+{% extends 'base_departamento.html' %} 
 {% block title %}Dashboard Departamento{% endblock %}
 
 {% block content %}
 <div class="dashboard-header">
-  <h1>Bienvenido/a, {{ request.session.usuario_activo.nombre }} {{ request.session.usuario_activo.apellido }}
-  
+  <h1>Bienvenido/a, {{ request.session.usuario_activo.nombre }} {{ request.session.usuario_activo.apellido }}</h1>
+  <h3>Departamento: {{ usuario_activo.direccion }}</h3>
   {% if error %}
       <div class="alert alert-danger">{{ error }}</div>
   {% elif departamento %}
@@ -13,7 +13,7 @@
 </div>
 
 <div class="section-container">
-  <h2>Resumen de Incidencias del Departamento</h2>
+  <h2>Resumen de Incidencias</h2>
   <div class="stats-container">
     <div class="card">Pendientes: {{ resumen.pendientes }}</div>
     <div class="card">Derivadas: {{ resumen.derivadas }}</div>

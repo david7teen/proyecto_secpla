@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>{% block title %}Panel Territorial{% endblock %}</title>
+  <title>{% block title %}Panel Departamento{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/compiled.css' %}">
   {% block extra_styles %}{% endblock %}
 </head>
@@ -13,16 +13,11 @@
 
 <div class="sidebar" id="sidebar-menu">
   <h2></h2>
-  <a href="/perfil/territorial/">Inicio</a>
-  <a href="{% url 'crear_incidencia' %}">Crear Incidencia</a>
-  <a href="{% url 'incidencias_abiertas' %}">Incidencias Abiertas</a>
-  <a href="{% url 'incidencias_derivadas' %}">Incidencias Derivadas</a>
-  <a href="{% url 'incidencias_proceso' %}">Incidencias en Proceso</a>
-  <a href="{% url 'incidencias_rechazadas' %}">Incidencias Rechazadas</a>
-  <a href="{% url 'incidencias_finalizadas' %}">Incidencias Finalizadas</a>
-  <a href="{% url 'incidencias_cerradas' %}">Incidencias Cerradas</a>
-  <a href="{% url 'ver_solicitudes' %}">Todas las Incidencias</a>
-  <!-- <a href="{% url 'encuestas_abiertas' %}">Encuestas Abiertas</a> -->
+  <a href="/perfil/departamento/">Inicio</a>
+  <a href="{% url 'ver_pendientes_departamento' %}">Ver Pendientes</a>
+  <a href="{% url 'ver_derivadas_departamento' %}">Ver Derivadas</a>
+  <a href="{% url 'ver_rechazadas_departamento' %}">Ver Rechazadas</a>
+  <a href="{% url 'ver_finalizadas_departamento' %}">Ver Finalizadas</a>
   <a href="/" class="logout-link">Cerrar sesión</a>
 </div>
 <div class="main-content">

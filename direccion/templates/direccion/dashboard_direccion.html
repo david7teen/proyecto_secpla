@@ -4,7 +4,8 @@
 {% block content %}
 <div class="dashboard-header">
   <h1>Bienvenido/a, {{ request.session.usuario_activo.nombre }} {{ request.session.usuario_activo.apellido }}
-  
+  <h3>Perfil: {{ request.session.usuario_activo.perfil }}</h3></h1>
+	<!-- <h3>Dirección: {{ request.session.usuario_activo.nombre_direccion }}</h3> -->
   {% if error %}
       <div class="alert alert-danger">{{ error }}</div>
   {% elif direccion %}

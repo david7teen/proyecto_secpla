@@ -1,4 +1,6 @@
-{% extends 'base_territorial.html' %}
+{% extends 'territorial/base_territorial.html' %} 
+{% load static %}
+
 {% block title %}Dashboard Territorial{% endblock %}
 
 {% block content %}
@@ -62,7 +64,7 @@
                   <a href="{% url 'eliminar_incidencia' i.id %}" class="btn btn-sm btn-danger">Eliminar</a>
                 {% endif %}
               {% else %}
-                <span class="text-muted">Solo lectura</span>
+                 <span class="text-muted">Solo lectura</span>
               {% endif %}
             </td>
           </tr>
@@ -76,19 +78,4 @@
   <a href="{% url 'listar_incidencias_territorial' %}" class="ver-todo">Ver todas las Incidencias</a>
 </div>
 
-<div class="section-container">
-  <h2>Acceso rápido por estado</h2>
-  <div class="form-actions">
-    <a href="{% url 'incidencias_abiertas' %}" class="btn">Ver Abiertas</a>
-    <a href="{% url 'incidencias_derivadas' %}" class="btn">Ver Derivadas</a>
-    <a href="{% url 'incidencias_proceso' %}" class="btn">Ver En Proceso</a>
-    <a href="{% url 'incidencias_rechazadas' %}" class="btn">Ver Rechazadas</a>
-    <a href="{% url 'incidencias_finalizadas' %}" class="btn">Ver Finalizadas</a>
-    <a href="{% url 'incidencias_cerradas' %}" class="btn">Ver Cerradas</a>
-  </div>
-</div>
-
-<div class="form-actions">
-  <a href="/" class="btn btn-secondary">Volver al inicio</a>
-</div>
 {% endblock %}

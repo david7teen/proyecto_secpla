@@ -2,49 +2,69 @@
 {% block title %}Incidencias {{ estado_titulo }}{% endblock %}
 
 {% block content %}
-<div class="section-container">
-  <div class="section-header">
-    <h2>Listado de Incidencias: {{ estado_titulo }}</h2>
-    <p>Mostrando todas las incidencias de tu dirección con estado "{{ estado_titulo }}".</p>
-  </div>
+<h2>Listado de Incidencias: {{ estado_titulo }}</h2>
+<p>Mostrando todas las incidencias de tu dirección con estado "{{ estado_titulo }}".</p>
 
-  <div class="table-responsive">
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre Incidencia</th>
-          <th>Departamento</th>
-          <th>Creador (Territorial)</th>
-          <th>Fecha Creación</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for i in incidencias %}
-          <tr>
-            <td>{{ i.id }}</td>
-            <td>{{ i.nombre_incidencia }}</td>
-            <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
-            <td>{{ i.territorial_creador.nombre|default:'N/A' }}</td>
-            <td>{{ i.fecha_creacion|date:"d/m/Y" }}</td>
-            <td class="action-buttons">
-              <a href="{% url 'dir_ver_incidencia' i.id %}" class="btn btn-sm btn-info">Ver Detalle</a>
-            </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="6" class="text-center">
-              No hay incidencias con este estado.
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+{% if messages %}
+    {% for message in messages %}
+        <p style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %}; font-weight: bold;">
+            {{ message }}
+        </p>
+    {% endfor %}
+{% endif %}
 
-  <div class="form-actions">
-    <a href="{% url 'dashboard_direccion' %}" class="btn btn-secondary">Volver al Dashboard</a>
-  </div>
-</div>
+<table class="user-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Nombre Incidencia</th>
+      <th>Departamento</th>
+      <th>Creador (Territorial)</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for i in incidencias %}
+      <tr>
+        <td>{{ i.id }}</td>
+        <td>{{ i.nombre_incidencia }}</td>
+        <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
+        <td>{{ i.territorial_creador.nombre|default:'N/A' }}</td>
+        <td class="action-buttons">
+          
+          <a href="{% url 'dir_ver_incidencia' i.id %}" class="btn btn-sm btn-info">Ver</a>
+          
+          {% if i.estado == 'Abierta' %}
+            <form action="{% url 'dir_derivar_incidencia' i.id %}" method="POST" style="display: inline-block;">
+                {% csrf_token %}
+                <select name="cuadrilla_id" style="padding: 2px;" required>
+                    <option value="">Derivar a Cuadrilla...</option>
+                    {% for c in cuadrillas %} 
+                    <option value="{{ c.id }}">{{ c.nombre }} ({{ c.departamento_asociado.nombre_departamento }})</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success btn-sm" style="padding: 2px 5px; font-size: 12px;">Derivar</button>
+            </form>
+          {% endif %}
+
+          {% if i.estado == 'Abierta' %}
+          <a href="{% url 'dir_rechazar_incidencia' i.id %}" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas rechazar esta incidencia?');">
+            Rechazar
+          </a>
+          {% endif %}
+
+          {% if i.estado == 'Abierta' or i.estado == 'Rechazada' %}
+          <a href="{% url 'dir_editar_incidencia' i.id %}" class="btn btn-sm btn-warning">Editar</a>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5">No hay incidencias con este estado.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'dashboard_direccion' %}" class="ver-todo" style="margin-top: 20px;">
+    ⬅️ Volver al Dashboard
+</a>
 {% endblock %}

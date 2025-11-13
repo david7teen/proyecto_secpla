@@ -20,7 +20,8 @@ def vista_territorial(request):
     usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
 
     incidencias = Incidencia.objects.filter(territorial_creador=usuario_activo)
-    incidencias_abiertas = incidencias.filter(estado='Abierta')[:5]  # Últimas 5
+    
+    incidencias_recientes = incidencias.order_by('-fecha_creacion')[:5] 
 
     encuestas = Encuesta.objects.filter(estado='Abierta').order_by('-id')[:5]
 
@@ -38,8 +39,7 @@ def vista_territorial(request):
         'usuario_activo': usuario_activo,
         'resumen': resumen,
         'encuestas': encuestas,
-        'incidencias': incidencias,  # ← AGREGAR ESTA LÍNEA
-        'incidencias_abiertas': incidencias_abiertas
+        'incidencias': incidencias_recientes,
     })
 
 def obtener_departamentos_por_direccion(request, direccion_id):
@@ -67,8 +67,7 @@ def responder_preguntas_encuesta(request):
             prioridad = request.POST.get('prioridad')
             datos_vecino = request.POST.get('datos_vecino')
             incidencia_id = request.POST.get('tipo_incidencia')
-            pregunta_ids = request.POST.getlist('preguntas[]')  # ✅ lista de IDs
-
+            pregunta_ids = request.POST.getlist('preguntas[]')
             if not all([nombre, prioridad, incidencia_id]):
                 raise ValueError("Faltan campos obligatorios.")
 
@@ -89,7 +88,7 @@ def responder_preguntas_encuesta(request):
                 categoria='Vigente'
             )
 
-            encuesta.preguntas.set(preguntas_seleccionadas)  # ✅ asigna todas las preguntas
+            encuesta.preguntas.set(preguntas_seleccionadas)
 
             return redirect('vista_secpla')
 
@@ -115,7 +114,6 @@ def derivar_encuesta(request, id):
     if encuesta.estado != 'Abierta':
         return redirect('dashboard_territorial')
     
-    # Validar que las preguntas estén respondidas (si aplica)
     encuesta.estado = 'Derivada'
     encuesta.save()
     return redirect('dashboard_territorial')
@@ -252,7 +250,6 @@ def crear_incidencia(request):
             datos_vecino = request.POST.get('datos_vecino')
             imagen = request.FILES.get('imagen')
 
-            # Validaciones básicas
             if not all([nombre_incidencia, descripcion, direccion_id, departamento_id]):
                 messages.error(request, 'Por favor complete todos los campos obligatorios.')
                 return render(request, 'territorial/crear_incidencia.html', {
@@ -266,7 +263,6 @@ def crear_incidencia(request):
             departamento = Departamento.objects.get(id=departamento_id)
             tipo_incidencia = TipoIncidencia.objects.get(id=tipo_incidencia_id) if tipo_incidencia_id else None
 
-            # Crear la incidencia
             incidencia = Incidencia.objects.create(
                 nombre_incidencia=nombre_incidencia,
                 descripcion=descripcion,
@@ -286,7 +282,6 @@ def crear_incidencia(request):
 
         except Exception as e:
             messages.error(request, f'Error al crear la incidencia: {str(e)}')
-            # En caso de error, volver a cargar los departamentos
             departamentos = Departamento.objects.filter(estado='Activo')
             return render(request, 'territorial/crear_incidencia.html', {
                 'usuario_activo': usuario_activo,
@@ -295,7 +290,6 @@ def crear_incidencia(request):
                 'tipos_incidencia': tipos_incidencia,
             })
 
-    # Para GET request - cargar todos los departamentos inicialmente
     departamentos = Departamento.objects.filter(estado='Activo')
 
     return render(request, 'territorial/crear_incidencia.html', {
@@ -313,7 +307,6 @@ def editar_incidencia(request, incidencia_id):
     usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
     incidencia = get_object_or_404(Incidencia, id=incidencia_id, territorial_creador=usuario_activo)
 
-    # Solo permitir edición si está en estado Abierta o Rechazada
     if incidencia.estado not in ['Abierta', 'Rechazada']:
         messages.error(request, 'Solo puede editar incidencias en estado Abierta o Rechazada.')
         return redirect('dashboard_territorial')
@@ -342,7 +335,6 @@ def editar_incidencia(request, incidencia_id):
             if tipo_incidencia_id:
                 incidencia.tipo_incidencia = TipoIncidencia.objects.get(id=tipo_incidencia_id)
 
-            # Si estaba rechazada, cambiar a Abierta
             if incidencia.estado == 'Rechazada':
                 incidencia.estado = 'Abierta'
 
@@ -353,7 +345,6 @@ def editar_incidencia(request, incidencia_id):
         except Exception as e:
             messages.error(request, f'Error al actualizar la incidencia: {str(e)}')
 
-    # Obtener departamentos para la dirección actual
     departamentos = Departamento.objects.filter(
         direccion_departamento=incidencia.direccion_incidencia, 
         estado='Activo'
@@ -375,7 +366,6 @@ def eliminar_incidencia(request, incidencia_id):
     usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
     incidencia = get_object_or_404(Incidencia, id=incidencia_id, territorial_creador=usuario_activo)
 
-    # Solo permitir eliminación si está en estado Abierta
     if incidencia.estado != 'Abierta':
         messages.error(request, 'Solo puede eliminar incidencias en estado Abierta.')
         return redirect('dashboard_territorial')

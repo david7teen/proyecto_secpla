@@ -1,12 +1,12 @@
-{% extends 'base_departamento.html' %} 
+{% extends 'departamento/base_departamento.html' %} 
 {% block title %}Dashboard Departamento{% endblock %}
 
 {% block content %}
 <div class="dashboard-header">
   <h1>Bienvenido/a, {{ request.session.usuario_activo.nombre }} {{ request.session.usuario_activo.apellido }}</h1>
-  <h3>Departamento: {{ usuario_activo.direccion }}</h3>
+  
   {% if error %}
-      <div class="alert alert-danger">{{ error }}</div>
+      <h3 class="advertencia" style="color: #ffc107;">{{ error }}</h3>
   {% elif departamento %}
       <h3>Departamento: {{ departamento.nombre_departamento }}</h3>
   {% endif %}
@@ -22,17 +22,4 @@
   </div>
 </div>
 
-<div class="section-container">
-  <h2>Acceso a listados por estado</h2>
-  <div class="form-actions">
-    <a href="{% url 'ver_pendientes_departamento' %}" class="btn btn-primary">Ver Pendientes</a>
-    <a href="{% url 'ver_derivadas_departamento' %}" class="btn btn-primary">Ver Derivadas</a>
-    <a href="{% url 'ver_rechazadas_departamento' %}" class="btn btn-primary">Ver Rechazadas</a>
-    <a href="{% url 'ver_finalizadas_departamento' %}" class="btn btn-primary">Ver Finalizadas</a>
-  </div>
-</div>
-
-<div class="form-actions">
-  <a href="/" class="btn btn-secondary">Volver al inicio</a>
-</div>
 {% endblock %}

@@ -1,15 +1,9 @@
-{% extends 'base_cuadrilla.html' %}
+{% extends 'cuadrilla/base_cuadrilla.html' %}
 {% block title %}Dashboard Cuadrilla{% endblock %}
-{% block menu %}
-  <a href="/cuadrilla/incidencias/activas/">Incidencias en curso</a>
-  <a href="/cuadrilla/incidencias/finalizadas/">Incidencias finalizadas</a>
-  <a href="/">Inicio</a>
-  <a href="/logout/">Cerrar sesión</a>
-{% endblock %}
 
 {% block content %}
 <div class="dashboard-header">
-  <h1>Bienvenido/a, {{ request.session.usuario_activo.nombre }} {{ request.session.usuario_activo.apellido }}
+  <h1>Bienvenido/a, {{ request.session.usuario_activo.nombre }} {{ request.session.usuario_activo.apellido }}</h1>
   <h3>Perfil: Cuadrilla</h3>
 </div>
 
@@ -26,7 +20,7 @@
 <div class="section-container">
   <div class="section-header">
     <h2>Incidencias Pendientes</h2>
-    <a href="/cuadrilla/incidencias/pendientes/" class="btn btn-primary">Ver todas</a>
+    <a href="{% url 'cuadrilla_incidencias_pendientes' %}" class="btn btn-primary">Ver todas</a>
   </div>
 
   <div class="table-responsive">
@@ -50,8 +44,8 @@
             <td>{{ i.direccion_incidencia.nombre_direccion }}</td>
             <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
             <td class="action-buttons">
-              <a href="/cuadrilla/incidencias/responder/{{ i.id }}/" class="btn btn-sm btn-primary">Trabajar</a>
-              <a href="/cuadrilla/incidencias/rechazar/{{ i.id }}/" class="btn btn-sm btn-danger">Rechazar</a>
+              <a href="{% url 'cuadrilla_responder_incidencia' i.id %}" class="btn btn-sm btn-primary">Trabajar</a>
+              <a href="{% url 'cuadrilla_rechazar_incidencia' i.id %}" class="btn btn-sm btn-danger">Rechazar</a>
             </td>
           </tr>
         {% empty %}
@@ -66,7 +60,4 @@
   </div>
 </div>
 
-<div class="form-actions">
-  <a href="/" class="btn btn-secondary">Volver al inicio</a>
-</div>
 {% endblock %}

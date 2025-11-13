@@ -276,21 +276,26 @@ h1, h2, h3 {
 }
 
 .main-content {
-  margin-left: 270px;
-  padding: 20px;
+  padding: 2rem;
+  padding-left: 65px;
+  transition: margin-left 0.3s ease-in-out;
+  margin-left: 0; 
   flex: 1;
 }
 
 .menu-toggle {
   position: fixed;
-  top: 15px;
+  top: 1px;
   left: 1px;
   z-index: 1001;
-  background: none;
+  background: #1e3a5f;
   border: none;
   font-size: 28px;
   color: white;
   cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: all 0.3s ease-in-out;
 }
 
 .formulario-departamento,
@@ -587,10 +592,6 @@ h1, h2, h3 {
 }
 
 
-/* --- PEGA ESTO EN TU static/css/compiled.css --- */
-/* --- REEMPLAZA LAS REGLAS ANTIGUAS .sidebar, .main-content, y .menu-toggle --- */
-
-/* SOLUCIÓN 2: Oculto por defecto fuera de la pantalla */
 .sidebar {
   width: 250px;
   background-color: #1e3a5f;
@@ -606,25 +607,23 @@ h1, h2, h3 {
   transition: transform 0.3s ease-in-out;
 }
 
-/* SOLUCIÓN 1: Mover el título H2 hacia abajo */
 .sidebar h2 {
-  margin-top: 60px; /* Espacio para el botón de menú */
+  margin-top: 60px;
   margin-bottom: 10px;
 }
 
-/* SOLUCIÓN 2: El contenido principal ocupa el 100% por defecto */
 .main-content {
   padding: 20px;
   transition: margin-left 0.3s ease-in-out;
-  margin-left: 0; /* Ancho completo por defecto */
+  margin-left: 0
 }
 
 .menu-toggle {
   position: fixed;
   top: 15px;
-  left: 15px; /* Espacio desde el borde */
+  left: 15px;
   z-index: 1001;
-  background: #1e3a5f; /* Fondo para que se vea */
+  background: #1e3a5f;
   border: none;
   font-size: 28px;
   color: white;
@@ -634,16 +633,16 @@ h1, h2, h3 {
   transition: left 0.3s ease-in-out;
 }
 
-/* --- SOLUCIÓN 2: Lógica de "sidebar activo" --- */
-/* Cuando el body tiene esta clase... */
+/* --- LÓGICA DE MENÚ ACTIVO --- */
 body.sidebar-active .sidebar {
-  transform: translateX(0); /* Muestra el sidebar */
+  transform: translateX(0);
 }
 
 body.sidebar-active .main-content {
-  margin-left: 250px; /* Empuja el contenido (ancho del sidebar) */
+  margin-left: 250px;
 }
 
 body.sidebar-active .menu-toggle {
-  left: 270px; /* Mueve el botón de menú junto con el sidebar */
+  left: 230px; 
+  opacity: 1;
 }

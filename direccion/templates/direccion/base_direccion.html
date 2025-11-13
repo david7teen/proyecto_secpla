@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Perfil Dirección{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/compiled.css' %}">
+  {% block extra_styles %}{% endblock %}
+</head>
+<body class="sidebar-active"> <button id="menu-toggle" class="menu-toggle">☰</button>
+
+<div class="sidebar" id="sidebar-menu">
+  <h2>Menú Dirección</h2>
+  
+  <ul class="nav-menu">
+    <li>
+      <a href="{% url 'dashboard_direccion' %}" class="nav-link">Inicio</a>
+    </li>
+    
+    <li>
+      <a href="#" class="nav-link has-submenu">Incidencias <span class="toggle-icon">▾</span></a>
+      <ul class="sub-menu" style="display: block;"> <li><a href="{% url 'dir_incidencias_pendientes' %}">Ver Pendientes (Abiertas)</a></li>
+        <li><a href="{% url 'dir_incidencias_derivadas' %}">Ver Derivadas</a></li>
+        <li><a href="{% url 'dir_incidencias_rechazadas' %}">Ver Rechazadas</a></li>
+        <li><a href="{% url 'dir_incidencias_finalizadas' %}">Ver Finalizadas</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="/" class="nav-link logout-link">Cerrar sesión</a>
+    </li>
+  </ul>
+</div>
+<div class="main-content">
+  {% block content %}
+  {% endblock %}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    
+    const toggleButton = document.getElementById('menu-toggle');
+    const body = document.body;
+
+    toggleButton.addEventListener('click', function () {
+      body.classList.toggle('sidebar-active');
+    });
+
+    const submenuLinks = document.querySelectorAll('.has-submenu');
+
+    submenuLinks.forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const subMenu = this.nextElementSibling;
+        const icon = this.querySelector('.toggle-icon');
+
+        if (subMenu.style.display === 'block') {
+          subMenu.style.display = 'none';
+          if(icon) icon.style.transform = 'rotate(0deg)';
+        } else {
+          subMenu.style.display = 'block';
+          if(icon) icon.style.transform = 'rotate(180deg)';
+        }
+      });
+    });
+
+  });
+</script>
+</body>
+</html>

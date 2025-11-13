@@ -1,16 +1,20 @@
+# --- REEMPLAZA el contenido de direccion/views.py ---
+
 from django.shortcuts import render, redirect, get_object_or_404
 from SECPLA.models import Usuario
 from incidencia.models import Incidencia
 from direccion.models import Direccion
+from departamento.models import Departamento # Importamos Departamento
 from django.contrib import messages
+from django.utils import timezone # Importamos timezone
 
 def vista_direccion(request):
     usuario_activo_data = request.session.get('usuario_activo')
     if not usuario_activo_data or usuario_activo_data['perfil'] != 'Dirección':
-        return redirect('/login/secpla/') # Ajusta a tu URL de login
+        return redirect('/login/secpla/')
 
     usuario_activo = get_object_or_404(Usuario, id=usuario_activo_data['id'])
-    direccion = usuario_activo.direccion_asociada # (Campo del Prerrequisito)
+    direccion = usuario_activo.direccion_asociada
 
     if not direccion:
         return render(request, 'direccion/dashboard_direccion.html', {
@@ -37,8 +41,44 @@ def vista_direccion(request):
         'resumen': resumen
     })
 
+# --- VISTA DE LISTADO 'PENDIENTES' (MODIFICADA) ---
+# La separamos de la función genérica para poder agregar las cuadrillas
+
+def incidencias_pendientes(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Dirección':
+        return redirect('/login/secpla/')
+        
+    usuario_activo = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    direccion = usuario_activo.direccion_asociada
+
+    if not direccion:
+        messages.error(request, 'No tienes una dirección asociada.')
+        return redirect('dashboard_direccion')
+
+    # 1. Incidencias 'Abiertas' de esta Dirección
+    incidencias_list = Incidencia.objects.filter(
+        direccion_incidencia=direccion,
+        estado='Abierta'
+    ).order_by('-fecha_creacion')
+    
+    # 2. Cuadrillas que pertenecen a los Departamentos de esta Dirección
+    cuadrillas = Usuario.objects.filter(
+        perfil='Cuadrilla',
+        estado='Activo',
+        departamento_asociado__direccion_departamento=direccion
+    )
+    
+    return render(request, 'direccion/listado_incidencias.html', {
+        'usuario_activo': usuario_activo,
+        'incidencias': incidencias_list,
+        'estado_titulo': 'Abierta',
+        'cuadrillas': cuadrillas  # <-- Pasamos las cuadrillas al template
+    })
+
+# --- VISTAS DE LISTADO (Genéricas) ---
+
 def get_incidencias_por_estado(request, estado, template_name):
-    """Función auxiliar para evitar repetir código en los listados"""
     usuario_activo_data = request.session.get('usuario_activo')
     if not usuario_activo_data or usuario_activo_data['perfil'] != 'Dirección':
         return redirect('/login/secpla/')
@@ -60,9 +100,6 @@ def get_incidencias_por_estado(request, estado, template_name):
         'incidencias': incidencias_list,
         'estado_titulo': estado
     })
-
-def incidencias_pendientes(request):
-    return get_incidencias_por_estado(request, 'Abierta', 'direccion/listado_incidencias.html')
 
 def incidencias_derivadas(request):
     return get_incidencias_por_estado(request, 'Derivada', 'direccion/listado_incidencias.html')
@@ -87,4 +124,111 @@ def ver_incidencia_direccion(request, incidencia_id):
     return render(request, 'direccion/ver_incidencia.html', {
         'usuario_activo': usuario_activo,
         'inc': incidencia
+    })
+
+# --- VISTA NUEVA: DERIVAR INCIDENCIA ---
+def derivar_incidencia_direccion(request, incidencia_id):
+    if request.method != 'POST':
+        return redirect('dir_incidencias_pendientes')
+
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Dirección':
+        messages.error(request, 'No tienes permisos.')
+        return redirect('/login/secpla/')
+         
+    usuario_activo = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+    
+    # Seguridad: Validar que la incidencia pertenezca a la DIRECCIÓN del usuario
+    if incidencia.direccion_incidencia != usuario_activo.direccion_asociada:
+        messages.error(request, 'No tienes permiso para derivar esta incidencia.')
+        return redirect('dir_incidencias_pendientes')
+        
+    cuadrilla_id = request.POST.get('cuadrilla_id')
+    
+    if not cuadrilla_id:
+        messages.error(request, 'Debes seleccionar una cuadrilla.')
+        return redirect('dir_incidencias_pendientes')
+
+    try:
+        # Validamos que la cuadrilla exista y pertenezca a un depto de esta dirección
+        cuadrilla_asignada = Usuario.objects.get(
+            id=cuadrilla_id, 
+            perfil='Cuadrilla', 
+            departamento_asociado__direccion_departamento=usuario_activo.direccion_asociada
+        )
+        
+        # Actualizamos la incidencia
+        incidencia.cuadrilla_asignada = cuadrilla_asignada
+        incidencia.estado = 'Derivada' # Cambiamos el estado
+        incidencia.fecha_derivacion = timezone.now() # Marcamos la fecha
+        incidencia.save()
+        
+        messages.success(request, f'Incidencia #{incidencia.id} derivada correctamente a {cuadrilla_asignada.nombre}.')
+        
+    except Usuario.DoesNotExist:
+        messages.error(request, 'La cuadrilla seleccionada no es válida o no pertenece a tu dirección.')
+    
+    return redirect('dir_incidencias_pendientes')
+
+
+# --- VISTAS DE RECHAZAR Y EDITAR (que ya tenías) ---
+def rechazar_incidencia_direccion(request, incidencia_id):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Dirección':
+        return redirect('/login/secpla/')
+
+    usuario_activo = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+    
+    if incidencia.direccion_incidencia != usuario_activo.direccion_asociada:
+        messages.error(request, 'No tienes permiso para esta acción.')
+        return redirect('dashboard_direccion')
+
+    incidencia.estado = 'Rechazada'
+    incidencia.save()
+    messages.warning(request, f'Incidencia #{incidencia.id} ha sido rechazada.')
+    return redirect('dir_incidencias_pendientes')
+
+
+def editar_incidencia_direccion(request, incidencia_id):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Dirección':
+        return redirect('/login/secpla/')
+        
+    usuario_activo = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+
+    if incidencia.direccion_incidencia != usuario_activo.direccion_asociada:
+        messages.error(request, 'No tienes permisos para editar esta incidencia.')
+        return redirect('dashboard_direccion')
+    
+    if request.method == 'POST':
+        try:
+            incidencia.nombre_incidencia = request.POST.get('nombre_incidencia')
+            incidencia.descripcion = request.POST.get('descripcion')
+            
+            departamento_id = request.POST.get('departamento_incidencia')
+            if departamento_id:
+                depto = Departamento.objects.get(id=departamento_id, direccion_departamento=usuario_activo.direccion_asociada)
+                incidencia.departamento_incidencia = depto
+            
+            if incidencia.estado == 'Rechazada':
+                incidencia.estado = 'Abierta' 
+
+            incidencia.save()
+            messages.success(request, 'Incidencia actualizada.')
+            return redirect('dashboard_direccion')
+
+        except Departamento.DoesNotExist:
+            messages.error(request, 'El departamento seleccionado no es válido o no pertenece a tu Dirección.')
+        except Exception as e:
+            messages.error(request, f'Ocurrió un error: {e}')
+    
+    departamentos = Departamento.objects.filter(estado='Activo', direccion_departamento=usuario_activo.direccion_asociada)
+
+    return render(request, 'direccion/editar_incidencia.html', {
+        'usuario_activo': usuario_activo,
+        'inc': incidencia,
+        'departamentos': departamentos,
     })

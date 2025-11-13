@@ -525,9 +525,7 @@ def ver_usuario_2(request, usuario_id):
     usuario = get_object_or_404(Usuario, id=usuario_id)
     return render(request, 'SECPLA/ver_usuario_2.html', {'usuario': usuario})
 
-# =================================================================
-# ==== INICIO DE LA MODIFICACIÓN ====
-# =================================================================
+
 def editar_usuario(request, usuario_id):
     if request.session.get('perfil') != 'SECPLA':
         return redirect('/login/secpla/')
@@ -540,35 +538,38 @@ def editar_usuario(request, usuario_id):
         usuario.correo = request.POST.get('correo')
         usuario.telefono = request.POST.get('telefono')
         usuario.perfil = request.POST.get('perfil')
+        direccion_id = request.POST.get('direccion_asociada')
+        if usuario.perfil == 'Dirección' and direccion_id:
+            try:
+                usuario.direccion_asociada = Direccion.objects.get(id=direccion_id)
+                usuario.departamento_asociado = None
+            except Direccion.DoesNotExist:
+                messages.error(request, 'La dirección seleccionada no es válida.')
         
-        # --- LÓGICA AÑADIDA ---
-        # Obtenemos el ID del departamento desde el formulario
         departamento_id = request.POST.get('departamento_asociado')
-        if departamento_id:
-            # Buscamos el objeto Departamento y lo asignamos
-            usuario.departamento_asociado = Departamento.objects.get(id=departamento_id)
-        else:
-            # Si no se selecciona ninguno (ej. "Ninguno"), lo dejamos en None
+        if usuario.perfil in ['Departamento', 'Cuadrilla'] and departamento_id:
+            try:
+                usuario.departamento_asociado = Departamento.objects.get(id=departamento_id)
+                usuario.direccion_asociada = None
+            except Departamento.DoesNotExist:
+                messages.error(request, 'El departamento seleccionado no es válido.')
+        
+        if usuario.perfil in ['SECPLA', 'Territorial']:
             usuario.departamento_asociado = None
-        # --- FIN DE LA LÓGICA AÑADIDA ---
+            usuario.direccion_asociada = None
 
         usuario.save()
-        return redirect('vista_secpla') # Redirige al dashboard de SECPLA
+        messages.success(request, 'Usuario actualizado correctamente.')
+        return redirect('ver_usuario')
 
-    # --- LÍNEA AÑADIDA ---
-    # Obtenemos todos los departamentos para mostrarlos en el <select>
+    direcciones = Direccion.objects.filter(estado='Activo')
     departamentos = Departamento.objects.filter(estado='Activo')
-    # ---------------------
 
-    # --- LÍNEA MODIFICADA ---
-    # Pasamos la lista de departamentos al template
     return render(request, 'SECPLA/editar_usuario.html', {
         'usuario': usuario,
-        'departamentos': departamentos  
+        'direcciones': direcciones,
+        'departamentos': departamentos,
     })
-# =================================================================
-# ==== FIN DE LA MODIFICACIÓN ====
-# =================================================================
 
 def eliminar_usuario(request, usuario_id):
     if request.session.get('perfil') != 'SECPLA':
@@ -1053,4 +1054,3 @@ def eliminar_tipo_incidencia(request, id):
         messages.error(request, f'Error al eliminar: No se puede eliminar si está en uso por una Encuesta o Incidencia. ({e})')
         
     return redirect('listar_tipos_incidencia')
-

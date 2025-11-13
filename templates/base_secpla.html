@@ -100,7 +100,7 @@
 
     submenuLinks.forEach(function(link) {
       link.addEventListener('click', function(e) {
-        e.preventDefault();
+        e.preventDefault(); 
         
         const subMenu = this.nextElementSibling;
         const icon = this.querySelector('.toggle-icon');
@@ -114,6 +114,7 @@
         }
       });
     });
+
   });
 </script>
 </body>

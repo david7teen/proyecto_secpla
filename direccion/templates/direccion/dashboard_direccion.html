@@ -1,11 +1,11 @@
-{% extends 'base_direccion.html' %} 
+{% extends 'direccion/base_direccion.html' %} 
 {% block title %}Dashboard Dirección{% endblock %}
 
 {% block content %}
 <div class="dashboard-header">
-  <h1>Bienvenido/a, {{ request.session.usuario_activo.nombre }} {{ request.session.usuario_activo.apellido }}
-  <h3>Perfil: {{ request.session.usuario_activo.perfil }}</h3></h1>
-	<!-- <h3>Dirección: {{ request.session.usuario_activo.nombre_direccion }}</h3> -->
+  <h1>Bienvenido/a, {{ request.session.usuario_activo.nombre }} {{ request.session.usuario_activo.apellido }}</h1>
+  <h3>Perfil: {{ request.session.usuario_activo.perfil }}</h3>
+  
   {% if error %}
       <div class="alert alert-danger">{{ error }}</div>
   {% elif direccion %}
@@ -20,16 +20,6 @@
     <div class="card">Derivadas: {{ resumen.derivadas }}</div>
     <div class="card">Rechazadas: {{ resumen.rechazadas }}</div>
     <div class="card">Finalizadas: {{ resumen.finalizadas }}</div>
-  </div>
-</div>
-
-<div class="section-container">
-  <h2>Acceso a listados por estado</h2>
-  <div class="form-actions">
-    <a href="{% url 'dir_incidencias_pendientes' %}" class="btn btn-primary">Ver Pendientes (Abiertas)</a>
-    <a href="{% url 'dir_incidencias_derivadas' %}" class="btn btn-primary">Ver Derivadas</a>
-    <a href="{% url 'dir_incidencias_rechazadas' %}" class="btn btn-primary">Ver Rechazadas</a>
-    <a href="{% url 'dir_incidencias_finalizadas' %}" class="btn btn-primary">Ver Finalizadas</a>
   </div>
 </div>
 
@@ -73,7 +63,4 @@
   </div>
 </div>
 
-<div class="form-actions">
-  <a href="/" class="btn btn-secondary">Volver al inicio</a>
-</div>
 {% endblock %}

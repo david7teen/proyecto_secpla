@@ -8,24 +8,79 @@
   {% block extra_styles %}{% endblock %}
 </head>
 <body>
-<!-- Botón del menú -->
 <button id="menu-toggle" class="menu-toggle">☰</button>
 
 <div class="sidebar" id="sidebar-menu">
-  <h2></h2>
-  <a href="/perfil/secpla/">Inicio</a>
-  <a href="/secpla/secpla/crear_direccion/">Crear Dirección</a>
-  <a href="/secpla/secpla/crear_departamento/">Crear Departamento</a>
-  <!-- <a href="/secpla/secpla/crear_incidencia/">Crear Incidencia</a> -->
-  <a href="/secpla/secpla/crear_encuesta/">Crear Encuesta</a>
-  <a href="/secpla/crear_usuario/">Crear Usuario</a>
-  <a href="/secpla/secpla/ver_usuario/">Ver Usuarios</a>
-  <a href="{% url 'listar_encuestas' %}">Ver Encuestas</a>
-  <a href="{% url 'listar_incidencias' %}">Ver Incidencias</a>
-  <a href="{% url 'listar_departamentos' %}">Ver Departamentos</a>
-  <a href="{% url 'listar_direcciones' %}">Ver Direcciones</a>
-  <a href="/secpla/ver_intentos_recuperacion/">Recuperaciones de contraseñas</a>
-  <a href="/" class="logout-link">Cerrar sesión</a>
+  <h2>Menú SECPLA</h2>
+  
+  <ul class="nav-menu">
+    <li>
+      <a href="{% url 'vista_secpla' %}" class="nav-link">Inicio</a>
+    </li>
+    
+    <li>
+      <a href="#" class="nav-link has-submenu">Usuarios <span class="toggle-icon">▾</span></a>
+      <ul class="sub-menu">
+        <li><a href="{% url 'crear_usuario' %}">Crear Usuario</a></li>
+        <li><a href="{% url 'ver_usuario' %}">Ver Usuarios</a></li>
+      </ul>
+    </li>
+    
+    <li>
+      <a href="#" class="nav-link has-submenu">Direcciones <span class="toggle-icon">▾</span></a>
+      <ul class="sub-menu">
+        <li><a href="{% url 'crear_direccion' %}">Crear Dirección</a></li>
+        <li><a href="{% url 'listar_direcciones' %}">Ver Direcciones</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="#" class="nav-link has-submenu">Departamentos <span class="toggle-icon">▾</span></a>
+      <ul class="sub-menu">
+        <li><a href="{% url 'crear_departamento' %}">Crear Departamento</a></li>
+        <li><a href="{% url 'listar_departamentos' %}">Ver Departamentos</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="#" class="nav-link has-submenu">Cuadrillas <span class="toggle-icon">▾</span></a>
+      <ul class="sub-menu">
+        <li><a href="{% url 'crear_usuario' %}">Crear Cuadrilla</a></li>
+        <li><a href="{% url 'listar_cuadrillas' %}">Ver Cuadrillas</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="#" class="nav-link has-submenu">Tipo de incidencia <span class="toggle-icon">▾</span></a>
+      <ul class="sub-menu">
+        <li><a href="{% url 'crear_tipo_incidencia' %}">Crear Tipo</a></li>
+        <li><a href="{% url 'listar_tipos_incidencia' %}">Ver Tipos</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="#" class="nav-link has-submenu">Encuesta <span class="toggle-icon">▾</span></a>
+      <ul class="sub-menu">
+        <li><a href="{% url 'crear_encuesta' %}">Crear Encuesta</a></li>
+        <li><a href="{% url 'listar_encuestas' %}">Ver Encuestas</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="#" class="nav-link has-submenu">Incidencias <span class="toggle-icon">▾</span></a>
+      <ul class="sub-menu">
+        <li><a href="{% url 'listar_incidencias' %}">Ver Incidencias</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="{% url 'ver_intentos_recuperacion' %}" class="nav-link">Recuperar contraseña</a>
+    </li>
+
+    <li>
+      <a href="/" class="nav-link logout-link">Cerrar sesión</a>
+    </li>
+  </ul>
 </div>
 
 <div class="main-content">
@@ -36,14 +91,28 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const toggleButton = document.getElementById('menu-toggle');
-    const sidebar = document.getElementById('sidebar-menu');
+    const body = document.body;
 
     toggleButton.addEventListener('click', function () {
-      if (sidebar.style.left === '0px') {
-        sidebar.style.left = '-250px';
-      } else {
-        sidebar.style.left = '0px';
-      }
+      body.classList.toggle('sidebar-active');
+    });
+    const submenuLinks = document.querySelectorAll('.has-submenu');
+
+    submenuLinks.forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const subMenu = this.nextElementSibling;
+        const icon = this.querySelector('.toggle-icon');
+
+        if (subMenu.style.display === 'block') {
+          subMenu.style.display = 'none';
+          if(icon) icon.style.transform = 'rotate(0deg)';
+        } else {
+          subMenu.style.display = 'block';
+          if(icon) icon.style.transform = 'rotate(180deg)';
+        }
+      });
     });
   });
 </script>

@@ -1,21 +1,21 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
+from django.contrib import messages
+from django.db import IntegrityError
 from SECPLA.models import Usuario
 from incidencia.models import Incidencia 
 from direccion.models import Direccion
 from departamento.models import Departamento
-from django.http import JsonResponse
-from encuesta.models import Encuesta
-from territorial.models import Territorial
-from django.views.decorators.http import require_POST
-from encuesta.models import Pregunta
-from .models import RecuperacionIntento
-from django.utils import timezone
-from django.shortcuts import get_object_or_404
-from django.contrib import messages
 from tipo_incidencia.models import TipoIncidencia
-from django.db import IntegrityError
+from cuadrilla.models import Cuadrilla
+from encuesta.models import Encuesta, Pregunta
+from territorial.models import Territorial
+from .models import RecuperacionIntento
 
 
 redirecciones = {
@@ -102,12 +102,16 @@ def vista_secpla(request):
     territoriales = Territorial.objects.filter(estado='Activo').order_by('-id')[:3]
     encuestas = Encuesta.objects.all().order_by('-id')[:3]
     incidencias = Incidencia.objects.all().order_by('-id')[:3]
+    cuadrillas = Usuario.objects.filter(perfil='Cuadrilla').order_by('-id')[:3]
+    tipos_incidencia = TipoIncidencia.objects.all().order_by('-id')[:3]
 
     resumen = {
         'usuarios_activos': Usuario.objects.filter(estado='Activo').count(),
         'direcciones_creadas': Direccion.objects.filter(estado='Activo').count(),
         'departamentos_creados': Departamento.objects.filter(estado='Activo').count(),
         'territoriales': Territorial.objects.filter( estado='Activo').count(),
+        'cuadrillas_activas': Usuario.objects.filter(perfil='Cuadrilla', estado='Activo').count(),
+        'tipos_incidencia_creados': TipoIncidencia.objects.count(),
     }
 
     return render(request, 'SECPLA/dashboard_secpla.html', {
@@ -119,6 +123,8 @@ def vista_secpla(request):
         'resumen': resumen,
         'perfil':'SECPLA',
         'incidencias': incidencias,
+        'cuadrillas': cuadrillas,
+        'tipos_incidencia': tipos_incidencia,
     })
 
 def vista_direccion(request):
@@ -189,7 +195,18 @@ def crear_usuario(request):
         telefono = request.POST.get('telefono')
         perfil = request.POST.get('perfil')
         contraseña = request.POST.get('contraseña')
-
+        departamento_id = request.POST.get('departamento_asociado')
+        departamento = None
+        if departamento_id:
+            try:
+                departamento = Departamento.objects.get(id=departamento_id)
+            except Departamento.DoesNotExist:
+                messages.error(request, 'El departamento seleccionado no es válido.')
+                direcciones = Direccion.objects.filter(estado='Activo')
+                return render(request, 'SECPLA/crear_usuario.html', {
+                    'error': 'Departamento no válido',
+                    'direcciones': direcciones
+                })
         Usuario.objects.create(
             nombre=nombre,
             apellido=apellido,
@@ -197,11 +214,15 @@ def crear_usuario(request):
             telefono=telefono,
             perfil=perfil,
             contraseña=contraseña,
-            estado='Activo'
+            estado='Activo',
+            departamento_asociado=departamento,
         )
-        return redirect('/secpla/dashboard/')
-
-    return render(request, 'SECPLA/crear_usuario.html')
+        return redirect('ver_usuario')
+    
+    departamentos = Departamento.objects.filter(estado='Activo')
+    return render(request, 'SECPLA/crear_usuario.html', {
+        'departamentos': departamentos
+    })
 
 def dashboard_secpla(request):
     correo = request.session.get('correo')
@@ -364,7 +385,7 @@ def crear_encuesta(request):
     })
 
 @require_POST
-def crear_pregunta_ajax(request):
+def crear_pregunta(request):
     nombre = request.POST.get('nombre_pregunta', '').strip()
     if nombre:
         pregunta = Pregunta.objects.create(nombre_pregunta=nombre)
@@ -379,6 +400,14 @@ def crear_pregunta_desde_encuesta(request):
             return redirect('crear_encuesta')  # vuelve al formulario original
         return render(request, 'SECPLA/crear_pregunta_desde_encuesta.html', {'error': 'Campo vacío'})
     return render(request, 'SECPLA/crear_pregunta_desde_encuesta.html')
+
+@require_POST
+def crear_pregunta_ajax(request):
+    nombre = request.POST.get('nombre_pregunta', '').strip()
+    if nombre:
+        pregunta = Pregunta.objects.create(nombre_pregunta=nombre)
+        return JsonResponse({'id': pregunta.id, 'nombre': pregunta.nombre_pregunta})
+    return JsonResponse({'error': 'Nombre inválido'}, status=400)
 
 """"
 def crear_territorial(request):
@@ -901,6 +930,127 @@ def eliminar_usuario(request, usuario_id):
     messages.success(request, f"El usuario {nombre} ha sido eliminado correctamente.")
     return redirect('ver_usuario')
 
-@require_POST
-def crear_tipo_incidencia_ajax(request):
-    return redirect('/perfil/secpla/')
+
+
+# --- AGREGA ESTAS NUEVAS VISTAS AL FINAL DE SECPLA/views.py ---
+
+# --- Vistas para Módulo Cuadrillas ---
+
+def listar_cuadrillas(request):
+    if request.session.get('perfil') != 'SECPLA':
+        return redirect('/login/secpla/')
+    
+    # "Cuadrilla" es un Usuario con perfil 'Cuadrilla'
+    cuadrillas_list = Usuario.objects.filter(perfil='Cuadrilla').order_by('nombre')
+    
+    return render(request, 'SECPLA/listar_cuadrillas.html', {
+        'usuario_activo': request.session.get('usuario_activo'),
+        'cuadrillas': cuadrillas_list,
+    })
+
+# --- Vistas para Módulo Tipo de Incidencia ---
+
+def listar_tipos_incidencia(request):
+    if request.session.get('perfil') != 'SECPLA':
+        return redirect('/login/secpla/')
+    
+    tipos_list = TipoIncidencia.objects.all().order_by('nombre')
+    
+    return render(request, 'SECPLA/listar_tipos_incidencia.html', {
+        'usuario_activo': request.session.get('usuario_activo'),
+        'tipos_incidencia': tipos_list,
+    })
+
+def crear_tipo_incidencia(request):
+    if request.session.get('perfil') != 'SECPLA':
+        return redirect('/login/secpla/')
+    
+    direcciones = Direccion.objects.filter(estado='Activo')
+    
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+        direccion_id = request.POST.get('direccion')
+        departamento_id = request.POST.get('departamento')
+
+        try:
+            direccion = Direccion.objects.get(id=direccion_id)
+            departamento = Departamento.objects.get(id=departamento_id)
+            
+            TipoIncidencia.objects.create(
+                nombre=nombre,
+                descripcion=descripcion,
+                direccion=direccion,
+                departamento=departamento,
+                creado_por=Usuario.objects.get(id=request.session['usuario_activo']['id'])
+            )
+            messages.success(request, 'Tipo de Incidencia creado correctamente.')
+            return redirect('listar_tipos_incidencia')
+        except Exception as e:
+            messages.error(request, f'Error al crear: {e}')
+            
+    return render(request, 'SECPLA/crear_tipo_incidencia.html', {
+        'direcciones': direcciones,
+        'departamentos': Departamento.objects.none() # Se llena con JS
+    })
+
+def editar_tipo_incidencia(request, id):
+    if request.session.get('perfil') != 'SECPLA':
+        return redirect('/login/secpla/')
+        
+    tipo = get_object_or_404(TipoIncidencia, id=id)
+    direcciones = Direccion.objects.filter(estado='Activo')
+    departamentos = Departamento.objects.filter(direccion_departamento=tipo.direccion, estado='Activo')
+
+    if request.method == 'POST':
+        try:
+            tipo.nombre = request.POST.get('nombre')
+            tipo.descripcion = request.POST.get('descripcion')
+            tipo.direccion = Direccion.objects.get(id=request.POST.get('direccion'))
+            tipo.departamento = Departamento.objects.get(id=request.POST.get('departamento'))
+            tipo.save()
+            messages.success(request, 'Tipo de Incidencia actualizado.')
+            return redirect('listar_tipos_incidencia')
+        except Exception as e:
+            messages.error(request, f'Error al actualizar: {e}')
+
+    return render(request, 'SECPLA/editar_tipo_incidencia.html', {
+        'tipo': tipo,
+        'direcciones': direcciones,
+        'departamentos': departamentos
+    })
+
+def bloquear_tipo_incidencia(request, id):
+    if request.session.get('perfil') != 'SECPLA':
+        return redirect('/login/secpla/')
+    
+    tipo = get_object_or_404(TipoIncidencia, id=id)
+    # (Tu modelo TipoIncidencia no tiene 'estado', así que lo simulamos borrando)
+    # Si tuvieras campo 'estado', la lógica sería:
+    # tipo.estado = 'Inactivo'
+    # tipo.save()
+    tipo.delete()
+    messages.warning(request, f'Tipo de incidencia "{tipo.nombre}" eliminado.')
+    return redirect('listar_tipos_incidencia')
+
+def activar_tipo_incidencia(request, id):
+    # (Esta lógica solo aplica si tienes campo 'estado')
+    return redirect('listar_tipos_incidencia')
+
+def eliminar_tipo_incidencia(request, id):
+    """
+    Esta función ELIMINA el registro (no lo bloquea).
+    """
+    if request.session.get('perfil') != 'SECPLA':
+        return redirect('/login/secpla/')
+    
+    tipo = get_object_or_404(TipoIncidencia, id=id)
+    try:
+        nombre_tipo = tipo.nombre
+        tipo.delete()
+        messages.warning(request, f'Tipo de incidencia "{nombre_tipo}" ha sido ELIMINADO.')
+    except Exception as e:
+        messages.error(request, f'Error al eliminar: No se puede eliminar si está en uso por una Encuesta o Incidencia. ({e})')
+        
+    return redirect('listar_tipos_incidencia')
+

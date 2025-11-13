@@ -39,6 +39,15 @@ urlpatterns = [
     path('activar_departamento/<int:id>/', views.activar_departamento, name='activar_departamento'),
     path('listar_departamentos/', views.listar_departamentos, name='listar_departamentos'),
 
+    # ---------- CRUD CUADRILLAS ----------
+    path('cuadrillas/listar/', views.listar_cuadrillas, name='listar_cuadrillas'),
+
+    # ---------- CRUD TIPO DE INCIDENCIA ----------
+    path('tipos-incidencia/crear/', views.crear_tipo_incidencia, name='crear_tipo_incidencia'),
+    path('tipos-incidencia/listar/', views.listar_tipos_incidencia, name='listar_tipos_incidencia'),
+    path('tipos-incidencia/editar/<int:id>/', views.editar_tipo_incidencia, name='editar_tipo_incidencia'),
+    path('tipos-incidencia/eliminar/<int:id>/', views.eliminar_tipo_incidencia, name='eliminar_tipo_incidencia'),
+
     # ---------- CRUD INCIDENCIAS ----------
     path('listar_incidencias/', views.listar_incidencias, name='listar_incidencias'),
     path('incidencia/actualizar-estado/<int:incidencia_id>/', views.actualizar_estado_incidencia, name='actualizar_estado_incidencia'),
@@ -63,10 +72,8 @@ urlpatterns = [
     path('cambiar_contraseña/<int:usuario_id>/', views.cambiar_contraseña, name='cambiar_contraseña'),
 
     # ---------- APIs ----------
-    path('api/departamentos/', obtener_departamentos_por_direccion, name='api_departamentos'),
-    path('api/departamentos_por_direccion/<int:direccion_id>/', obtener_departamentos_por_direccion, name='departamentos_por_direccion'),
-    path('secpla/api/departamentos_por_direccion/<int:direccion_id>/', obtener_departamentos_por_direccion),
-    path('secpla/crear_tipo_incidencia_ajax/', views.crear_tipo_incidencia_ajax, name='crear_tipo_incidencia_ajax'),
+    path('api/departamentos_por_direccion/<int:direccion_id>/', views.obtener_departamentos_por_direccion, name='api_departamentos_por_direccion'),
+    
 
     # ---------- LOGOUT ----------
     path('logout/secpla/', views.salir_secpla, name='salir_secpla'),

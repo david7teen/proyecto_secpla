@@ -1,0 +1,55 @@
+{% extends 'base_secpla.html' %}
+{% block title %}Listado de Tipos de Incidencia{% endblock %}
+
+{% block content %}
+<div class="section-container">
+  <div class="section-header">
+    <h2>Listado de Tipos de Incidencia</h2>
+    <a href="{% url 'crear_tipo_incidencia' %}" class="btn btn-primary">Crear Tipo de Incidencia</a>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'warning' %}alert-warning{% else %}alert-danger{% endif %}">
+          {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Dirección</th>
+          <th>Departamento</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tipo in tipos_incidencia %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ tipo.nombre }}</td>
+            <td>{{ tipo.descripcion|default:"-" }}</td>
+            <td>{{ tipo.direccion.nombre_direccion }}</td>
+            <td>{{ tipo.departamento.nombre_departamento }}</td>
+            <td class="action-buttons">
+                <a href="{% url 'editar_tipo_incidencia' tipo.id %}" class="btn btn-sm btn-warning">Editar</a>
+                
+                <a href="{% url 'eliminar_tipo_incidencia' tipo.id %}" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas ELIMINAR este tipo de incidencia? Esta acción no se puede deshacer.');">
+                    Eliminar
+                </a>
+                </td>
+          </tr>
+        {% empty %}
+            <tr><td colspan="6">No hay tipos de incidencia registrados.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <a href="{% url 'vista_secpla' %}" class="ver-todo">⬅️ Volver al Dashboard</a>
+</div>
+{% endblock %}

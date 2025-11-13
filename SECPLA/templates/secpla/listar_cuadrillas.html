@@ -1,0 +1,44 @@
+{% extends 'base_secpla.html' %}
+{% block title %}Listado de Cuadrillas{% endblock %}
+
+{% block content %}
+<div class="section-container">
+  <div class="section-header">
+    <h2>Listado de Cuadrillas</h2>
+    <a href="{% url 'crear_usuario' %}" class="btn btn-primary">Crear Cuadrilla</a>
+  </div>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Nombre</th><th>Apellido</th><th>Correo</th><th>Teléfono</th><th>Perfil</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in cuadrillas %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ u.nombre }}</td>
+            <td>{{ u.apellido }}</td>
+            <td>{{ u.correo }}</td>
+            <td>{{ u.telefono }}</td>
+            <td>{{ u.perfil }}</td>
+            <td class="action-buttons">
+              <a href="{% url 'ver_usuario_2' u.id %}" class="btn btn-sm btn-info">Ver</a>
+              <a href="{% url 'editar_usuario' u.id %}" class="btn btn-sm btn-warning">Editar</a>
+              {% if u.estado == 'Activo' %}
+                <a href="{% url 'bloquear_usuario' u.id %}" class="btn btn-sm btn-danger">Bloquear</a>
+              {% else %}
+                <a href="{% url 'activar_usuario' u.id %}" class="btn btn-sm btn-success">Activar</a>  
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+            <tr><td colspan="7">No hay cuadrillas registradas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <a href="{% url 'vista_secpla' %}" class="ver-todo">⬅️ Volver al Dashboard</a>
+</div>
+{% endblock %}

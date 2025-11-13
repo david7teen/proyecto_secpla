@@ -1,61 +1,81 @@
 {% extends 'base_secpla.html' %}
-
-{% block title %}Crear nuevo usuario{% endblock %}
+{% block title %}Crear Nuevo Usuario{% endblock %}
 
 {% block content %}
-<div class="form-container">
-  <div class="formulario-departamento">
-    <h2>Crear nuevo usuario</h2>
+<div style="display: flex; justify-content: center; padding: 20px;">
+    <div class="usuario-detalle-card" style="width: 600px;">
+        <h2>Crear nuevo usuario</h2>
 
-    {% if error %}
-      <div class="alert alert-danger">{{ error }}</div>
-    {% endif %}
+        <form method="POST" class="form-edicion">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" name="nombre" id="nombre" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="apellido">Apellido:</label>
+                <input type="text" name="apellido" id="apellido" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="correo">Correo:</label>
+                <input type="email" name="correo" id="correo" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input type="text" name="telefono" id="telefono" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="id_perfil">Perfil:</label>
+                <select name="perfil" id="id_perfil" class="form-control" required>
+                    <option value="">Seleccione un perfil</option>
+                    <option value="SECPLA">SECPLA</option>
+                    <option value="Dirección">Dirección</option>
+                    <option value="Departamento">Departamento</option>
+                    <option value="Territorial">Territorial</option>
+                    <option value="Cuadrilla">Cuadrilla</option>
+                </select>
+            </div>
 
-    <form method="POST">
-      {% csrf_token %}
-
-      <div class="form-group">
-        <label>Nombre:</label>
-        <input type="text" name="nombre" required>
-      </div>
-
-      <div class="form-group">
-        <label>Apellido:</label>
-        <input type="text" name="apellido" required>
-      </div>
-
-      <div class="form-group">
-        <label>Correo:</label>
-        <input type="email" name="correo" required>
-      </div>
-
-      <div class="form-group">
-        <label>Teléfono:</label>
-        <input type="text" name="telefono" required>
-      </div>
-
-      <div class="form-group">
-        <label>Perfil:</label>
-        <select name="perfil" required>
-          <option value="">Seleccione un perfil</option>
-          <option value="SECPLA">SECPLA</option>
-          <option value="Dirección">Dirección</option>
-          <option value="Departamento">Departamento</option>
-          <option value="Territorial">Territorial</option>
-          <option value="Cuadrilla">Cuadrilla</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Contraseña:</label>
-        <input type="text" name="contraseña" required>
-      </div>
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Crear usuario</button>
-        <a href="/perfil/secpla/" class="btn btn-secondary">Cancelar</a>
-      </div>
-    </form>
-  </div>
+            <div class="form-group" id="departamento-group" style="display: none;">
+                <label for="departamento_asociado">Departamento asociado:</label>
+                <select name="departamento_asociado" id="id_departamento_asociado" class="form-control">
+                    <option value="">(Opcional) Asignar departamento</option>
+                    {% for dep in departamentos %}
+                        <option value="{{ dep.id }}">{{ dep.nombre_departamento }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="contraseña">Contraseña:</label>
+                <input type="password" name="contraseña" id="contraseña" class="form-control" required>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Crear usuario</button>
+                <a href="{% url 'ver_usuario' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const perfilSelect = document.querySelector('#id_perfil');
+    const deptoGroup = document.querySelector('#departamento-group');
+
+    perfilSelect.addEventListener('change', function() {
+        const perfil = this.value;
+        if (perfil === 'Departamento' || perfil === 'Cuadrilla') {
+            deptoGroup.style.display = 'block';
+        } else {
+            deptoGroup.style.display = 'none';
+        }
+    });
+});
+</script>
 {% endblock %}

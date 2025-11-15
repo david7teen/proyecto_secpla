@@ -53,9 +53,33 @@ h1, h2, h3 {
   border-radius: 5px;
   text-decoration: none;
   font-weight: bold;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: inherit;
 }
 
 .btn:hover {
+  background-color: #0056b3;
+}
+
+button.btn {
+  border: none;
+  outline: none;
+}
+
+button {
+  border: none;
+  outline: none;
+}
+
+.btn-secondary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-secondary:hover {
   background-color: #0056b3;
 }
 
@@ -233,12 +257,15 @@ h1, h2, h3 {
 }
 
 .form-edicion input,
+.form-edicion textarea,
 .form-edicion select {
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 15px;
+  font-family: inherit;
+  font-weight: normal;
 }
 
 .form-actions {
@@ -324,6 +351,9 @@ h1, h2, h3 {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: normal;
 }
 
 .form-actions {
@@ -462,8 +492,30 @@ h1, h2, h3 {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  width: 300px;
+  width: 400px;
   box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  max-width: 90%;
+}
+
+.modal form .form-group {
+  margin-bottom: 15px;
+}
+
+.modal form .form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.modal form .form-group input,
+.modal form .form-group select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .modal-actions {
@@ -645,4 +697,31 @@ body.sidebar-active .main-content {
 body.sidebar-active .menu-toggle {
   left: 230px; 
   opacity: 1;
+}
+
+/* Estilos para campos de datos del vecino */
+.datos-vecino-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.datos-vecino-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.datos-vecino-field label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.datos-vecino-field input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }

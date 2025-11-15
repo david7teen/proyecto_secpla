@@ -63,9 +63,9 @@ DATABASES = {
     "default": {
         'HOST':'localhost',
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": 'bddsecpla',
+        "NAME": 'bd_sitio_web',
         'USER': 'postgres',
-        'PASSWORD': 'quenosemeolvide',
+        'PASSWORD': '12345',
         'PORT': '5432',
     }
 }

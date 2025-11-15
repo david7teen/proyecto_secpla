@@ -3,7 +3,10 @@
 
 {% block content %}
 <div class="section-container">
-  <h2>Listado de Direcciones</h2>
+  <div class="section-header">
+    <h2>Listado de Direcciones</h2>
+    <a href="{% url 'crear_direccion' %}" class="btn btn-primary">Crear Dirección</a>
+  </div>
 
   <div class="table-responsive">
     <table class="user-table">
@@ -46,6 +49,8 @@
     </table>
   </div>
 
-  <a href="{% url 'vista_secpla' %}" class="btn btn-secondary">Volver al panel</a>
+  <div style="margin-top: 20px;">
+    <a href="{% url 'vista_secpla' %}" class="btn btn-secondary">Volver</a>
+  </div>
 </div>
 {% endblock %}

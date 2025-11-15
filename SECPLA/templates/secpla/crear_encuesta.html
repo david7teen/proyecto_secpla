@@ -2,7 +2,7 @@
 {% block title %}Crear nueva Encuesta{% endblock %}
 {% block content %}
 <div class="form-container">
-  <form method="POST" action="{% url 'crear_encuesta' %}" enctype="multipart/form-data" class="formulario-encuesta">
+  <form method="POST" action="{% url 'crear_encuesta' %}" enctype="multipart/form-data" class="formulario-encuesta" id="formEncuesta">
     <h2>Crear nueva Encuesta</h2>
     {% csrf_token %}
     {% if error %}
@@ -53,7 +53,7 @@
       </div>
       <div class="pregunta-actions">
         <button type="button" onclick="agregarCampoPregunta()" class="btn btn-sm btn-secondary">Agregar otra pregunta</button>
-        <a href="{% url 'crear_pregunta_desde_encuesta' %}" class="btn btn-sm btn-primary">Crear nueva pregunta</a>
+        <button type="button" onclick="abrirModalPregunta()" class="btn btn-sm btn-secondary">Crear nueva pregunta</button>
       </div>
     </div>
 
@@ -68,8 +68,22 @@
     </div>
 
     <div class="form-group">
-      <label for="datos_vecino">Datos del vecino (Nombre - Celular - Email):</label>
-      <input type="text" name="datos_vecino" id="datos_vecino" pattern=".+ - .+ - .+">
+      <label>Datos del vecino:</label>
+      <div class="datos-vecino-container">
+        <div class="datos-vecino-field">
+          <label for="vecino_nombre">Nombre</label>
+          <input type="text" name="vecino_nombre" id="vecino_nombre" placeholder="Nombre">
+        </div>
+        <div class="datos-vecino-field">
+          <label for="vecino_celular">Celular</label>
+          <input type="text" name="vecino_celular" id="vecino_celular" placeholder="Celular">
+        </div>
+        <div class="datos-vecino-field">
+          <label for="vecino_email">Email</label>
+          <input type="email" name="vecino_email" id="vecino_email" placeholder="Email">
+        </div>
+      </div>
+      <input type="hidden" name="datos_vecino" id="datos_vecino">
     </div>
 
     <div class="form-group">
@@ -84,55 +98,153 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Crear Encuesta</button>
+      <button type="submit" class="btn btn-secondary">Crear</button>
       <a href="/perfil/secpla/" class="btn btn-secondary">Cancelar</a>
     </div>
   </form>
 </div>
 
-<div id="modalTipo" class="modal">
-  <form id="formTipo" method="post" action="{% url 'crear_tipo_incidencia_ajax' %}">
+<div id="modalPregunta" class="modal" style="display: none;">
+  <form id="formPregunta" method="post" action="{% url 'crear_pregunta_ajax' %}">
     {% csrf_token %}
-    <label for="nombre_tipo">Nombre del nuevo tipo:</label>
-    <input type="text" name="nombre_tipo" id="nombre_tipo" required>
-
-    <label for="direccion_tipo">Dirección:</label>
-    <select name="direccion_tipo" id="direccion_tipo" required onchange="cargarDepartamentos()">
-      <option value="">Seleccione una dirección</option>
-      {% for d in direcciones %}
-        <option value="{{ d.id }}">{{ d.nombre_direccion }}</option>
-      {% endfor %}
-    </select>
-
-    <label for="departamento_tipo">Departamento:</label>
-    <select name="departamento_tipo" id="departamento_tipo" required disabled>
-      <option value="">Seleccione un departamento</option>
-    </select>
+    <label for="nombre_pregunta">Nombre de la pregunta:</label>
+    <input type="text" name="nombre_pregunta" id="nombre_pregunta" required>
     
     <div class="modal-actions">
+      <button type="submit" class="btn btn-secondary">Guardar</button>
+      <button type="button" onclick="cerrarModalPregunta()" class="btn btn-secondary">Cancelar</button>
+    </div>
+  </form>
+</div>
+
+<div id="modalTipo" class="modal" style="display: none;">
+  <form id="formTipo" method="post" action="{% url 'crear_tipo_incidencia_ajax' %}">
+    {% csrf_token %}
+    <h3 style="margin-top: 0; margin-bottom: 20px;">Crear Nuevo Tipo de Incidencia</h3>
+    
+    <div class="form-group">
+      <label for="nombre_tipo">Nombre:</label>
+      <input type="text" name="nombre_tipo" id="nombre_tipo" required>
+    </div>
+
+    <div class="form-group">
+      <label for="direccion_tipo">Dirección:</label>
+      <select name="direccion_tipo" id="direccion_tipo" required onchange="cargarDepartamentos()">
+        <option value="">Seleccione una dirección</option>
+        {% for d in direcciones %}
+          <option value="{{ d.id }}">{{ d.nombre_direccion }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="departamento_tipo">Departamento:</label>
+      <select name="departamento_tipo" id="departamento_tipo" required disabled>
+        <option value="">Seleccione un departamento</option>
+      </select>
+    </div>
+    
+    <div class="modal-actions">
+      <button type="submit" class="btn btn-secondary">Guardar</button>
       <button type="button" onclick="cerrarModalTipo()" class="btn btn-secondary">Cancelar</button>
-      <button type="submit" class="btn btn-primary">Guardar</button>
     </div>
   </form>
 </div>
 
 <script>
+// Función para actualizar el campo oculto datos_vecino
+function actualizarDatosVecino() {
+  const nombre = document.getElementById("vecino_nombre").value.trim();
+  const celular = document.getElementById("vecino_celular").value.trim();
+  const email = document.getElementById("vecino_email").value.trim();
+  const datosCombinados = `${nombre} - ${celular} - ${email}`;
+  document.getElementById("datos_vecino").value = datosCombinados;
+}
+
+// Actualizar datos_vecino cuando cambien los campos
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById("vecino_nombre").addEventListener('input', actualizarDatosVecino);
+  document.getElementById("vecino_celular").addEventListener('input', actualizarDatosVecino);
+  document.getElementById("vecino_email").addEventListener('input', actualizarDatosVecino);
+  
+  // Actualizar antes de enviar el formulario
+  document.getElementById("formEncuesta").addEventListener('submit', actualizarDatosVecino);
+});
+
+let preguntasDisponibles = [
+  {% for p in preguntas %}
+    {id: {{ p.id }}, nombre: "{{ p.nombre_pregunta|escapejs }}"}{% if not forloop.last %},{% endif %}
+  {% endfor %}
+];
+
 function agregarCampoPregunta() {
   const contenedor = document.getElementById("contenedorPreguntas");
   const nuevoBloque = document.createElement("div");
   nuevoBloque.classList.add("bloque-pregunta");
 
-  nuevoBloque.innerHTML = `
-    <select name="preguntas[]" required>
-      <option value="" disabled selected>Seleccione una pregunta</option>
-      {% for p in preguntas %}
-        <option value="{{ p.id }}">{{ p.nombre_pregunta }}</option>
-      {% endfor %}
-    </select>
-  `;
+  let optionsHTML = '<option value="" disabled selected>Seleccione una pregunta</option>';
+  preguntasDisponibles.forEach(p => {
+    optionsHTML += `<option value="${p.id}">${p.nombre}</option>`;
+  });
 
+  nuevoBloque.innerHTML = `<select name="preguntas[]">${optionsHTML}</select>`;
   contenedor.appendChild(nuevoBloque);
 }
+
+function abrirModalPregunta() {
+  document.getElementById("modalPregunta").style.display = "flex";
+}
+
+function cerrarModalPregunta() {
+  document.getElementById("modalPregunta").style.display = "none";
+  document.getElementById("nombre_pregunta").value = "";
+}
+
+// Manejar creación de pregunta vía AJAX
+document.getElementById("formPregunta").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const nombre = document.getElementById("nombre_pregunta").value.trim();
+
+  if (!nombre) {
+    alert("Debes ingresar el nombre de la pregunta.");
+    return;
+  }
+
+  const data = new FormData(form);
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  fetch(form.action, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": csrfToken
+    },
+    body: data
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.id) {
+      // Agregar la nueva pregunta a la lista disponible
+      preguntasDisponibles.push({id: data.id, nombre: data.nombre});
+      
+      // Actualizar todos los selects existentes
+      const selects = document.querySelectorAll('select[name="preguntas[]"]');
+      selects.forEach(select => {
+        const option = document.createElement("option");
+        option.value = data.id;
+        option.text = data.nombre;
+        option.selected = true;
+        select.appendChild(option);
+      });
+      
+      cerrarModalPregunta();
+      alert("Pregunta creada exitosamente");
+    } else if (data.error) {
+      alert(data.error);
+    }
+  })
+  .catch(() => alert("Error de conexión al crear la pregunta."));
+});
 
 function abrirModalTipo() {
   document.getElementById("modalTipo").style.display = "flex";

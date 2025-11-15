@@ -342,7 +342,14 @@ def crear_encuesta(request):
             audio = request.FILES.get('audio')
 
             prioridad = request.POST.get('prioridad')
+            # Combinar los campos de datos del vecino si vienen separados
+            vecino_nombre = request.POST.get('vecino_nombre', '').strip()
+            vecino_celular = request.POST.get('vecino_celular', '').strip()
+            vecino_email = request.POST.get('vecino_email', '').strip()
             datos_vecino = request.POST.get('datos_vecino')
+            # Si no viene el campo combinado pero vienen los separados, combinarlos
+            if not datos_vecino and (vecino_nombre or vecino_celular or vecino_email):
+                datos_vecino = f"{vecino_nombre} - {vecino_celular} - {vecino_email}"
             incidencia_id = request.POST.get('tipo_incidencia')
             pregunta_ids = request.POST.getlist('preguntas[]')  # ✅ lista de IDs
 

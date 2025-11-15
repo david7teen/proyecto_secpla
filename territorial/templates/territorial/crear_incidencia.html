@@ -24,7 +24,7 @@
 
       <div class="form-group">
         <label>Descripción *</label>
-        <textarea name="descripcion" rows="4" required></textarea>
+        <textarea name="descripcion" rows="4" required style="font-size:14px;">{{ descripcion|default_if_none:'' }}</textarea>
       </div>
 
       <div class="form-group">
@@ -72,8 +72,12 @@
       </div>
 
       <div class="form-group">
-        <label>Datos del Vecino (Nombre - Celular - Email)</label>
-        <input type="text" name="datos_vecino" placeholder="Ej: Juan Pérez - 912345678 - juan@email.com">
+        <label>Datos del Vecino</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input type="text" name="datos_vecino_nombre" placeholder="Nombre del vecino" style="flex:1; min-width:180px;">
+          <input type="text" name="datos_vecino_celular" placeholder="Celular" style="width:160px;">
+          <input type="email" name="datos_vecino_email" placeholder="Email" style="flex:1; min-width:180px;">
+        </div>
       </div>
 
       <div class="form-group">
@@ -82,7 +86,7 @@
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Crear Incidencia</button>
+        <button type="submit" class="btn btn-secondary" style="border:none; font-size:14px;">Crear</button>
         <a href="{% url 'dashboard_territorial' %}" class="btn btn-secondary">Cancelar</a>
       </div>
     </form>

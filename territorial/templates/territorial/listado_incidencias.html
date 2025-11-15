@@ -40,10 +40,9 @@
         {% endfor %}
       </tbody>
     </table>
-  </div>
-
-  <div class="form-actions">
-    <a href="{% url 'dashboard_territorial' %}" class="btn btn-secondary">Volver al Dashboard</a>
-  </div>
+    <a href="{% url 'dashboard_territorial' %}" 
+      class="btn btn-secondary"
+      style="margin-right:8px;margin-bottom:6px;">Volver</a>
+    </div>
 </div>
 {% endblock %}

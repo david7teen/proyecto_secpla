@@ -24,7 +24,7 @@
 
       <div class="form-group">
         <label>Descripción *</label>
-        <textarea name="descripcion" rows="4" required>{{ incidencia.descripcion }}</textarea>
+        <textarea name="descripcion" rows="4" required style="font-size:14px;">{{ incidencia.descripcion }}</textarea>
       </div>
 
       <div class="form-group">
@@ -78,8 +78,12 @@
       </div>
 
       <div class="form-group">
-        <label>Datos del Vecino (Nombre - Celular - Email)</label>
-        <input type="text" name="datos_vecino" value="{{ incidencia.datos_vecino|default_if_none:'' }}" placeholder="Ej: Juan Pérez - 912345678 - juan@email.com">
+        <label>Datos del Vecino</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input type="text" name="datos_vecino_nombre" value="{{ datos_vecino_nombre|default_if_none:'' }}" placeholder="Nombre del vecino" style="flex:1; min-width:180px;">
+          <input type="text" name="datos_vecino_celular" value="{{ datos_vecino_celular|default_if_none:'' }}" placeholder="Celular" style="width:160px;">
+          <input type="email" name="datos_vecino_email" value="{{ datos_vecino_email|default_if_none:'' }}" placeholder="Email" style="flex:1; min-width:180px;">
+        </div>
       </div>
 
       <div class="form-group">
@@ -109,7 +113,7 @@
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+  <button type="submit" class="btn btn-primary">Guardar Cambios</button>
         <a href="{% url 'dashboard_territorial' %}" class="btn btn-secondary">Cancelar</a>
       </div>
     </form>

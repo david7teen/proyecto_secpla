@@ -45,7 +45,7 @@
           </td>
           <td class="action-buttons">
             <a href="{% url 'ver_incidencia_departamento' incidencia.id %}" class="btn btn-sm btn-info">Ver</a>
-            <a href="{% url 'seguimiento_incidencia' incidencia.id %}" class="btn btn-sm btn-secondary">Seguimiento</a>
+            <a href="{% url 'ver_incidencia_departamento' incidencia.id %}" class="btn btn-sm btn-secondary">Seguimiento</a>
           </td>
         </tr>
         {% endfor %}
@@ -59,7 +59,7 @@
   {% endif %}
 
   <div class="form-actions">
-    <a href="{% url 'dashboard_departamento' %}" class="btn btn-secondary">Volver al Dashboard</a>
+    <a href="{% url 'vista_departamento' %}" class="btn btn-secondary">Volver</a>
   </div>
 </div>
 {% endblock %}

@@ -247,7 +247,14 @@ def crear_incidencia(request):
             tipo_incidencia_id = request.POST.get('tipo_incidencia')
             prioridad = request.POST.get('prioridad')
             ubicacion = request.POST.get('ubicacion')
-            datos_vecino = request.POST.get('datos_vecino')
+            # soporta campos separados para datos del vecino: nombre, celular, email
+            datos_vecino_nombre = request.POST.get('datos_vecino_nombre')
+            datos_vecino_celular = request.POST.get('datos_vecino_celular')
+            datos_vecino_email = request.POST.get('datos_vecino_email')
+            if datos_vecino_nombre or datos_vecino_celular or datos_vecino_email:
+                datos_vecino = ' - '.join(filter(None, [datos_vecino_nombre or '', datos_vecino_celular or '', datos_vecino_email or '']))
+            else:
+                datos_vecino = request.POST.get('datos_vecino')
             imagen = request.FILES.get('imagen')
 
             if not all([nombre_incidencia, descripcion, direccion_id, departamento_id]):
@@ -323,7 +330,14 @@ def editar_incidencia(request, incidencia_id):
             tipo_incidencia_id = request.POST.get('tipo_incidencia')
             incidencia.prioridad = request.POST.get('prioridad')
             incidencia.ubicacion = request.POST.get('ubicacion')
-            incidencia.datos_vecino = request.POST.get('datos_vecino')
+            # soportar edición con campos separados
+            datos_vecino_nombre = request.POST.get('datos_vecino_nombre')
+            datos_vecino_celular = request.POST.get('datos_vecino_celular')
+            datos_vecino_email = request.POST.get('datos_vecino_email')
+            if datos_vecino_nombre or datos_vecino_celular or datos_vecino_email:
+                incidencia.datos_vecino = ' - '.join(filter(None, [datos_vecino_nombre or '', datos_vecino_celular or '', datos_vecino_email or '']))
+            else:
+                incidencia.datos_vecino = request.POST.get('datos_vecino')
 
             if 'imagen' in request.FILES:
                 incidencia.imagen = request.FILES['imagen']
@@ -350,12 +364,26 @@ def editar_incidencia(request, incidencia_id):
         estado='Activo'
     )
 
+    # Intentar separar datos_vecino en nombre / celular / email para el formulario
+    datos_vecino_nombre = datos_vecino_celular = datos_vecino_email = ''
+    if incidencia.datos_vecino:
+        parts = [p.strip() for p in incidencia.datos_vecino.split(' - ')]
+        if len(parts) >= 1:
+            datos_vecino_nombre = parts[0]
+        if len(parts) >= 2:
+            datos_vecino_celular = parts[1]
+        if len(parts) >= 3:
+            datos_vecino_email = parts[2]
+
     return render(request, 'territorial/editar_incidencia.html', {
         'usuario_activo': usuario_activo,
         'incidencia': incidencia,
         'direcciones': direcciones,
         'departamentos': departamentos,
         'tipos_incidencia': tipos_incidencia,
+        'datos_vecino_nombre': datos_vecino_nombre,
+        'datos_vecino_celular': datos_vecino_celular,
+        'datos_vecino_email': datos_vecino_email,
     })
 
 def eliminar_incidencia(request, incidencia_id):

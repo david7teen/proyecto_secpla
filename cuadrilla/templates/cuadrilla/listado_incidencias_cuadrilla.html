@@ -31,7 +31,7 @@
                     <td>{{ inc.fecha_derivacion|date:"d/m/Y H:i"|default:inc.fecha_creacion|date:"d/m/Y H:i" }}</td>
                     
                     <td class="action-buttons">
-                        <a href="#" class="btn btn-sm btn-info">Ver</a>
+                        <a href="{% url 'cuadrilla_responder_incidencia' inc.id %}" class="btn btn-sm btn-info">Ver</a>
                         
                         {% if inc.estado == 'Derivada' %}
                             <a href="{% url 'cuadrilla_tomar_incidencia' inc.id %}" class="btn btn-sm btn-primary">Tomar</a>
@@ -54,5 +54,8 @@
             </tbody>
         </table>
     </div>
+            <div class="form-actions" style="margin-top:12px;">
+                <a href="{% url 'dashboard_cuadrilla' %}" class="btn btn-secondary">Volver</a>
+            </div>
 </div>
 {% endblock %}

@@ -40,7 +40,7 @@
     </div>
 
     <div class="usuario-acciones">
-        <a href="{% url 'dashboard_territorial' %}" class="btn btn-secondary">Volver al Dashboard</a>
+        <a href="{% url 'dashboard_territorial' %}" class="btn btn-secondary">Volver</a>
         {% if incidencia.estado == 'Abierta' or incidencia.estado == 'Rechazada' %}
             <a href="{% url 'editar_incidencia' incidencia.id %}" class="btn btn-warning">Editar</a>
         {% endif %}

@@ -10,15 +10,17 @@
   <div class="stats-header">
     <h3>Filtrar por estado:</h3>
     <div class="form-actions">
-      <a href="{% url 'listar_incidencias_territorial' %}" 
-         class="btn {% if not estado_filtro %}btn-primary{% else %}btn-secondary{% endif %}">
-         Todas ({{ incidencias.count }})
-      </a>
+    <a href="{% url 'listar_incidencias_territorial' %}" 
+      class="btn {% if not estado_filtro %}btn-primary{% else %}btn-secondary{% endif %}"
+      style="margin-right:8px;margin-bottom:6px;">
+      Todas ({{ incidencias.count }})
+    </a>
       {% for value, label in estado_choices %}
-      <a href="{% url 'listar_incidencias_territorial' %}?estado={{ value }}" 
-         class="btn {% if estado_filtro == value %}btn-primary{% else %}btn-secondary{% endif %}">
-         {{ label }}
-      </a>
+    <a href="{% url 'listar_incidencias_territorial' %}?estado={{ value }}" 
+      class="btn {% if estado_filtro == value %}btn-primary{% else %}btn-secondary{% endif %}"
+      style="margin-right:8px;margin-bottom:6px;">
+      {{ label }}
+    </a>
       {% endfor %}
     </div>
   </div>
@@ -80,7 +82,7 @@
   </div>
 
   <div class="form-actions">
-    <a href="{% url 'dashboard_territorial' %}" class="btn btn-secondary">Volver al Dashboard</a>
+    <a href="{% url 'dashboard_territorial' %}" class="btn btn-secondary">Volver</a>
   </div>
 </div>
 {% endblock %}

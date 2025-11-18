@@ -312,7 +312,7 @@ def editar_incidencia(request, incidencia_id):
         return redirect('/secpla/login/territorial/')
     
     usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
-    incidencia = get_object_or_404(Incidencia, id=incidencia_id, territorial_creador=usuario_activo)
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
 
     if incidencia.estado not in ['Abierta', 'Rechazada']:
         messages.error(request, 'Solo puede editar incidencias en estado Abierta o Rechazada.')

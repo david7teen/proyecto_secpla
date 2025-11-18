@@ -1,4 +1,4 @@
-{% extends 'departamento/base_departamento.html' %} 
+{% extends 'departamento/base_departamento.html' %}
 {% block title %}Dashboard Departamento{% endblock %}
 
 {% block content %}
@@ -19,6 +19,44 @@
     <div class="card">Derivadas: {{ resumen.derivadas }}</div>
     <div class="card">Rechazadas: {{ resumen.rechazadas }}</div>
     <div class="card">Finalizadas: {{ resumen.finalizadas }}</div>
+  </div>
+</div>
+
+<div class="section-container">
+  <div class="section-header">
+    <h2>Incidencias Pendientes Recientes</h2>
+    <a href="{% url 'ver_pendientes_departamento' %}" class="btn btn-primary">Ver Todas</a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Incidencia</th>
+          <th>Creador (Territorial)</th>
+          <th>Prioridad</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in incidencias %}
+          <tr>
+            <td>{{ i.id }}</td>
+            <td>{{ i.nombre_incidencia }}</td>
+            <td>{{ i.territorial_creador.nombre|default:'N/A' }}</td>
+            <td>{{ i.get_prioridad_display }}</td>
+            <td><span class="estado-pendiente">{{ i.estado }}</span></td>
+            <td class="action-buttons">
+              <a href="{% url 'ver_pendientes_departamento' %}" class="btn btn-sm btn-info">Ir a Pendientes</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6">No hay incidencias pendientes registradas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 

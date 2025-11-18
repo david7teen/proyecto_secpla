@@ -4,11 +4,14 @@ from home.urls import home_urlpatterns
 from django.conf import settings
 from django.conf.urls.static import static
 
+
 # Importar vistas principales de perfiles
 from SECPLA.views import (
-    vista_secpla, vista_direccion, vista_departamento,
+    vista_secpla,
     vista_territorial, vista_cuadrilla
 )
+from direccion.views import vista_direccion
+from departamento.views import vista_departamento
 
 urlpatterns = [
     # Página principal (home)

@@ -15,15 +15,39 @@ def vista_departamento(request):
 
     departamento_usuario = usuario_activo.departamento_asociado
 
+    # --- INICIO DEL ARREGLO ---
     if not departamento_usuario:
-        # Si el admin de SECPLA no te ha asignado un depto, mostramos un error
+        # Si no tiene depto, mostramos el error con datos vacíos
         return render(request, 'departamento/dashboard_departamento.html', {
             'usuario_activo': usuario_activo,
-            'resumen': {},
+            'departamento': None,
+            'resumen': {}, # Mandamos un resumen vacío
+            'incidencias': [], # Mandamos una lista vacía
             'error': 'Este usuario no tiene un departamento asociado.'
         })
+    
+    #filtro base: trae las incidencias de este depto
+    incidencias = Incidencia.objects.filter(departamento_incidencia=departamento_usuario)
 
-    # Filtrar incidencias de ESE departamento
+    #creamos resumen (contando desde el filtro base)
+    resumen = {
+        'pendientes': incidencias.filter(estado='Abierta').count(),
+        'derivadas': incidencias.filter(estado='Derivada').count(),
+        'rechazadas': incidencias.filter(estado='Rechazada').count(),
+        'finalizadas': incidencias.filter(estado='Finalizada').count(),
+    }
+
+    #creamos la lista de incidencias recientes (para la tabla)
+    incidencias_recientes = incidencias.filter(estado='Abierta').order_by('-fecha_creacion')[:5]
+
+    return render(request, 'departamento/dashboard_departamento.html', {
+        'usuario_activo': usuario_activo,
+        'departamento': departamento_usuario,
+        'resumen': resumen,
+        'incidencias': incidencias_recientes
+    })
+
+    # Filtrar incidencias de departamento
     incidencias = Incidencia.objects.filter(departamento_incidencia=departamento_usuario)
 
     resumen = {
@@ -163,12 +187,12 @@ def reporte_finalizadas(request):
     
     usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
     
-  
+
     departamento_usuario = usuario_activo.departamento_asociado
     if not departamento_usuario:
         messages.error(request, 'No tienes un departamento asociado.')
         return redirect('vista_departamento')
-  
+
     
     incidencias = Incidencia.objects.filter(
         departamento_incidencia=departamento_usuario,

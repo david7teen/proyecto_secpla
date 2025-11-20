@@ -112,6 +112,7 @@ def vista_secpla(request):
         'territoriales': Territorial.objects.filter( estado='Activo').count(),
         'cuadrillas_activas': Usuario.objects.filter(perfil='Cuadrilla', estado='Activo').count(),
         'tipos_incidencia_creados': TipoIncidencia.objects.count(),
+        'incidencias_totales': Incidencia.objects.count(),
     }
 
     return render(request, 'SECPLA/dashboard_secpla.html', {

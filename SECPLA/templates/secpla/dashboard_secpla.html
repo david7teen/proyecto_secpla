@@ -10,10 +10,10 @@
 </div>
 
 <div class="stats-container">
-  <div class="card">Total Usuarios: {{ usuarios|length }}</div>
-  <div class="card">Total Direcciones: {{ direcciones|length }}</div>
-  <div class="card">Total Departamentos: {{ departamentos|length }}</div>
-  <div class="card">Total Incidencias: {{ incidencias|length }}</div>
+  <div class="card">Total Usuarios: {{ resumen.usuarios_activos }}</div>
+  <div class="card">Total Direcciones: {{ resumen.direcciones_creadas }}</div>
+  <div class="card">Total Departamentos: {{ resumen.departamentos_creados }}</div>
+  <div class="card">Total Incidencias: {{ resumen.incidencias_totales }}</div>
 </div>
 
 <div class="section-container">

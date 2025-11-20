@@ -18,25 +18,24 @@
       <label>Descripción:</label>
       <textarea name="descripcion_incidente"></textarea>
     </div>
-
+    
     <div class="form-group">
-      <label>Ubicación:</label>
-      <input type="text" name="ubicacion" required>
+      <label for="tipo_incidencia">Tipo de incidencia:</label>
+      <select id="tipo_incidencia" name="tipo_incidencia" required>
+        <option value="">Seleccione una incidencia</option>
+        {% for i in incidencias %}
+            <option value="{{ i.id }}">{{ i.nombre }}</option>
+        {% endfor %}
+      </select>
+      <div class="pregunta-actions">
+        <button type="button" onclick="abrirModalTipo()" class="btn btn-sm btn-primary">Crear</button>
+      </div>
     </div>
-
+    
     <div class="form-group">
-      <label>Imagen:</label>
-      <input type="file" name="imagen">
-    </div>
-
-    <div class="form-group">
-      <label>Video:</label>
-      <input type="file" name="video">
-    </div>
-
-    <div class="form-group">
-      <label>Audio:</label>
-      <input type="file" name="audio">
+      <label for="ubicacion">Ubicación *</label>
+      <input type="text" name="ubicacion" id="ubicacion" required 
+           placeholder="Ej: Las Condes, Avenida Kennedy, #1234">
     </div>
 
     <div class="form-group">
@@ -52,13 +51,13 @@
         </div>
       </div>
       <div class="pregunta-actions">
-        <button type="button" onclick="agregarCampoPregunta()" class="btn btn-sm btn-secondary">Agregar otra pregunta</button>
-        <button type="button" onclick="abrirModalPregunta()" class="btn btn-sm btn-secondary">Crear nueva pregunta</button>
+        <button type="button" onclick="abrirModalPregunta()" class="btn btn-sm btn-secondary">Crear</button>
+        <button type="button" onclick="agregarCampoPregunta()" class="btn btn-sm btn-secondary">Agregar</button>
       </div>
     </div>
 
     <div class="form-group">
-      <label for="prioridad">Prioridad:</label>
+      <label for="prioridad">Prioridad</label>
       <select id="prioridad" name="prioridad" required>
         <option value="">Seleccione una opción</option>
         <option value="Alta">Alta</option>
@@ -68,18 +67,15 @@
     </div>
 
     <div class="form-group">
-      <label>Datos del vecino:</label>
+      <label>Datos del vecino</label>
       <div class="datos-vecino-container">
         <div class="datos-vecino-field">
-          <label for="vecino_nombre">Nombre</label>
           <input type="text" name="vecino_nombre" id="vecino_nombre" placeholder="Nombre">
         </div>
         <div class="datos-vecino-field">
-          <label for="vecino_celular">Celular</label>
           <input type="text" name="vecino_celular" id="vecino_celular" placeholder="Celular">
         </div>
         <div class="datos-vecino-field">
-          <label for="vecino_email">Email</label>
           <input type="email" name="vecino_email" id="vecino_email" placeholder="Email">
         </div>
       </div>
@@ -87,15 +83,24 @@
     </div>
 
     <div class="form-group">
-      <label for="tipo_incidencia">Tipo de incidencia:</label>
-      <select id="tipo_incidencia" name="tipo_incidencia" required>
-        <option value="">Seleccione una incidencia</option>
-        {% for i in incidencias %}
-          <option value="{{ i.id }}">{{ i.nombre }}</option>
-        {% endfor %}
-      </select>
-      <button type="button" onclick="abrirModalTipo()" class="btn btn-sm btn-primary">Crear nuevo tipo</button>
+      <label>Archivos adjuntos</label>
     </div>
+
+    <div style="margin-bottom: 10px;">
+      <label>Imagen:</label>
+      <input type="file" name="imagen" accept="image/*">
+    </div>
+      
+    <div style="margin-bottom: 10px;">
+      <label>Video:</label>
+      <input type="file" name="video" accept="video/*">
+    </div>
+    
+    <div style="margin-bottom: 10px;">
+      <label>Audio:</label>
+      <input type="file" name="audio" accept="audio/*">
+    </div>
+
 
     <div class="form-actions">
       <button type="submit" class="btn btn-secondary">Crear</button>
@@ -313,5 +318,53 @@ function cargarDepartamentos() {
       departamentoSelect.innerHTML = '<option value="">Error al cargar</option>';
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const ubicacionInput = document.getElementById('ubicacion');
+    const form = document.getElementById('formEncuesta');
+
+    function validarFormatoUbicacion(ubicacion) {
+        const partes = ubicacion.trim().split(',').map(p => p.trim());
+        if (partes.length !== 3) return false;
+        
+        const [comuna, calle, numero] = partes;
+        
+        return comuna.length > 0 && 
+               calle.length > 0 && 
+               numero.startsWith('#') && 
+               /^\d+$/.test(numero.slice(1));
+    }
+
+    function formatearUbicacion(ubicacion) {
+        return ubicacion.split(', ').map(parte => 
+            parte.replace(/\b\w/g, char => char.toUpperCase())
+        ).join(', ');
+    }
+
+    ubicacionInput.addEventListener('blur', function() {
+        const valor = this.value.trim();
+        if (valor && !validarFormatoUbicacion(valor)) {
+            alert('Formato incorrecto. Use: Comuna, Calle, #Número\n\nEjemplo: Las Condes, Avenida Kennedy, #1234');
+            this.focus();
+        } else if (valor) {
+            this.value = formatearUbicacion(valor);
+        }
+    });
+
+    form.addEventListener('submit', function(e) {
+        const ubicacion = ubicacionInput.value.trim();
+        
+        if (ubicacion && !validarFormatoUbicacion(ubicacion)) {
+            e.preventDefault();
+            alert('Formato de ubicación incorrecto\n\nUse: Comuna, Calle, #Número\nEjemplo: Las Condes, Avenida Kennedy, #1234');
+            ubicacionInput.focus();
+            return false;
+        }
+        
+        if (ubicacion) {
+            ubicacionInput.value = formatearUbicacion(ubicacion);
+        }
+    });
+});
 </script>
 {% endblock %}

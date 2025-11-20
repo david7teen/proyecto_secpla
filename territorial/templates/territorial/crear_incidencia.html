@@ -38,6 +38,12 @@
       </div>
 
       <div class="form-group">
+        <label for="ubicacion">Ubicación *</label>
+        <input type="text" name="ubicacion" id="ubicacion" required 
+             placeholder="Ej: Las Condes, Avenida Kennedy, #1234">
+      </div>
+
+      <div class="form-group">
         <label>Dirección *</label>
         <select id="direccion_incidencia" name="direccion_incidencia" required onchange="cargarDepartamentos()">
           <option value="">Seleccione una dirección</option>
@@ -67,22 +73,31 @@
       </div>
 
       <div class="form-group">
-        <label>Ubicación</label>
-        <input type="text" name="ubicacion" placeholder="Dirección exacta o referencia">
-      </div>
-
-      <div class="form-group">
         <label>Datos del Vecino</label>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input type="text" name="datos_vecino_nombre" placeholder="Nombre del vecino" style="flex:1; min-width:180px;">
+          <input type="text" name="datos_vecino_nombre" placeholder="Nombre" style="flex:1; min-width:180px;">
           <input type="text" name="datos_vecino_celular" placeholder="Celular" style="width:160px;">
           <input type="email" name="datos_vecino_email" placeholder="Email" style="flex:1; min-width:180px;">
         </div>
       </div>
-
+      
       <div class="form-group">
-        <label>Archivo adjunto (opcional)</label>
+        <label>Archivos adjuntos</label>
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label>Imagen:</label>
         <input type="file" name="imagen" accept="image/*">
+      </div>
+      
+      <div style="margin-bottom: 10px;">
+        <label>Video:</label>
+        <input type="file" name="video" accept="video/*">
+	  </div>
+    
+      <div style="margin-bottom: 10px;">
+        <label>Audio:</label>
+        <input type="file" name="audio" accept="audio/*">
       </div>
 
       <div class="form-actions">
@@ -94,6 +109,59 @@
 </div>
 
 <script>
+	
+document.addEventListener('DOMContentLoaded', function() {
+    const ubicacionInput = document.getElementById('ubicacion');
+    const form = document.querySelector('form');
+    
+    if (!ubicacionInput) return;
+
+    function validarFormatoUbicacion(ubicacion) {
+        if (!ubicacion.trim()) return true;
+        
+        const partes = ubicacion.trim().split(',').map(p => p.trim());
+        if (partes.length !== 3) return false;
+        
+        const [comuna, calle, numero] = partes;
+        
+        return comuna.length > 0 && 
+               calle.length > 0 && 
+               numero.startsWith('#') && 
+               /^\d+$/.test(numero.slice(1));
+    }
+
+    function formatearUbicacion(ubicacion) {
+        return ubicacion.split(', ').map(parte => 
+            parte.replace(/\b\w/g, char => char.toUpperCase())
+        ).join(', ');
+    }
+
+    ubicacionInput.addEventListener('blur', function() {
+        const valor = this.value.trim();
+        if (valor && !validarFormatoUbicacion(valor)) {
+            alert('Formato incorrecto. Use: Comuna, Calle, #Número\n\nEjemplo: Las Condes, Avenida Kennedy, #1234');
+            this.focus();
+        } else if (valor) {
+            this.value = formatearUbicacion(valor);
+        }
+    });
+
+    form.addEventListener('submit', function(e) {
+        const ubicacion = ubicacionInput.value.trim();
+        
+        if (ubicacion && !validarFormatoUbicacion(ubicacion)) {
+            e.preventDefault();
+            alert('Formato de ubicación incorrecto\n\nUse: Comuna, Calle, #Número\nEjemplo: Las Condes, Avenida Kennedy, #1234');
+            ubicacionInput.focus();
+            return false;
+        }
+        
+        if (ubicacion) {
+            ubicacionInput.value = formatearUbicacion(ubicacion);
+        }
+    });
+});	
+	
 function cargarDepartamentos() {
   const direccionId = document.getElementById('direccion_incidencia').value;
   const departamentoSelect = document.getElementById('departamento_incidencia');

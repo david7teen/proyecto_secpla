@@ -51,6 +51,8 @@ class Incidencia(models.Model):
 
     ubicacion = models.CharField(max_length=200, blank=True, null=True)
     imagen = models.ImageField(upload_to='incidencias/imagenes/', blank=True, null=True)
+    video = models.FileField(upload_to='incidencias/videos/', blank=True, null=True)
+    audio = models.FileField(upload_to='incidencias/audios/', blank=True, null=True)
     datos_vecino = models.TextField(blank=True, null=True)
 
     fecha_creacion = models.DateTimeField(auto_now_add=True)

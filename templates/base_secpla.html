@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="{% static 'css/compiled.css' %}">
   {% block extra_styles %}{% endblock %}
 </head>
-<body>
+<body class="sidebar-active"> 
 <button id="menu-toggle" class="menu-toggle">☰</button>
 
 <div class="sidebar" id="sidebar-menu">
@@ -20,55 +20,47 @@
     <li>
       <a href="#" class="nav-link has-submenu">Usuarios <span class="toggle-icon">▾</span></a>
       <ul class="sub-menu">
-        <li><a href="{% url 'crear_usuario' %}">Crear Usuario</a></li>
-        <li><a href="{% url 'ver_usuario' %}">Ver Usuarios</a></li>
+        <li><a href="{% url 'crear_usuario' %}">Crear</a></li>
+        <li><a href="{% url 'ver_usuario' %}">Ver todo</a></li>
       </ul>
     </li>
     
     <li>
       <a href="#" class="nav-link has-submenu">Direcciones <span class="toggle-icon">▾</span></a>
       <ul class="sub-menu">
-        <li><a href="{% url 'crear_direccion' %}">Crear Dirección</a></li>
-        <li><a href="{% url 'listar_direcciones' %}">Ver Direcciones</a></li>
+        <li><a href="{% url 'crear_direccion' %}">Crear</a></li>
+        <li><a href="{% url 'listar_direcciones' %}">Ver todo</a></li>
       </ul>
     </li>
 
     <li>
       <a href="#" class="nav-link has-submenu">Departamentos <span class="toggle-icon">▾</span></a>
       <ul class="sub-menu">
-        <li><a href="{% url 'crear_departamento' %}">Crear Departamento</a></li>
-        <li><a href="{% url 'listar_departamentos' %}">Ver Departamentos</a></li>
-      </ul>
-    </li>
-
-    <li>
-      <a href="#" class="nav-link has-submenu">Cuadrillas <span class="toggle-icon">▾</span></a>
-      <ul class="sub-menu">
-        <li><a href="{% url 'crear_usuario' %}">Crear Cuadrilla</a></li>
-        <li><a href="{% url 'listar_cuadrillas' %}">Ver Cuadrillas</a></li>
-      </ul>
-    </li>
-
-    <li>
-      <a href="#" class="nav-link has-submenu">Tipo de incidencia <span class="toggle-icon">▾</span></a>
-      <ul class="sub-menu">
-        <li><a href="{% url 'crear_tipo_incidencia' %}">Crear Tipo</a></li>
-        <li><a href="{% url 'listar_tipos_incidencia' %}">Ver Tipos</a></li>
+        <li><a href="{% url 'crear_departamento' %}">Crear</a></li>
+        <li><a href="{% url 'listar_departamentos' %}">Ver todo</a></li>
       </ul>
     </li>
 
     <li>
       <a href="#" class="nav-link has-submenu">Encuesta <span class="toggle-icon">▾</span></a>
       <ul class="sub-menu">
-        <li><a href="{% url 'crear_encuesta' %}">Crear Encuesta</a></li>
-        <li><a href="{% url 'listar_encuestas' %}">Ver Encuestas</a></li>
+        <li><a href="{% url 'crear_encuesta' %}">Crear</a></li>
+        <li><a href="{% url 'listar_encuestas' %}">Ver todo</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="#" class="nav-link has-submenu">Tipo de incidencia <span class="toggle-icon">▾</span></a>
+      <ul class="sub-menu">
+        <li><a href="{% url 'crear_tipo_incidencia' %}">Crear</a></li>
+        <li><a href="{% url 'listar_tipos_incidencia' %}">Ver todo</a></li>
       </ul>
     </li>
 
     <li>
       <a href="#" class="nav-link has-submenu">Incidencias <span class="toggle-icon">▾</span></a>
       <ul class="sub-menu">
-        <li><a href="{% url 'listar_incidencias' %}">Ver Incidencias</a></li>
+        <li><a href="{% url 'listar_incidencias' %}">Ver todo</a></li>
       </ul>
     </li>
 

@@ -16,7 +16,8 @@ from cuadrilla.models import Cuadrilla
 from encuesta.models import Encuesta, Pregunta
 from territorial.models import Territorial
 from .models import RecuperacionIntento
-
+import secrets
+import string
 
 redirecciones = {
     'secpla': 'SECPLA',
@@ -1022,3 +1023,78 @@ def eliminar_tipo_incidencia(request, id):
         messages.error(request, f'Error al eliminar: No se puede eliminar si está en uso por una Encuesta o Incidencia. ({e})')
         
     return redirect('listar_tipos_incidencia')
+
+
+def aprobar_recuperacion(request, intento_id):
+    if request.session.get('perfil') != 'SECPLA':
+        messages.error(request, 'No tienes permisos para esta acción.')
+        return redirect('/login/secpla/')
+    
+    intento = get_object_or_404(RecuperacionIntento, id=intento_id)
+    
+    if request.method == 'POST':
+        intento.estado = 'Aprobado'
+        intento.observacion = 'Solicitud aprobada por SECPLA - Esperando restablecimiento de contraseña'
+        intento.save()
+        
+        messages.success(request, f'Solicitud de {intento.correo} aprobada. Ahora puedes restablecer la contraseña.')
+    
+    return redirect('ver_intentos_recuperacion')
+
+def rechazar_recuperacion(request, intento_id):
+    if request.session.get('perfil') != 'SECPLA':
+        messages.error(request, 'No tienes permisos para esta acción.')
+        return redirect('/login/secpla/')
+    
+    intento = get_object_or_404(RecuperacionIntento, id=intento_id)
+    
+    if request.method == 'POST':
+        intento.estado = 'Rechazado'
+        intento.observacion = 'Solicitud rechazada por SECPLA'
+        intento.save()
+        
+        messages.warning(request, f'Solicitud de {intento.correo} rechazada.')
+    
+    return redirect('ver_intentos_recuperacion')
+
+def generar_contraseña_aleatoria(longitud=6):
+    caracteres = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(caracteres) for _ in range(longitud))
+
+def cambiar_contraseña_desde_recuperacion(request, intento_id):
+    if request.session.get('perfil') != 'SECPLA':
+        messages.error(request, 'No tienes permisos para esta acción.')
+        return redirect('/login/secpla/')
+    
+    intento = get_object_or_404(RecuperacionIntento, id=intento_id)
+    
+    if intento.estado != 'Aprobado':
+        messages.error(request, 'Esta solicitud debe ser aprobada primero antes de restablecer la contraseña.')
+        return redirect('ver_intentos_recuperacion')
+    
+    try:
+        usuario = Usuario.objects.get(correo=intento.correo)
+    except Usuario.DoesNotExist:
+        messages.error(request, f'Usuario con correo {intento.correo} no encontrado.')
+        return redirect('ver_intentos_recuperacion')
+    except Usuario.MultipleObjectsReturned:
+        usuario = Usuario.objects.filter(correo=intento.correo).first()
+        messages.warning(request, f'Múltiples usuarios con el mismo correo. Se usará: {usuario.nombre}')
+    
+    if request.method == 'POST':
+        nueva_contraseña = generar_contraseña_aleatoria(6)
+        
+        usuario.contraseña = nueva_contraseña
+        usuario.save()
+        
+        intento.estado = 'Completado'
+        intento.observacion = f'Contraseña restablecida por SECPLA el {timezone.now().strftime("%d/%m/%Y %H:%M")}. Nueva contraseña: {nueva_contraseña}'
+        intento.save()
+        
+        messages.success(request, f'Contraseña restablecida para {usuario.correo}. Nueva contraseña: <strong>{nueva_contraseña}</strong>')
+        return redirect('ver_intentos_recuperacion')
+    
+    return render(request, 'SECPLA/cambiar_contraseña_desde_recuperacion.html', {
+        'intento': intento,
+        'usuario': usuario
+    })

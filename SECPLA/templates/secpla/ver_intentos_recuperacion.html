@@ -6,6 +6,14 @@
 <div class="section-container">
   <h2>Solicitudes de recuperación</h2>
 
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
   {% if intentos|length == 0 %}
     <div class="alert alert-info">No hay solicitudes registradas.</div>
   {% else %}
@@ -19,6 +27,7 @@
             <th>Fecha</th>
             <th>Estado</th>
             <th>Observación</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -34,6 +43,32 @@
                 </span>
               </td>
               <td>{{ intento.observacion }}</td>
+              <td class="action-buttons">
+                {% if intento.estado == 'Pendiente' %}
+                  <form method="POST" action="{% url 'aprobar_recuperacion' intento.id %}" class="inline-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-success" 
+                            onclick="return confirm('¿Aprobar solicitud de {{ intento.correo }}?')">
+                      Aprobar
+                    </button>
+                  </form>
+                  <form method="POST" action="{% url 'rechazar_recuperacion' intento.id %}" class="inline-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger"
+                            onclick="return confirm('¿Rechazar solicitud de {{ intento.correo }}?')">
+                      Rechazar
+                    </button>
+                  </form>
+                {% elif intento.estado == 'Aprobado' %}
+                  <a href="{% url 'cambiar_contraseña_desde_recuperacion' intento.id %}" 
+                     class="btn btn-sm btn-primary"
+                     title="Restablecer contraseña">
+                    Restablecer
+                  </a>
+                {% else %}
+                  <span class="text-muted">Finalizado</span>
+                {% endif %}
+              </td>
             </tr>
           {% endfor %}
         </tbody>
@@ -45,4 +80,44 @@
     <a href="/perfil/secpla/" class="btn btn-secondary">Volver al inicio</a>
   </div>
 </div>
+
+<style>
+.estado-tag {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.estado-pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.estado-aprobado {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.estado-rechazado {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.estado-completado {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.inline-form {
+  display: inline-block;
+  margin: 0 2px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+</style>
 {% endblock %}

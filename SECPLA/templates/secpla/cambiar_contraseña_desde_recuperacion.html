@@ -1,0 +1,44 @@
+{% extends 'base_secpla.html' %}
+
+{% block title %}Restablecer Contraseña{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <div class="formulario-departamento">
+    <h2>Restablecer Contraseña</h2>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}">
+          {{ message|safe }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="usuario-info">
+      <p><strong>Usuario:</strong> {{ usuario.correo }}</p>
+      <p><strong>Perfil:</strong> {{ usuario.perfil }}</p>
+      <p><strong>Nombre:</strong> {{ usuario.nombre }} {{ usuario.apellido }}</p>
+      <p><strong>Solicitud aprobada:</strong> {{ intento.fecha|date:"d/m/Y H:i" }}</p>
+    </div>
+
+    <div class="alert alert-info">
+      <strong>Información:</strong> 
+      Al confirmar, el sistema generará automáticamente una nueva contraseña de <strong>6 caracteres</strong> 
+      y se mostrará en pantalla.
+    </div>
+
+    <form method="POST">
+      {% csrf_token %}
+      
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" 
+                onclick="return confirm('¿Generar nueva contraseña aleatoria para {{ usuario.correo }}?')">
+          Generar Nueva Contraseña
+        </button>
+        <a href="{% url 'ver_intentos_recuperacion' %}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

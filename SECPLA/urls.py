@@ -64,11 +64,11 @@ urlpatterns = [
     path('api/departamentos_por_direccion/<int:direccion_id>/', views.obtener_departamentos_por_direccion, name='api_departamentos_por_direccion'),
     
     path('logout/secpla/', views.salir_secpla, name='salir_secpla'),
+    
+    path('recuperacion/aprobar/<int:intento_id>/', views.aprobar_recuperacion, name='aprobar_recuperacion'),
+    path('recuperacion/rechazar/<int:intento_id>/', views.rechazar_recuperacion, name='rechazar_recuperacion'),
+    path('recuperacion/restablecer/<int:intento_id>/', views.cambiar_contraseña_desde_recuperacion, name='cambiar_contraseña_desde_recuperacion'),
 ]
-
-path('secpla/bloquear_usuario/<int:usuario_id>/', views.bloquear_usuario, name='bloquear_usuario'),
-path('secpla/activar_usuario/<int:usuario_id>/', views.activar_usuario, name='activar_usuario'),
-path('secpla/eliminar_usuario/<int:usuario_id>/', views.eliminar_usuario, name='eliminar_usuario'),
 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

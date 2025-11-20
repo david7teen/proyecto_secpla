@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'departamento/base_departamento.html' %}
 {% block title %}Incidencias Rechazadas - Departamento{% endblock %}
 
 {% block content %}
@@ -47,12 +47,12 @@
   </div>
   {% else %}
   <div class="empty-state">
-    <p>No hay incidencias rechazadas. ¡Excelente!</p>
+    <p>No hay incidencias rechazadas.</p>
   </div>
   {% endif %}
 
   <div class="form-actions">
-    <a href="{% url 'vista_departamento' %}" class="btn btn-secondary">Volver</a>
+    <a href="{% url 'dashboard_departamento' %}" class="btn btn-secondary">Volver</a>
   </div>
 </div>
 {% endblock %}

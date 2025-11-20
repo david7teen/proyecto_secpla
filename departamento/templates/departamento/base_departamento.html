@@ -7,13 +7,13 @@
   <link rel="stylesheet" href="{% static 'css/compiled.css' %}">
   {% block extra_styles %}{% endblock %}
 </head>
-<body class="sidebar-active"> <button id="menu-toggle" class="menu-toggle">☰</button>
+<body> <button id="menu-toggle" class="menu-toggle">☰</button>
 
 <div class="sidebar" id="sidebar-menu">
   
   <ul class="nav-menu">
     <li>
-      <a href="{% url 'vista_departamento' %}" class="nav-link">Inicio</a>
+      <a href="{% url 'dashboard_departamento' %}" class="nav-link">Inicio</a>
     </li>
     
     <li>

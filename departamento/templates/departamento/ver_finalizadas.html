@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'departamento/base_departamento.html' %}
 {% block title %}Incidencias Finalizadas - Departamento{% endblock %}
 
 {% block content %}
@@ -58,7 +58,7 @@
   {% endif %}
 
   <div class="form-actions">
-    <a href="{% url 'vista_departamento' %}" class="btn btn-secondary">Volver</a>
+    <a href="{% url 'dashboard_departamento' %}" class="btn btn-secondary">Volver</a>
     <a href="{% url 'reporte_finalizadas' %}" class="btn btn-primary">Generar Reporte</a>
   </div>
 </div>

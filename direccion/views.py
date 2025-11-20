@@ -197,28 +197,34 @@ def editar_incidencia_direccion(request, incidencia_id):
         try:
             incidencia.nombre_incidencia = request.POST.get('nombre_incidencia')
             incidencia.descripcion = request.POST.get('descripcion')
-            
+            incidencia.prioridad = request.POST.get('prioridad')
+            incidencia.ubicacion = request.POST.get('ubicacion')
+            incidencia.datos_vecino = request.POST.get('datos_vecino')
+
+            direccion_id = request.POST.get('direccion_incidencia')
             departamento_id = request.POST.get('departamento_incidencia')
-            if departamento_id:
-                depto = Departamento.objects.get(id=departamento_id, direccion_departamento=usuario_activo.direccion_asociada)
-                incidencia.departamento_incidencia = depto
             
-            if incidencia.estado == 'Rechazada':
-                incidencia.estado = 'Abierta' 
+            if direccion_id:
+                incidencia.direccion_incidencia = Direccion.objects.get(id=direccion_id)
+            if departamento_id:
+                incidencia.departamento_incidencia = Departamento.objects.get(id=departamento_id)
+
+            if 'imagen' in request.FILES:
+                incidencia.imagen = request.FILES['imagen']
 
             incidencia.save()
-            messages.success(request, 'Incidencia actualizada.')
+            messages.success(request, 'Incidencia actualizada correctamente.')
             return redirect('dashboard_direccion')
 
-        except Departamento.DoesNotExist:
-            messages.error(request, 'El departamento seleccionado no es válido o no pertenece a tu Dirección.')
         except Exception as e:
-            messages.error(request, f'Ocurrió un error: {e}')
+            messages.error(request, f'Error al actualizar: {e}')
     
-    departamentos = Departamento.objects.filter(estado='Activo', direccion_departamento=usuario_activo.direccion_asociada)
+    direcciones = Direccion.objects.filter(estado='Activo')
+    departamentos = Departamento.objects.filter(estado='Activo')
 
     return render(request, 'direccion/editar_incidencia.html', {
         'usuario_activo': usuario_activo,
         'inc': incidencia,
+        'direcciones': direcciones,
         'departamentos': departamentos,
     })

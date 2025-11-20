@@ -18,12 +18,12 @@
 
 <div class="section-container">
   <h2>Gestión de solicitudes de recuperación</h2>
-  <a href="/secpla/ver_intentos_recuperacion/" class="btn">Ver solicitudes</a>
+  <a href="/secpla/ver_intentos_recuperacion/" class="btn">Ver</a>
 </div>
 
 <div class="section-container">
   <div class="section-header">
-    <h2>Listado de usuarios/perfiles</h2>
+    <h2>Listado de Usuarios</h2>
     <a href="/secpla/crear_usuario/" class="btn btn-primary">Crear</a>
   </div>
   <div class="table-responsive">
@@ -57,7 +57,7 @@
       </tbody>
     </table>
   </div>
-  <a href="{% url 'ver_usuario' %}" class="ver-todo">Ver todos los Usuarios</a>
+  <a href="{% url 'ver_usuario' %}" class="ver-todo">Ver todo</a>
 </div>
 
 <div class="section-container">
@@ -109,7 +109,7 @@
       </tbody>
     </table>
   </div>
-  <a href="{% url 'listar_direcciones' %}" class="ver-todo">Ver todas las Direcciones</a>
+  <a href="{% url 'listar_direcciones' %}" class="ver-todo">Ver todo</a>
 </div>
 
 <div class="section-container">
@@ -159,133 +159,7 @@
       </tbody>
     </table>
   </div>
-  <a href="{% url 'listar_departamentos' %}" class="ver-todo">Ver todos los Departamentos</a>
-</div>
-
-<div class="section-container">
-  <div class="section-header">
-    <h2>Listado de Cuadrillas</h2>
-    <a href="{% url 'crear_usuario' %}" class="btn btn-primary">Crear</a>
-  </div>
-  <div class="table-responsive">
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre</th>
-          <th>Correo</th>
-          <th>Teléfono</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for c in cuadrillas %}
-          <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ c.nombre }} {{ c.apellido }}</td>
-            <td>{{ c.correo }}</td>
-            <td>{{ c.telefono }}</td>
-            <td>
-              {% if c.estado == "Activo" %}
-                <span class="estado-activo">{{ c.estado }}</span>
-              {% else %}
-                <span class="estado-inactivo">{{ c.estado }}</span>
-              {% endif %}
-            </td>
-            <td class="action-buttons">
-              <a href="{% url 'ver_usuario_2' c.id %}" class="btn btn-sm btn-info">Ver</a>
-              <a href="{% url 'editar_usuario' c.id %}" class="btn btn-sm btn-warning">Editar</a>
-              {% if c.estado == 'Activo' %}
-                <a href="{% url 'bloquear_usuario' c.id %}" class="btn btn-sm btn-danger">Bloquear</a>
-              {% else %}
-                <a href="{% url 'activar_usuario' c.id %}" class="btn btn-sm btn-success">Activar</a>  
-              {% endif %}
-            </td>
-          </tr>
-        {% empty %}
-          <tr><td colspan="6">No hay cuadrillas registradas.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <a href="{% url 'listar_cuadrillas' %}" class="ver-todo">Ver todas las Cuadrillas</a>
-</div>
-
-<div class="section-container">
-  <div class="section-header">
-    <h2>Listado de Tipos de Incidencia</h2>
-    <a href="{% url 'crear_tipo_incidencia' %}" class="btn btn-primary">Crear</a>
-  </div>
-  <div class="table-responsive">
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre</th>
-          <th>Departamento</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for tipo in tipos_incidencia %}
-          <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ tipo.nombre }}</td>
-            <td>{{ tipo.departamento.nombre_departamento }}</td>
-            <td class="action-buttons">
-                <a href="{% url 'editar_tipo_incidencia' tipo.id %}" class="btn btn-sm btn-warning">Editar</a>
-                <a href="{% url 'eliminar_tipo_incidencia' tipo.id %}" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas ELIMINAR este tipo de incidencia? Esta acción no se puede deshacer.');">Eliminar</a>
-            </td>
-          </tr>
-        {% empty %}
-          <tr><td colspan="4">No hay tipos de incidencia registrados.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <a href="{% url 'listar_tipos_incidencia' %}" class="ver-todo">Ver todos los Tipos de Incidencia</a>
-</div>
-
-<div class="section-container">
-  <h2>Listado de Incidencias/Solicitudes</h2>
-  <div class="table-responsive">
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Título</th>
-          <th>Departamento</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for inc in incidencias %}
-          <tr>
-            <td>{{ inc.id }}</td>
-            <td>{{ inc.nombre_incidencia }}</td>
-            <td>{{ inc.departamento_incidencia.nombre_departamento }}</td>
-            <td>
-              {% if inc.estado == "Finalizada" or inc.estado == "Cerrada" %}
-                <span class="estado-activo">{{ inc.get_estado_display }}</span>
-              {% elif inc.estado == "Rechazada" %}
-                <span class="estado-inactivo">{{ inc.get_estado_display }}</span>
-              {% else %}
-                <span class="estado-pendiente">{{ inc.get_estado_display }}</span>
-              {% endif %}
-            </td>
-            <td>
-              <a href="{% url 'ver_incidencia' inc.id %}" class="btn btn-sm btn-info">Ver</a>
-            </td>
-          </tr>
-        {% empty %}
-          <tr><td colspan="5">No hay incidencias registradas.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <a href="{% url 'listar_incidencias' %}" class="ver-todo">Ver todas las Incidencias</a>
+  <a href="{% url 'listar_departamentos' %}" class="ver-todo">Ver todo</a>
 </div>
 
 <div class="section-container">
@@ -343,7 +217,83 @@
       </tbody>
     </table>
   </div>
-  <a href="{% url 'listar_encuestas' %}" class="ver-todo">Ver todas las Encuestas</a>
+  <a href="{% url 'listar_encuestas' %}" class="ver-todo">Ver todo</a>
+</div>
+
+<div class="section-container">
+  <div class="section-header">
+    <h2>Listado de Tipos de Incidencia</h2>
+    <a href="{% url 'crear_tipo_incidencia' %}" class="btn btn-primary">Crear</a>
+  </div>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Departamento</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tipo in tipos_incidencia %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ tipo.nombre }}</td>
+            <td>{{ tipo.departamento.nombre_departamento }}</td>
+            <td class="action-buttons">
+                <a href="{% url 'editar_tipo_incidencia' tipo.id %}" class="btn btn-sm btn-warning">Editar</a>
+                <a href="{% url 'eliminar_tipo_incidencia' tipo.id %}" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas ELIMINAR este tipo de incidencia? Esta acción no se puede deshacer.');">Eliminar</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No hay tipos de incidencia registrados.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <a href="{% url 'listar_tipos_incidencia' %}" class="ver-todo">Ver todo</a>
+</div>
+
+<div class="section-container">
+  <h2>Listado de Incidencias</h2>
+  <div class="table-responsive">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Título</th>
+          <th>Departamento</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inc in incidencias %}
+          <tr>
+            <td>{{ inc.id }}</td>
+            <td>{{ inc.nombre_incidencia }}</td>
+            <td>{{ inc.departamento_incidencia.nombre_departamento }}</td>
+            <td>
+              {% if inc.estado == "Finalizada" or inc.estado == "Cerrada" %}
+                <span class="estado-activo">{{ inc.get_estado_display }}</span>
+              {% elif inc.estado == "Rechazada" %}
+                <span class="estado-inactivo">{{ inc.get_estado_display }}</span>
+              {% else %}
+                <span class="estado-pendiente">{{ inc.get_estado_display }}</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'ver_incidencia' inc.id %}" class="btn btn-sm btn-info">Ver</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5">No hay incidencias registradas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <a href="{% url 'listar_incidencias' %}" class="ver-todo">Ver todo</a>
 </div>
 
 {% endblock %}

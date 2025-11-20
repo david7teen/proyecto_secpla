@@ -247,7 +247,6 @@ def crear_incidencia(request):
             tipo_incidencia_id = request.POST.get('tipo_incidencia')
             prioridad = request.POST.get('prioridad')
             ubicacion = request.POST.get('ubicacion')
-            # soporta campos separados para datos del vecino: nombre, celular, email
             datos_vecino_nombre = request.POST.get('datos_vecino_nombre')
             datos_vecino_celular = request.POST.get('datos_vecino_celular')
             datos_vecino_email = request.POST.get('datos_vecino_email')
@@ -330,7 +329,6 @@ def editar_incidencia(request, incidencia_id):
             tipo_incidencia_id = request.POST.get('tipo_incidencia')
             incidencia.prioridad = request.POST.get('prioridad')
             incidencia.ubicacion = request.POST.get('ubicacion')
-            # soportar edición con campos separados
             datos_vecino_nombre = request.POST.get('datos_vecino_nombre')
             datos_vecino_celular = request.POST.get('datos_vecino_celular')
             datos_vecino_email = request.POST.get('datos_vecino_email')
@@ -364,7 +362,6 @@ def editar_incidencia(request, incidencia_id):
         estado='Activo'
     )
 
-    # Intentar separar datos_vecino en nombre / celular / email para el formulario
     datos_vecino_nombre = datos_vecino_celular = datos_vecino_email = ''
     if incidencia.datos_vecino:
         parts = [p.strip() for p in incidencia.datos_vecino.split(' - ')]
@@ -408,8 +405,8 @@ def eliminar_incidencia(request, incidencia_id):
         'incidencia': incidencia,
     })
 
+
 def obtener_departamentos_por_direccion(request, direccion_id):
-    """Vista AJAX para obtener departamentos por dirección"""
     try:
         departamentos = Departamento.objects.filter(
             direccion_departamento_id=direccion_id, 

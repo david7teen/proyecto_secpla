@@ -49,12 +49,10 @@ class Incidencia(models.Model):
         default='Abierta'
     )
 
-    # Campos de ubicación y detalles
     ubicacion = models.CharField(max_length=200, blank=True, null=True)
     imagen = models.ImageField(upload_to='incidencias/imagenes/', blank=True, null=True)
-    datos_vecino = models.TextField(blank=True, null=True)  # Nombre, celular, email del vecino
+    datos_vecino = models.TextField(blank=True, null=True)
 
-    # Campos de fecha
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_derivacion = models.DateTimeField(blank=True, null=True)
     fecha_finalizacion = models.DateTimeField(blank=True, null=True)

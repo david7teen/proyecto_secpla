@@ -15,21 +15,17 @@ def vista_departamento(request):
 
     departamento_usuario = usuario_activo.departamento_asociado
 
-    # --- INICIO DEL ARREGLO ---
     if not departamento_usuario:
-        # Si no tiene depto, mostramos el error con datos vacíos
         return render(request, 'departamento/dashboard_departamento.html', {
             'usuario_activo': usuario_activo,
             'departamento': None,
-            'resumen': {}, # Mandamos un resumen vacío
-            'incidencias': [], # Mandamos una lista vacía
+            'resumen': {},
+            'incidencias': [],
             'error': 'Este usuario no tiene un departamento asociado.'
         })
     
-    #filtro base: trae las incidencias de este depto
     incidencias = Incidencia.objects.filter(departamento_incidencia=departamento_usuario)
 
-    #creamos resumen (contando desde el filtro base)
     resumen = {
         'pendientes': incidencias.filter(estado='Abierta').count(),
         'derivadas': incidencias.filter(estado='Derivada').count(),
@@ -37,7 +33,6 @@ def vista_departamento(request):
         'finalizadas': incidencias.filter(estado='Finalizada').count(),
     }
 
-    #creamos la lista de incidencias recientes (para la tabla)
     incidencias_recientes = incidencias.filter(estado='Abierta').order_by('-fecha_creacion')[:5]
 
     return render(request, 'departamento/dashboard_departamento.html', {
@@ -47,7 +42,6 @@ def vista_departamento(request):
         'incidencias': incidencias_recientes
     })
 
-    # Filtrar incidencias de departamento
     incidencias = Incidencia.objects.filter(departamento_incidencia=departamento_usuario)
 
     resumen = {
@@ -73,28 +67,24 @@ def ver_pendientes_departamento(request):
     departamento_usuario = usuario_activo.departamento_asociado
     if not departamento_usuario:
         messages.error(request, 'No tienes un departamento asociado.')
-        return redirect('vista_departamento') # Lo mandamos de vuelta al dashboard de depto
+        return redirect('vista_departamento')
     
-    # Filtrar incidencias del departamento con estado Abierta (Pendiente)
     incidencias = Incidencia.objects.filter(
         departamento_incidencia=departamento_usuario,
         estado='Abierta'
     ).order_by('-id')
     
-    # Buscamos todos los usuarios que sean 'Cuadrilla' Y que pertenezcan
-    # a nuestro mismo departamento.
     cuadrillas = Usuario.objects.filter(
         perfil='Cuadrilla',
         estado='Activo',
         departamento_asociado=departamento_usuario 
     )
-    # -----------------------------------------------------------
     
     return render(request, 'departamento/ver_pendientes.html', {
         'usuario_activo': usuario_activo,
         'departamento': departamento_usuario,
         'incidencias': incidencias,
-        'cuadrillas': cuadrillas  #
+        'cuadrillas': cuadrillas
     })
 
 def ver_derivadas_departamento(request):
@@ -163,7 +153,6 @@ def ver_finalizadas_departamento(request):
         estado='Finalizada'
     ).order_by('-id')
     
-    # Calcular porcentaje de eficiencia
     total_incidencias = Incidencia.objects.filter(
         departamento_incidencia=departamento_usuario
     ).count()
@@ -205,8 +194,6 @@ def reporte_finalizadas(request):
         'incidencias': incidencias
     })
 
-
-
 def derivar_incidencia(request, incidencia_id):
     if request.method != 'POST':
         return redirect('ver_pendientes_departamento')
@@ -222,7 +209,6 @@ def derivar_incidencia(request, incidencia_id):
     
     incidencia = get_object_or_404(Incidencia, id=incidencia_id)
     
-    # Validar que la incidencia pertenezca al depto del usuario 
     if incidencia.departamento_incidencia != usuario_activo.departamento_asociado:
         messages.error(request, 'No tienes permiso para derivar esta incidencia.')
         return redirect('ver_pendientes_departamento')
@@ -236,10 +222,9 @@ def derivar_incidencia(request, incidencia_id):
     try:
         cuadrilla_asignada = Usuario.objects.get(id=cuadrilla_id, perfil='Cuadrilla', departamento_asociado=usuario_activo.departamento_asociado)
         
-        # Actualizamos la incidencia
         incidencia.cuadrilla_asignada = cuadrilla_asignada
-        incidencia.estado = 'Derivada' # Cambiamos el estado
-        incidencia.fecha_derivacion = timezone.now() # Marcamos la fecha
+        incidencia.estado = 'Derivada'
+        incidencia.fecha_derivacion = timezone.now()
         incidencia.save()
         
         messages.success(request, f'Incidencia #{incidencia.id} derivada correctamente a {cuadrilla_asignada.nombre}.')
@@ -262,12 +247,10 @@ def rechazar_incidencia(request, incidencia_id):
     
     incidencia = get_object_or_404(Incidencia, id=incidencia_id)
     
-    # Validación de seguridad
     if incidencia.departamento_incidencia != usuario_activo.departamento_asociado:
         messages.error(request, 'No tienes permiso para esta acción.')
         return redirect('ver_pendientes_departamento')
 
-    # Cambiamos el estado
     incidencia.estado = 'Rechazada'
 
     incidencia.save()
@@ -278,9 +261,6 @@ def rechazar_incidencia(request, incidencia_id):
 
 
 def ver_incidencia_departamento(request, incidencia_id):
-    """
-    FUNCIONALIDAD 1: Muestra el detalle de una incidencia.
-    """
     usuario_activo_data = request.session.get('usuario_activo')
     if not usuario_activo_data or usuario_activo_data['perfil'] != 'Departamento':
         return redirect('/secpla/login/departamento/')

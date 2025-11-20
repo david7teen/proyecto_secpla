@@ -49,9 +49,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const direccionSelect = document.querySelector('#id_direccion');
     const departamentoSelect = document.querySelector('#id_departamento');
-    
-    // 1. Usamos el 'name' de la URL que acabamos de arreglar en urls.py
-    // El '0' es un marcador de posición que vamos a reemplazar.
+
     const baseUrl = "{% url 'api_departamentos_por_direccion' 0 %}";
 
     direccionSelect.addEventListener('change', function() {
@@ -60,10 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
         departamentoSelect.disabled = true;
 
         if (direccionId) {
-            // 2. Reemplazamos el '0' con el ID de la dirección seleccionada
             const fetchUrl = baseUrl.replace('0', direccionId); 
 
-            // 3. Hacemos el fetch a la URL correcta (ej. /api/departamentos_por_direccion/1/)
             fetch(fetchUrl) 
                 .then(response => {
                     if (!response.ok) {
@@ -76,15 +72,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     data.forEach(dep => {
                         departamentoSelect.add(new Option(dep.nombre, dep.id));
                     });
-                    departamentoSelect.disabled = false; // Habilitamos el combo
+                    departamentoSelect.disabled = false;
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    // Esto es lo que estás viendo: "Error al cargar"
                     departamentoSelect.innerHTML = '<option value="">Error al cargar</option>';
                 });
         } else {
-            // Si el usuario no selecciona nada
             departamentoSelect.innerHTML = '<option value="">Seleccione una dirección primero</option>';
         }
     });

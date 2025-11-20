@@ -1,12 +1,10 @@
-# --- REEMPLAZA el contenido de direccion/views.py ---
-
 from django.shortcuts import render, redirect, get_object_or_404
 from SECPLA.models import Usuario
 from incidencia.models import Incidencia
 from direccion.models import Direccion
-from departamento.models import Departamento # Importamos Departamento
+from departamento.models import Departamento
 from django.contrib import messages
-from django.utils import timezone # Importamos timezone
+from django.utils import timezone
 
 def vista_direccion(request):
     usuario_activo_data = request.session.get('usuario_activo')
@@ -41,8 +39,6 @@ def vista_direccion(request):
         'resumen': resumen
     })
 
-# --- VISTA DE LISTADO 'PENDIENTES' (MODIFICADA) ---
-# La separamos de la función genérica para poder agregar las cuadrillas
 
 def incidencias_pendientes(request):
     usuario_activo_data = request.session.get('usuario_activo')
@@ -56,13 +52,11 @@ def incidencias_pendientes(request):
         messages.error(request, 'No tienes una dirección asociada.')
         return redirect('dashboard_direccion')
 
-    # 1. Incidencias 'Abiertas' de esta Dirección
     incidencias_list = Incidencia.objects.filter(
         direccion_incidencia=direccion,
         estado='Abierta'
     ).order_by('-fecha_creacion')
     
-    # 2. Cuadrillas que pertenecen a los Departamentos de esta Dirección
     cuadrillas = Usuario.objects.filter(
         perfil='Cuadrilla',
         estado='Activo',
@@ -73,10 +67,10 @@ def incidencias_pendientes(request):
         'usuario_activo': usuario_activo,
         'incidencias': incidencias_list,
         'estado_titulo': 'Abierta',
-        'cuadrillas': cuadrillas  # <-- Pasamos las cuadrillas al template
+        'cuadrillas': cuadrillas
     })
 
-# --- VISTAS DE LISTADO (Genéricas) ---
+
 
 def get_incidencias_por_estado(request, estado, template_name):
     usuario_activo_data = request.session.get('usuario_activo')
@@ -126,7 +120,7 @@ def ver_incidencia_direccion(request, incidencia_id):
         'inc': incidencia
     })
 
-# --- VISTA NUEVA: DERIVAR INCIDENCIA ---
+
 def derivar_incidencia_direccion(request, incidencia_id):
     if request.method != 'POST':
         return redirect('dir_incidencias_pendientes')
@@ -139,7 +133,6 @@ def derivar_incidencia_direccion(request, incidencia_id):
     usuario_activo = get_object_or_404(Usuario, id=usuario_activo_data['id'])
     incidencia = get_object_or_404(Incidencia, id=incidencia_id)
     
-    # Seguridad: Validar que la incidencia pertenezca a la DIRECCIÓN del usuario
     if incidencia.direccion_incidencia != usuario_activo.direccion_asociada:
         messages.error(request, 'No tienes permiso para derivar esta incidencia.')
         return redirect('dir_incidencias_pendientes')
@@ -151,17 +144,15 @@ def derivar_incidencia_direccion(request, incidencia_id):
         return redirect('dir_incidencias_pendientes')
 
     try:
-        # Validamos que la cuadrilla exista y pertenezca a un depto de esta dirección
         cuadrilla_asignada = Usuario.objects.get(
             id=cuadrilla_id, 
             perfil='Cuadrilla', 
             departamento_asociado__direccion_departamento=usuario_activo.direccion_asociada
         )
         
-        # Actualizamos la incidencia
         incidencia.cuadrilla_asignada = cuadrilla_asignada
-        incidencia.estado = 'Derivada' # Cambiamos el estado
-        incidencia.fecha_derivacion = timezone.now() # Marcamos la fecha
+        incidencia.estado = 'Derivada'
+        incidencia.fecha_derivacion = timezone.now()
         incidencia.save()
         
         messages.success(request, f'Incidencia #{incidencia.id} derivada correctamente a {cuadrilla_asignada.nombre}.')
@@ -172,7 +163,6 @@ def derivar_incidencia_direccion(request, incidencia_id):
     return redirect('dir_incidencias_pendientes')
 
 
-# --- VISTAS DE RECHAZAR Y EDITAR (que ya tenías) ---
 def rechazar_incidencia_direccion(request, incidencia_id):
     usuario_activo_data = request.session.get('usuario_activo')
     if not usuario_activo_data or usuario_activo_data['perfil'] != 'Dirección':

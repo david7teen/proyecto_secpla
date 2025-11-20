@@ -147,7 +147,6 @@ function cargarDepartamentos() {
 
       departamentoSelect.disabled = false;
       
-      // Seleccionar el departamento actual si existe
       const currentDeptId = "{{ incidencia.departamento_incidencia.id }}";
       if (currentDeptId) {
         departamentoSelect.value = currentDeptId;
@@ -159,7 +158,6 @@ function cargarDepartamentos() {
     });
 }
 
-// Cargar departamentos al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
   cargarDepartamentos();
 });

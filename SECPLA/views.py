@@ -62,7 +62,6 @@ def login_por_perfil(request, perfil):
         elif usuario.contraseña.strip() != contraseña:
             error = 'Contraseña incorrecta.'
         else:
-            # Login exitoso - CORREGIDO
             request.session['usuario_activo'] = {
                 'id': usuario.id,
                 'nombre': usuario.nombre,
@@ -234,16 +233,13 @@ def dashboard_secpla(request):
     except Usuario.DoesNotExist:
         return redirect('/login/secpla/')
 
-    # Usuarios por perfil
     usuarios = Usuario.objects.all().order_by('perfil')
     direcciones = Usuario.objects.filter(perfil='Dirección').order_by('nombre')
     departamentos = Usuario.objects.filter(perfil='Departamento').order_by('nombre')
     territoriales = Usuario.objects.filter(perfil='Territorial').order_by('nombre')
-
-    # Otros modelos
     encuestas = Encuesta.objects.all().order_by('nombre_encuesta')
 
-    # Resumen dinámico
+
     resumen = {
         'usuarios_activos': Usuario.objects.filter(estado='Activo').count(),
         'direcciones_creadas': Usuario.objects.filter(perfil='Dirección', estado='Activo').count(),
@@ -342,16 +338,15 @@ def crear_encuesta(request):
             audio = request.FILES.get('audio')
 
             prioridad = request.POST.get('prioridad')
-            # Combinar los campos de datos del vecino si vienen separados
             vecino_nombre = request.POST.get('vecino_nombre', '').strip()
             vecino_celular = request.POST.get('vecino_celular', '').strip()
             vecino_email = request.POST.get('vecino_email', '').strip()
             datos_vecino = request.POST.get('datos_vecino')
-            # Si no viene el campo combinado pero vienen los separados, combinarlos
+
             if not datos_vecino and (vecino_nombre or vecino_celular or vecino_email):
                 datos_vecino = f"{vecino_nombre} - {vecino_celular} - {vecino_email}"
             incidencia_id = request.POST.get('tipo_incidencia')
-            pregunta_ids = request.POST.getlist('preguntas[]')  # ✅ lista de IDs
+            pregunta_ids = request.POST.getlist('preguntas[]')
 
             if not all([nombre, prioridad, incidencia_id]):
                 raise ValueError("Faltan campos obligatorios.")
@@ -373,7 +368,7 @@ def crear_encuesta(request):
                 categoria='Vigente'
             )
 
-            encuesta.preguntas.set(preguntas_seleccionadas)  # ✅ asigna todas las preguntas
+            encuesta.preguntas.set(preguntas_seleccionadas)
 
             return redirect('vista_secpla')
 
@@ -404,7 +399,7 @@ def crear_pregunta_desde_encuesta(request):
         nombre = request.POST.get('nombre_pregunta')
         if nombre:
             nueva = Pregunta.objects.create(nombre_pregunta=nombre)
-            return redirect('crear_encuesta')  # vuelve al formulario original
+            return redirect('crear_encuesta')
         return render(request, 'SECPLA/crear_pregunta_desde_encuesta.html', {'error': 'Campo vacío'})
     return render(request, 'SECPLA/crear_pregunta_desde_encuesta.html')
 
@@ -416,28 +411,7 @@ def crear_pregunta_ajax(request):
         return JsonResponse({'id': pregunta.id, 'nombre': pregunta.nombre_pregunta})
     return JsonResponse({'error': 'Nombre inválido'}, status=400)
 
-""""
-def crear_territorial(request):
-    if request.session.get('perfil') != 'SECPLA':
-        return redirect('/login/secpla/')
 
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre_territorial')
-        apellido = request.POST.get('apellido_territorial')
-        correo = request.POST.get('correo_territorial')
-        telefono = request.POST.get('telefono_territorial')
-
-        Territorial.objects.create(
-            nombre_territorial=nombre,
-            apellido_territorial=apellido,
-            correo_territorial=correo,
-            telefono_territorial=telefono,
-            estado='Activo'
-        )
-        return redirect('/perfil/secpla/')
-
-    return render(request, 'SECPLA/crear_territorial.html')
-"""
 def recuperar_cuenta(request):
     perfil = request.GET.get('perfil', 'SECPLA')
     mensaje = None
@@ -448,7 +422,6 @@ def recuperar_cuenta(request):
 
         usuario = Usuario.objects.filter(correo__iexact=correo, perfil__iexact=perfil).first()
 
-        # Registrar el intento
         RecuperacionIntento.objects.create(
             correo=correo,
             perfil=perfil,
@@ -489,10 +462,10 @@ def cambiar_contraseña(request, usuario_id):
         confirmar = request.POST.get('confirmar_contraseña')
 
         if nueva_contraseña == confirmar:
-            usuario.contraseña = nueva_contraseña  # Si usás hash, aplicalo aquí
+            usuario.contraseña = nueva_contraseña
             usuario.save()
             messages.success(request, 'Contraseña actualizada correctamente.')
-            return redirect('ver_usuarios_secpla')  # O donde quieras redirigir
+            return redirect('ver_usuarios_secpla')
         else:
             messages.error(request, 'Las contraseñas no coinciden.')
 
@@ -663,7 +636,7 @@ def ver_departamento(request, id):
     
     return render(request, 'SECPLA/ver_departamento.html', {
         'departamento': departamento,
-        'direccion': departamento.direccion_departamento  # si existe relación
+        'direccion': departamento.direccion_departamento
     })
 
 def editar_departamento(request, id):
@@ -898,7 +871,6 @@ def listar_encuestas(request):
     })
 
 def bloquear_usuario(request, usuario_id):
-    # Solo SECPLA puede ejecutar esta acción
     if request.session.get('perfil') != 'SECPLA':
         return redirect('/login/secpla/')
 
@@ -917,6 +889,7 @@ def activar_usuario(request, usuario_id):
     usuario.save()
     messages.success(request, f'Usuario {usuario.nombre} activado.')
     return redirect('ver_usuario')
+
 
 def eliminar_usuario(request, usuario_id):
 
@@ -940,15 +913,10 @@ def eliminar_usuario(request, usuario_id):
 
 
 
-# --- AGREGA ESTAS NUEVAS VISTAS AL FINAL DE SECPLA/views.py ---
-
-# --- Vistas para Módulo Cuadrillas ---
-
 def listar_cuadrillas(request):
     if request.session.get('perfil') != 'SECPLA':
         return redirect('/login/secpla/')
     
-    # "Cuadrilla" es un Usuario con perfil 'Cuadrilla'
     cuadrillas_list = Usuario.objects.filter(perfil='Cuadrilla').order_by('nombre')
     
     return render(request, 'SECPLA/listar_cuadrillas.html', {
@@ -956,7 +924,7 @@ def listar_cuadrillas(request):
         'cuadrillas': cuadrillas_list,
     })
 
-# --- Vistas para Módulo Tipo de Incidencia ---
+
 
 def listar_tipos_incidencia(request):
     if request.session.get('perfil') != 'SECPLA':
@@ -999,7 +967,7 @@ def crear_tipo_incidencia(request):
             
     return render(request, 'SECPLA/crear_tipo_incidencia.html', {
         'direcciones': direcciones,
-        'departamentos': Departamento.objects.none() # Se llena con JS
+        'departamentos': Departamento.objects.none()
     })
 
 def editar_tipo_incidencia(request, id):
@@ -1033,22 +1001,15 @@ def bloquear_tipo_incidencia(request, id):
         return redirect('/login/secpla/')
     
     tipo = get_object_or_404(TipoIncidencia, id=id)
-    # (Tu modelo TipoIncidencia no tiene 'estado', así que lo simulamos borrando)
-    # Si tuvieras campo 'estado', la lógica sería:
-    # tipo.estado = 'Inactivo'
-    # tipo.save()
     tipo.delete()
     messages.warning(request, f'Tipo de incidencia "{tipo.nombre}" eliminado.')
     return redirect('listar_tipos_incidencia')
 
 def activar_tipo_incidencia(request, id):
-    # (Esta lógica solo aplica si tienes campo 'estado')
     return redirect('listar_tipos_incidencia')
 
 def eliminar_tipo_incidencia(request, id):
-    """
-    Esta función ELIMINA el registro (no lo bloquea).
-    """
+
     if request.session.get('perfil') != 'SECPLA':
         return redirect('/login/secpla/')
     

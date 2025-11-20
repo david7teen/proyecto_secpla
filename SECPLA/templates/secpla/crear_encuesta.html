@@ -152,7 +152,6 @@
 </div>
 
 <script>
-// Función para actualizar el campo oculto datos_vecino
 function actualizarDatosVecino() {
   const nombre = document.getElementById("vecino_nombre").value.trim();
   const celular = document.getElementById("vecino_celular").value.trim();
@@ -161,13 +160,11 @@ function actualizarDatosVecino() {
   document.getElementById("datos_vecino").value = datosCombinados;
 }
 
-// Actualizar datos_vecino cuando cambien los campos
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById("vecino_nombre").addEventListener('input', actualizarDatosVecino);
   document.getElementById("vecino_celular").addEventListener('input', actualizarDatosVecino);
   document.getElementById("vecino_email").addEventListener('input', actualizarDatosVecino);
-  
-  // Actualizar antes de enviar el formulario
+
   document.getElementById("formEncuesta").addEventListener('submit', actualizarDatosVecino);
 });
 
@@ -200,7 +197,6 @@ function cerrarModalPregunta() {
   document.getElementById("nombre_pregunta").value = "";
 }
 
-// Manejar creación de pregunta vía AJAX
 document.getElementById("formPregunta").addEventListener("submit", function(e) {
   e.preventDefault();
   const form = e.target;
@@ -224,10 +220,8 @@ document.getElementById("formPregunta").addEventListener("submit", function(e) {
   .then(response => response.json())
   .then(data => {
     if (data.id) {
-      // Agregar la nueva pregunta a la lista disponible
       preguntasDisponibles.push({id: data.id, nombre: data.nombre});
       
-      // Actualizar todos los selects existentes
       const selects = document.querySelectorAll('select[name="preguntas[]"]');
       selects.forEach(select => {
         const option = document.createElement("option");

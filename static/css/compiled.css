@@ -274,7 +274,6 @@ button {
   margin-top: 20px;
 }
 
-/* ===== ESTILOS DE LOS TEMPLATES BASE ===== */
 .sidebar {
   width: 250px;
   background-color: #1e3a5f;
@@ -388,7 +387,6 @@ button {
   margin-top: 40px;
 }
 
-/* Nuevos estilos para el dashboard */
 .dashboard-header {
   background: linear-gradient(135deg, #1e3a5f, #2c6cb0);
   color: white;
@@ -459,7 +457,6 @@ button {
   font-style: italic;
 }
 
-/* Estilos para formularios de encuesta */
 .pregunta-actions {
   display: flex;
   gap: 10px;
@@ -474,7 +471,6 @@ button {
   width: 100%;
 }
 
-/* Modales */
 .modal {
   position: fixed;
   top: 0;
@@ -524,13 +520,11 @@ button {
   margin-top: 15px;
 }
 
-/* Botones pequeños */
 .btn-sm {
   padding: 6px 12px;
   font-size: 0.875em;
 }
 
-/* Estilos para pie de formulario */
 .form-footer {
   margin-top: 15px;
   text-align: center;
@@ -549,7 +543,6 @@ button {
   background: none;
 }
 
-/* Estilos para detalles de incidencia */
 .descripcion-texto {
   white-space: pre-wrap;
   padding-left: 15px;
@@ -567,7 +560,6 @@ button {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* Estilos para imagen actual en formularios */
 .imagen-actual {
   margin: 10px 0;
 }
@@ -577,7 +569,6 @@ button {
   margin-bottom: 5px;
 }
 
-/* Estilos para información de incidencia */
 .incidencia-info {
   background: #f8f9fa;
   padding: 20px;
@@ -586,7 +577,6 @@ button {
   border-left: 4px solid #dc3545;
 }
 
-/* Estilos para listas de preguntas */
 .preguntas-list {
   margin: 0;
   padding-left: 15px;
@@ -655,7 +645,7 @@ button {
   left: 0;
   height: 100%;
   z-index: 999;
-  transform: translateX(-100%); /* Oculto por defecto */
+  transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
 }
 
@@ -685,7 +675,6 @@ button {
   transition: left 0.3s ease-in-out;
 }
 
-/* --- LÓGICA DE MENÚ ACTIVO --- */
 body.sidebar-active .sidebar {
   transform: translateX(0);
 }
@@ -699,7 +688,6 @@ body.sidebar-active .menu-toggle {
   opacity: 1;
 }
 
-/* Estilos para campos de datos del vecino */
 .datos-vecino-container {
   display: flex;
   gap: 10px;

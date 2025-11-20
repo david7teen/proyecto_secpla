@@ -1,0 +1,19 @@
+# =============================================================================
+# CONFIGURACIÓN INICIAL - SISTEMA SECPLA MUNICIPAL MUNICHILE
+# =============================================================================
+
+# 1. MIGRACIONES DE BASE DE DATOS
+python manage.py makemigrations
+python manage.py migrate
+
+# 2. CREAR USUARIO SECPLA INICIAL (Ejecutar en PgAdmin)
+INSERT INTO "SECPLA_usuario" (nombre, apellido, correo, telefono, perfil, contraseña, estado) 
+VALUES ('nombre_1','apellido_1','secpla1@m.com','+56912345678','SECPLA','123','Activo');
+
+# 3. INICIAR SERVIDOR
+python manage.py runserver
+
+# 4. ACCEDER AL SISTEMA
+# URL: http://127.0.0.1:8000/
+# Usuario: secpla1@m.com
+# Contraseña: 123

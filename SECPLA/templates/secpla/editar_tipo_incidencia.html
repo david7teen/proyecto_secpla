@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
         departamentoSelect.disabled = true;
 
         if (direccionId) {
-            // Reemplazar el '0' con el ID de la dirección seleccionada
             const fetchUrl = baseUrl.replace('0', direccionId);
 
             fetch(fetchUrl)
@@ -66,8 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         departamentoSelect.add(new Option(dep.nombre, dep.id));
                     });
                     departamentoSelect.disabled = false;
-                    
-                    // Mantener el departamento seleccionado si existe
+
                     const departamentoActual = departamentoSelect.getAttribute('data-selected-id');
                     if (departamentoActual) {
                         departamentoSelect.value = departamentoActual;

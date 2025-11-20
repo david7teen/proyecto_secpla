@@ -1,4 +1,4 @@
-{% extends 'base_direccion.html' %} 
+{% extends 'direccion/base_direccion.html' %} 
 {% block title %}Incidencias {{ estado_titulo }}{% endblock %}
 
 {% block content %}
@@ -64,7 +64,8 @@
   </tbody>
 </table>
 
-<a href="{% url 'dashboard_direccion' %}" class="ver-todo" style="margin-top: 20px;">
-    Volver al Dashboard
-</a>
+<a href="{% url 'dashboard_direccion' %}" 
+      class="btn btn-secondary"
+      style="margin-right:8px;margin-bottom:6px;">Volver</a>
+      
 {% endblock %}

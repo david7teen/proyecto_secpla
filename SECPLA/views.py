@@ -467,7 +467,7 @@ def cambiar_contraseña(request, usuario_id):
             usuario.contraseña = nueva_contraseña
             usuario.save()
             messages.success(request, 'Contraseña actualizada correctamente.')
-            return redirect('ver_usuarios_secpla')
+            return redirect('ver_usuario')
         else:
             messages.error(request, 'Las contraseñas no coinciden.')
 

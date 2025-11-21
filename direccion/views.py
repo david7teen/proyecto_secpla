@@ -228,3 +228,68 @@ def editar_incidencia_direccion(request, incidencia_id):
         'direcciones': direcciones,
         'departamentos': departamentos,
     })
+
+
+def listar_todas_incidencias(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Dirección':
+        return redirect('/login/secpla/')
+        
+    usuario_activo = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    direccion = usuario_activo.direccion_asociada
+
+    if not direccion:
+        messages.error(request, 'No tienes una dirección asociada.')
+        return redirect('dashboard_direccion')
+
+    incidencias_list = Incidencia.objects.filter(
+        direccion_incidencia=direccion
+    ).order_by('-fecha_creacion')
+    
+    cuadrillas = Usuario.objects.filter(
+        perfil='Cuadrilla',
+        estado='Activo',
+        departamento_asociado__direccion_departamento=direccion
+    )
+    
+    return render(request, 'direccion/listado_incidencias.html', {
+        'usuario_activo': usuario_activo,
+        'incidencias': incidencias_list,
+        'estado_titulo': 'Todas',
+        'cuadrillas': cuadrillas
+    })
+
+def listar_incidencias_direccion(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Dirección':
+        return redirect('/login/secpla/')
+        
+    usuario_activo = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    direccion = usuario_activo.direccion_asociada
+
+    if not direccion:
+        messages.error(request, 'No tienes una dirección asociada.')
+        return redirect('dashboard_direccion')
+
+    incidencias_list = Incidencia.objects.filter(
+        direccion_incidencia=direccion
+    ).order_by('-fecha_creacion')
+    
+    estado_filtro = request.GET.get('estado')
+    if estado_filtro:
+        incidencias_list = incidencias_list.filter(estado=estado_filtro)
+    
+    estado_choices = Incidencia._meta.get_field('estado').choices
+    cuadrillas = Usuario.objects.filter(
+        perfil='Cuadrilla',
+        estado='Activo',
+        departamento_asociado__direccion_departamento=direccion
+    )
+    
+    return render(request, 'direccion/listar_incidencias_direccion.html', {
+        'usuario_activo': usuario_activo,
+        'incidencias': incidencias_list,
+        'estado_choices': estado_choices,
+        'estado_filtro': estado_filtro,
+        'cuadrillas': cuadrillas
+    })

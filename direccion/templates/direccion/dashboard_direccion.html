@@ -31,36 +31,45 @@
         <tr>
           <th>#</th>
           <th>Nombre</th>
-          <th>Departamento</th>
-          <th>Estado</th>
+		  <th>Descripción</th>
+		  <th>Departamento</th>
+		  <th>Creador</th>
+		  <th>Prioridad</th>
+		  <th>Fecha</th>
+		  <th>Estado</th>
         </tr>
       </thead>
-      <tbody>
-        {% for i in incidencias %}
-          <tr>
-            <td>{{ i.id }}</td>
-            <td>{{ i.nombre_incidencia }}</td>
-            <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
-            <td>
-              {% if i.estado == "Finalizada" or i.estado == "Cerrada" %}
-                <span class="estado-activo">{{ i.get_estado_display }}</span>
-              {% elif i.estado == "Rechazada" %}
-                <span class="estado-inactivo">{{ i.get_estado_display }}</span>
-              {% else %}
-                <span class="estado-pendiente">{{ i.get_estado_display }}</span>
-              {% endif %}
-            </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="4" class="text-center">
-              No hay incidencias registradas para esta dirección.
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
+  	  <tbody>
+	    {% for i in incidencias %}
+		  <tr>
+		    <td>{{ i.id }}</td>
+		    <td>{{ i.nombre_incidencia }}</td>
+		    <td>{{ i.descripcion|truncatewords:10 }}</td>
+		    <td>{{ i.departamento_incidencia.nombre_departamento }}</td>
+		    <td>{{ i.territorial_creador.nombre|default:'N/A' }}</td>
+		    <td>{{ i.prioridad }}</td>
+		    <td>{{ i.fecha_creacion|date:"d/m/Y" }}</td>
+		    <td>
+			  {% if i.estado == "Finalizada" or i.estado == "Cerrada" %}
+			    <span class="estado-activo">{{ i.get_estado_display }}</span>
+			  {% elif i.estado == "Rechazada" %}
+			    <span class="estado-inactivo">{{ i.get_estado_display }}</span>
+			  {% else %}
+			    <span class="estado-pendiente">{{ i.get_estado_display }}</span>
+			  {% endif %}
+		    </td>
+		  </tr>
+	    {% empty %}
+		  <tr>
+		    <td colspan="8" class="text-center">
+			  No hay incidencias registradas para esta dirección.
+		    </td>
+		  </tr>
+	    {% endfor %}
+	  </tbody>
     </table>
   </div>
+  <a href="{% url 'dir_listar_incidencias' %}" class="ver-todo">Ver todo</a>
 </div>
 
 {% endblock %}

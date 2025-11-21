@@ -9,4 +9,6 @@ urlpatterns = [
     path('incidencias/tomar/<int:incidencia_id>/', views.tomar_incidencia, name='cuadrilla_tomar_incidencia'),
     path('incidencias/en-proceso/', views.incidencias_en_proceso, name='cuadrilla_incidencias_proceso'),
     path('incidencias/finalizadas/', views.incidencias_finalizadas, name='cuadrilla_incidencias_finalizadas'),
+
+	path('incidencias/listar/', views.listar_incidencias_en_cuadrilla, name='cua_listar_incidencias'),
 ]

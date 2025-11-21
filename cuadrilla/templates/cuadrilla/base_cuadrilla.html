@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="{% static 'css/compiled.css' %}">
   {% block extra_styles %}{% endblock %}
 </head>
-<body class="sidebar-active"> <button id="menu-toggle" class="menu-toggle">☰</button>
+<body> <button id="menu-toggle" class="menu-toggle">☰</button>
 
 <div class="sidebar" id="sidebar-menu">
   
@@ -16,13 +16,9 @@
       <a href="{% url 'dashboard_cuadrilla' %}" class="nav-link">Inicio</a>
     </li>
     
-    <li>
-      <a href="#" class="nav-link has-submenu">Mis Tareas <span class="toggle-icon">▾</span></a>
-      <ul class="sub-menu" style="display: block;"> <li><a href="{% url 'cuadrilla_incidencias_pendientes' %}">Ver Pendientes</a></li>
-        <li><a href="{% url 'cuadrilla_incidencias_proceso' %}">Ver En Proceso</a></li>
-        <li><a href="{% url 'cuadrilla_incidencias_finalizadas' %}">Ver Finalizadas</a></li>
-      </ul>
-    </li>
+	<li>
+	  <a href="{% url 'cua_listar_incidencias' %}" class="nav-link">Listado de Incidencias</a>
+	</li>
 
     <li>
       <a href="/" class="nav-link logout-link">Cerrar sesión</a>

@@ -9,6 +9,7 @@ from SECPLA.views import (
 )
 from direccion.views import vista_direccion
 from departamento.views import vista_departamento
+from cuadrilla.views import vista_cuadrilla
 
 urlpatterns = [
     path('', include(home_urlpatterns)),

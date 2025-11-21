@@ -30,8 +30,9 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Nombre Incidencia</th>
+          <th>Nombre</th>
           <th>Descripción</th>
+          <th>Departamento</th>
           <th>Creador</th>
           <th>Prioridad</th>
           <th>Fecha</th>
@@ -45,6 +46,7 @@
             <td>{{ forloop.counter }}</td>
             <td>{{ inc.nombre_incidencia }}</td>
             <td>{{ inc.descripcion|truncatewords:15 }}</td>
+            <td>{{ inc.departamento_incidencia.nombre_departamento }}</td>
             <td>{{ inc.territorial_creador.nombre|default:'N/A' }}</td>
             <td>{{ inc.prioridad }}</td>
             <td>{{ inc.fecha_creacion|date:"d/m/Y" }}</td>
@@ -67,12 +69,14 @@
                    onclick="return confirm('¿Estás seguro de RECHAZAR esta incidencia?');">Rechazar</a>
               {% elif inc.estado == 'En proceso' %}
                 <a href="{% url 'cuadrilla_responder_incidencia' inc.id %}" class="btn btn-sm btn-success">Finalizar Tarea</a>
+              {% else %}
+                <span class="text-muted">{{ inc.get_estado_display }}</span>
               {% endif %}
             </td>
           </tr>
         {% empty %}
           <tr>
-            <td colspan="8" class="text-center">
+            <td colspan="9" class="text-center">
               No hay incidencias {% if estado_filtro %}en estado {{ estado_filtro }}{% else %}asignadas{% endif %}.
             </td>
           </tr>

@@ -19,7 +19,7 @@ def vista_cuadrilla(request):
         'rechazadas': incidencias_asignadas.filter(estado='Rechazada').count(),
     }
 
-    incidencias_pendientes = incidencias_asignadas.filter(estado='Derivada').order_by('-fecha_creacion')[:5]
+    incidencias_pendientes = incidencias_asignadas.order_by('-fecha_creacion')[:5]
 
     return render(request, 'cuadrilla/dashboard_cuadrilla.html', {
         'usuario_activo': cuadrilla,
@@ -99,4 +99,25 @@ def incidencias_finalizadas(request):
         'usuario_activo': cuadrilla,
         'incidencias': incidencias_list,
         'titulo_lista': 'Historial de Incidencias Finalizadas'
+    })
+
+def listar_incidencias_en_cuadrilla(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Cuadrilla':
+        return redirect('/login/secpla/')
+    
+    cuadrilla = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    incidencias_list = Incidencia.objects.filter(cuadrilla_asignada=cuadrilla).order_by('-fecha_creacion')
+    
+    estado_filtro = request.GET.get('estado')
+    if estado_filtro:
+        incidencias_list = incidencias_list.filter(estado=estado_filtro)
+    
+    estado_choices = Incidencia._meta.get_field('estado').choices
+    
+    return render(request, 'cuadrilla/listar_incidencias_cuadrilla.html', {
+        'usuario_activo': cuadrilla,
+        'incidencias': incidencias_list,
+        'estado_choices': estado_choices,
+        'estado_filtro': estado_filtro
     })

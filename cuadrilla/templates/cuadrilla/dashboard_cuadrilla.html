@@ -10,16 +10,16 @@
 <div class="section-container">
   <h2>Resumen de Incidencias</h2>
   <div class="stats-container">
-    <div class="card">Incidencias Pendientes: {{ resumen.pendientes }}</div>
-    <div class="card">Incidencias en Proceso: {{ resumen.en_proceso }}</div>
-    <div class="card">Incidencias Finalizadas: {{ resumen.finalizadas }}</div>
-    <div class="card">Incidencias Rechazadas: {{ resumen.rechazadas }}</div>
+    <div class="card">Pendientes: {{ resumen.pendientes }}</div>
+    <div class="card">En Proceso: {{ resumen.en_proceso }}</div>
+    <div class="card">Finalizadas: {{ resumen.finalizadas }}</div>
+    <div class="card">Rechazadas: {{ resumen.rechazadas }}</div>
   </div>
 </div>
 
 <div class="section-container">
   <div class="section-header">
-    <h2>Incidencias Pendientes</h2>
+    <h2>Últimas Incidencias</h2>
   </div>
 
   <div class="table-responsive">
@@ -27,34 +27,42 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Nombre Incidencia</th>
+          <th>Nombre</th>
           <th>Descripción</th>
-          <th>Dirección</th>
-          <th>Departamento</th>
-          <th>Acciones</th>
+          <th>Creador</th>
+          <th>Prioridad</th>
+          <th>Fecha</th>
+          <th>Estado</th>
         </tr>
       </thead>
       <tbody>
         {% for i in incidencias_pendientes %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ i.nombre }}</td>
-            <td>{{ i.descripcion }}</td>
-            <td>{{ i.direccion }}</td>
-            <td>{{ i.departamento }}</td>
+            <td>{{ i.nombre_incidencia }}</td>
+            <td>{{ i.descripcion|truncatewords:10 }}</td>
+            <td>{{ i.territorial_creador.nombre|default:'N/A' }}</td>
+            <td>{{ i.get_prioridad_display }}</td>
+            <td>{{ i.fecha_creacion|date:"d/m/Y" }}</td>
             <td>
-              <a href="{% url 'cuadrilla_incidencia_detalle' i.id %}" class="btn btn-sm btn-info">Ver</a>
+              {% if i.estado == "Finalizada" or i.estado == "Cerrada" %}
+                <span class="estado-activo">{{ i.estado }}</span>
+              {% elif i.estado == "Rechazada" %}
+                <span class="estado-inactivo">{{ i.estado }}</span>
+              {% else %}
+                <span class="estado-pendiente">{{ i.estado }}</span>
+              {% endif %}
             </td>
           </tr>
         {% empty %}
           <tr>
-            <td colspan="6">No hay incidencias pendientes.</td>
+            <td colspan="7" class="text-center">No hay incidencias pendientes.</td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-  <a href="{% url 'cuadrilla_incidencias_pendientes' %}" style="color: #007bff; text-decoration: none; font-weight: bold; display: block; margin-top: 10px;">Ver todo</a>
+  <a href="{% url 'cua_listar_incidencias' %}" style="color: #007bff; text-decoration: none; font-weight: bold; display: block; margin-top: 10px;">Ver todo</a>
 </div>
 
 {% endblock %}

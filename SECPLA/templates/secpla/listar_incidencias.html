@@ -2,6 +2,35 @@
 {% block title %}Listado de Incidencias{% endblock %}
 
 {% block content %}
+
+<style>
+/* 🔵 Select estilo botón azul */
+.select-estado {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #007bff;
+    color: white;
+    padding: 6px 35px 6px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='12' width='12' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><polygon points='0,0 20,0 10,10'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+.select-estado:hover {
+    background-color: #0066d6;
+}
+
+.select-estado option {
+    background: white;
+    color: black;
+}
+</style>
+
 <div class="section-container">
   <h2>Listado de Incidencias</h2>
 
@@ -43,17 +72,22 @@
                 <span class="estado-pendiente">{{ inc.get_estado_display }}</span>
               {% endif %}
             </td>
+
             <td class="action-buttons">
               <a href="{% url 'ver_incidencia' inc.id %}" class="btn btn-sm btn-info">Ver</a>
+
               <form action="{% url 'actualizar_estado_incidencia' inc.id %}" method="POST" class="inline-form">
                 {% csrf_token %}
-                <select name="estado" class="form-select-sm">
+
+                <!-- 🔵 SELECT ESTILIZADO -->
+                <select name="estado" class="select-estado">
                   {% for value, display_name in estado_choices %}
                     <option value="{{ value }}" {% if inc.estado == value %}selected{% endif %}>
                       {{ display_name }}
                     </option>
                   {% endfor %}
                 </select>
+
                 <button type="submit" class="btn btn-sm btn-primary">Actualizar</button>
               </form>
             </td>
@@ -69,4 +103,5 @@
     <a href="{% url 'vista_secpla' %}" class="btn btn-secondary">Volver</a>
   </div>
 </div>
+
 {% endblock %}

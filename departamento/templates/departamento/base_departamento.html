@@ -16,14 +16,9 @@
       <a href="{% url 'dashboard_departamento' %}" class="nav-link">Inicio</a>
     </li>
     
-    <li>
-      <a href="#" class="nav-link has-submenu">Incidencias <span class="toggle-icon">▾</span></a>
-      <ul class="sub-menu" style="display: block;"> <li><a href="{% url 'ver_pendientes_departamento' %}">Ver Pendientes</a></li>
-        <li><a href="{% url 'ver_derivadas_departamento' %}">Ver Derivadas</a></li>
-        <li><a href="{% url 'ver_rechazadas_departamento' %}">Ver Rechazadas</a></li>
-        <li><a href="{% url 'ver_finalizadas_departamento' %}">Ver Finalizadas</a></li>
-      </ul>
-    </li>
+	<li>
+	  <a href="{% url 'dep_listar_incidencias' %}" class="nav-link">Listado de Incidencias</a>
+	</li>
 
     <li>
       <a href="{% url 'reporte_finalizadas' %}" class="nav-link">Reporte Finalizadas</a>

@@ -14,4 +14,6 @@ urlpatterns = [
     path('incidencia/ver/<int:incidencia_id>/', views.ver_incidencia_departamento, name='ver_incidencia_departamento'),
     path('incidencia/reabrir/<int:incidencia_id>/', views.reabrir_incidencia, name='reabrir_incidencia'),
     path('incidencia/editar/<int:incidencia_id>/', views.editar_incidencia_departamento, name='editar_incidencia_departamento'),
+    
+    path('incidencias/listar/', views.listar_incidencias_departamento, name='dep_listar_incidencias'),
 ]

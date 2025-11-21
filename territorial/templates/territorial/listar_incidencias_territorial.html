@@ -13,7 +13,7 @@
     <a href="{% url 'listar_incidencias_territorial' %}" 
       class="btn {% if not estado_filtro %}btn-primary{% else %}btn-secondary{% endif %}"
       style="margin-right:8px;margin-bottom:6px;">
-      Todas ({{ incidencias.count }})
+      Todas
     </a>
       {% for value, label in estado_choices %}
     <a href="{% url 'listar_incidencias_territorial' %}?estado={{ value }}" 
@@ -30,7 +30,7 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Nombre Incidencia</th>
+          <th>Nombre</th>
           <th>Descripción</th>
           <th>Dirección</th>
           <th>Departamento</th>

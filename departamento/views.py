@@ -33,7 +33,7 @@ def vista_departamento(request):
         'finalizadas': incidencias.filter(estado='Finalizada').count(),
     }
 
-    incidencias_recientes = incidencias.filter(estado='Abierta').order_by('-fecha_creacion')[:5]
+    incidencias_recientes = incidencias.order_by('-fecha_creacion')[:5]
 
     return render(request, 'departamento/dashboard_departamento.html', {
         'usuario_activo': usuario_activo,
@@ -350,4 +350,40 @@ def editar_incidencia_departamento(request, incidencia_id):
         'inc': incidencia,
         'direcciones': direcciones,
         'departamentos': departamentos,
+    })
+
+def listar_incidencias_departamento(request):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data or usuario_activo_data['perfil'] != 'Departamento':
+        return redirect('/secpla/login/departamento/')
+        
+    usuario_activo = get_object_or_404(Usuario, id=usuario_activo_data['id'])
+    departamento_usuario = usuario_activo.departamento_asociado
+
+    if not departamento_usuario:
+        messages.error(request, 'No tienes un departamento asociado.')
+        return redirect('vista_departamento')
+
+    incidencias_list = Incidencia.objects.filter(
+        departamento_incidencia=departamento_usuario
+    ).order_by('-fecha_creacion')
+    
+    estado_filtro = request.GET.get('estado')
+    if estado_filtro:
+        incidencias_list = incidencias_list.filter(estado=estado_filtro)
+    
+    estado_choices = Incidencia._meta.get_field('estado').choices
+    cuadrillas = Usuario.objects.filter(
+        perfil='Cuadrilla',
+        estado='Activo',
+        departamento_asociado=departamento_usuario
+    )
+    
+    return render(request, 'departamento/listar_incidencias_departamento.html', {
+        'usuario_activo': usuario_activo,
+        'departamento': departamento_usuario,
+        'incidencias': incidencias_list,
+        'estado_choices': estado_choices,
+        'estado_filtro': estado_filtro,
+        'cuadrillas': cuadrillas
     })

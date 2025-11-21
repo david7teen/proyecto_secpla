@@ -24,7 +24,7 @@
 
 <div class="section-container">
   <div class="section-header">
-    <h2>Incidencias Pendientes Recientes</h2>
+    <h2>Últimas incidencias</h2>
   </div>
 
   <div class="table-responsive">
@@ -32,34 +32,38 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Nombre Incidencia</th>
-          <th>Creador (Territorial)</th>
+          <th>Nombre</th>
+          <th>Creador</th>
           <th>Prioridad</th>
           <th>Estado</th>
-          <th>Acciones</th>
         </tr>
       </thead>
-      <tbody>
-        {% for i in incidencias %}
-          <tr>
-            <td>{{ i.id }}</td>
-            <td>{{ i.nombre_incidencia }}</td>
-            <td>{{ i.territorial_creador.nombre|default:'N/A' }}</td>
-            <td>{{ i.get_prioridad_display }}</td>
-            <td><span class="estado-pendiente">{{ i.estado }}</span></td>
-            <td class="action-buttons">
-              <a href="{% url 'ver_pendientes_departamento' %}" class="btn btn-sm btn-info">Ir a Pendientes</a>
-            </td>
-          </tr>
-        {% empty %}
-          <tr><td colspan="6">No hay incidencias pendientes registradas.</td></tr>
-        {% endfor %}
-      </tbody>
+	  <tbody>
+	    {% for i in incidencias %}
+		  <tr>
+		    <td>{{ i.id }}</td>
+		    <td>{{ i.nombre_incidencia }}</td>
+		    <td>{{ i.territorial_creador.nombre|default:'N/A' }}</td>
+		    <td>{{ i.get_prioridad_display }}</td>
+		    <td>
+			  {% if i.estado == "Finalizada" or i.estado == "Cerrada" %}
+			    <span class="estado-activo">{{ i.estado }}</span>
+			  {% elif i.estado == "Rechazada" %}
+			    <span class="estado-inactivo">{{ i.estado }}</span>
+			  {% else %}
+			    <span class="estado-pendiente">{{ i.estado }}</span>
+			  {% endif %}
+		    </td>
+		  </tr>
+	    {% empty %}
+		  <tr><td colspan="6">No hay incidencias registradas.</td></tr>
+	    {% endfor %}
+	  </tbody>
     </table>
   </div>
 
   <div class="section-footer">
-    <a href="{% url 'ver_pendientes_departamento' %}" style="color: #007bff; text-decoration: none; font-weight: bold;">Ver todo</a>
+    <a href="{% url 'dep_listar_incidencias' %}" style="color: #007bff; text-decoration: none; font-weight: bold;">Ver todo</a>
   </div>
 </div>
 

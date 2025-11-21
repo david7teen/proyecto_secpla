@@ -1099,3 +1099,18 @@ def cambiar_contraseña_desde_recuperacion(request, intento_id):
         'intento': intento,
         'usuario': usuario
     })
+
+def eliminar_encuesta(request, encuesta_id):
+    if request.session.get('perfil') != 'SECPLA':
+        messages.error(request, 'No tienes permisos para esta acción.')
+        return redirect('/login/secpla/')
+    
+    encuesta = get_object_or_404(Encuesta, id=encuesta_id)
+    
+    if request.method == 'POST':
+        nombre_encuesta = encuesta.nombre_encuesta
+        encuesta.delete()
+        messages.success(request, f'Encuesta "{nombre_encuesta}" eliminada correctamente.')
+        return redirect('listar_encuestas')
+    
+    return redirect('listar_encuestas')

@@ -52,6 +52,7 @@ urlpatterns = [
     path('editar_encuesta/<int:encuesta_id>/', views.editar_encuesta, name='editar_encuesta'),
     path('bloquear_encuesta/<int:encuesta_id>/', views.bloquear_encuesta, name='bloquear_encuesta'),
     path('activar_encuesta/<int:encuesta_id>/', views.activar_encuesta, name='activar_encuesta'),
+	path('encuesta/eliminar/<int:encuesta_id>/', views.eliminar_encuesta, name='eliminar_encuesta'),
 
     path('ajax/crear_pregunta/', crear_pregunta_ajax, name='crear_pregunta_ajax'),
     path('secpla/crear_pregunta_ajax/', views.crear_pregunta_ajax, name='crear_pregunta_ajax'),

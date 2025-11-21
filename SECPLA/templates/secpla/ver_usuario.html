@@ -41,13 +41,17 @@
             </td>
             <td class="action-buttons">
               <a href="{% url 'cambiar_contraseña' u.id %}" class="btn btn-sm btn-secondary">Cambiar contraseña</a>
-              <a href="/secpla/ver_usuario_2/{{ u.id }}" class="btn btn-sm btn-info">Ver</a>
               <a href="/secpla/editar_usuario/{{ u.id }}" class="btn btn-sm btn-warning">Editar</a>
               {% if u.estado == 'Activo' %}
                 <a href="/secpla/bloquear_usuario/{{ u.id }}" class="btn btn-sm btn-danger">Bloquear</a>
               {% else %}
                 <a href="/secpla/activar_usuario/{{ u.id }}" class="btn btn-sm btn-success">Activar</a>
               {% endif %}
+              <a href="{% url 'eliminar_usuario' u.id %}" 
+				   class="btn btn-sm btn-danger"
+				   onclick="return confirm('¿Eliminar definitivamente a {{ u.nombre }}? Esta acción no se puede deshacer.');">
+				   Eliminar
+				</a>
             </td>
           </tr>
         {% endfor %}

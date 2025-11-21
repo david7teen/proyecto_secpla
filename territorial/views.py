@@ -256,7 +256,7 @@ def crear_incidencia(request):
                 datos_vecino = request.POST.get('datos_vecino')
             imagen = request.FILES.get('imagen')
 
-            if not all([nombre_incidencia, descripcion, direccion_id, departamento_id]):
+            if not all([nombre_incidencia, descripcion, direccion_id, departamento_id, tipo_incidencia_id]):
                 messages.error(request, 'Por favor complete todos los campos obligatorios.')
                 return render(request, 'territorial/crear_incidencia.html', {
                     'usuario_activo': usuario_activo,

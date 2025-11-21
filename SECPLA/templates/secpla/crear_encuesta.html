@@ -4,6 +4,11 @@
 <div class="form-container">
   <form method="POST" action="{% url 'crear_encuesta' %}" enctype="multipart/form-data" class="formulario-encuesta" id="formEncuesta">
     <h2>Crear nueva Encuesta</h2>
+    {% if messages %}
+	  {% for message in messages %}
+		<div class="alert alert-danger">{{ message }}</div>
+	  {% endfor %}
+	{% endif %}
     {% csrf_token %}
     {% if error %}
       <div class="alert alert-danger">{{ error }}</div>
@@ -20,7 +25,7 @@
     </div>
     
     <div class="form-group">
-      <label for="tipo_incidencia">Tipo de incidencia:</label>
+      <label for="tipo_incidencia">Tipo de incidencia: *</label>
       <select id="tipo_incidencia" name="tipo_incidencia" required>
         <option value="">Seleccione una incidencia</option>
         {% for i in incidencias %}

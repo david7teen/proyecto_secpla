@@ -1058,7 +1058,7 @@ def rechazar_recuperacion(request, intento_id):
     
     return redirect('ver_intentos_recuperacion')
 
-def generar_contraseña_aleatoria(longitud=6):
+def generar_contraseña_aleatoria(longitud=8):
     caracteres = string.ascii_letters + string.digits
     return ''.join(secrets.choice(caracteres) for _ in range(longitud))
 
@@ -1083,7 +1083,7 @@ def cambiar_contraseña_desde_recuperacion(request, intento_id):
         messages.warning(request, f'Múltiples usuarios con el mismo correo. Se usará: {usuario.nombre}')
     
     if request.method == 'POST':
-        nueva_contraseña = generar_contraseña_aleatoria(6)
+        nueva_contraseña = generar_contraseña_aleatoria(8)
         
         usuario.contraseña = nueva_contraseña
         usuario.save()

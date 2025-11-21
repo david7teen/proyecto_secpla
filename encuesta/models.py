@@ -20,7 +20,7 @@ class Encuesta(models.Model):
     prioridad = models.CharField(max_length=10, choices=PRIORIDAD_CHOICES)
 
     datos_vecino = models.TextField(blank=True, null=True)
-    tipo_incidencia = models.ForeignKey(TipoIncidencia, on_delete=models.CASCADE, null=True)
+    tipo_incidencia = models.ForeignKey(TipoIncidencia, on_delete=models.CASCADE)
 
     estado = models.CharField(max_length=20, choices=[
     ('Abierta', 'Abierta'),

@@ -28,8 +28,8 @@
       </div>
 
       <div class="form-group">
-        <label>Tipo de Incidencia</label>
-        <select name="tipo_incidencia">
+        <label>Tipo de Incidencia *</label>
+        <select name="tipo_incidencia" required>
           <option value="">Seleccione un tipo</option>
           {% for tipo in tipos_incidencia %}
             <option value="{{ tipo.id }}" {% if incidencia.tipo_incidencia.id == tipo.id %}selected{% endif %}>
@@ -37,6 +37,12 @@
             </option>
           {% endfor %}
         </select>
+      </div>
+
+      <div class="form-group">
+        <label for="ubicacion">Ubicación *</label>
+        <input type="text" name="ubicacion" id="ubicacion" value="{{ incidencia.ubicacion|default_if_none:'' }}" required 
+             placeholder="Ej: Las Condes, Avenida Kennedy, #1234">
       </div>
 
       <div class="form-group">
@@ -73,30 +79,31 @@
       </div>
 
       <div class="form-group">
-        <label>Ubicación</label>
-        <input type="text" name="ubicacion" value="{{ incidencia.ubicacion|default_if_none:'' }}" placeholder="Dirección exacta o referencia">
-      </div>
-
-      <div class="form-group">
         <label>Datos del Vecino</label>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input type="text" name="datos_vecino_nombre" value="{{ datos_vecino_nombre|default_if_none:'' }}" placeholder="Nombre del vecino" style="flex:1; min-width:180px;">
+          <input type="text" name="datos_vecino_nombre" value="{{ datos_vecino_nombre|default_if_none:'' }}" placeholder="Nombre" style="flex:1; min-width:180px;">
           <input type="text" name="datos_vecino_celular" value="{{ datos_vecino_celular|default_if_none:'' }}" placeholder="Celular" style="width:160px;">
           <input type="email" name="datos_vecino_email" value="{{ datos_vecino_email|default_if_none:'' }}" placeholder="Email" style="flex:1; min-width:180px;">
         </div>
       </div>
-
+      
       <div class="form-group">
-        <label>Imagen actual:</label>
-        {% if incidencia.imagen %}
-          <div class="imagen-actual">
-            <img src="{{ incidencia.imagen.url }}" alt="Imagen actual" width="200">
-            <small>Imagen actual - Subir nueva imagen para reemplazar</small>
-          </div>
-        {% else %}
-          <p class="text-muted">No hay imagen actual</p>
-        {% endif %}
+        <label>Archivos Adjuntos</label>
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label>Imagen:</label>
         <input type="file" name="imagen" accept="image/*">
+      </div>
+      
+      <div style="margin-bottom: 10px;">
+        <label>Video:</label>
+        <input type="file" name="video" accept="video/*" value="{{ incidencia.video|default_if_none:'' }}">
+	  </div>
+    
+      <div style="margin-bottom: 10px;">
+        <label>Audio:</label>
+        <input type="file" name="audio" accept="audio/*" value="{{ incidencia.audio|default_if_none:'' }}">
       </div>
 
       <div class="form-group">
@@ -113,7 +120,7 @@
       </div>
 
       <div class="form-actions">
-  <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
         <a href="{% url 'dashboard_territorial' %}" class="btn btn-secondary">Cancelar</a>
       </div>
     </form>

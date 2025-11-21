@@ -11,7 +11,7 @@ class Incidencia(models.Model):
 
     direccion_incidencia = models.ForeignKey(Direccion, on_delete=models.CASCADE, null=False)
     departamento_incidencia = models.ForeignKey(Departamento, on_delete=models.CASCADE, null=False)
-    tipo_incidencia = models.ForeignKey(TipoIncidencia, on_delete=models.CASCADE, null=True, blank=True)
+    tipo_incidencia = models.ForeignKey(TipoIncidencia, on_delete=models.CASCADE)
 
     cuadrilla_asignada = models.ForeignKey(
         Usuario,

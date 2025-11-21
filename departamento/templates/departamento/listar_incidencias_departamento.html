@@ -1,5 +1,5 @@
-{% extends 'cuadrilla/base_cuadrilla.html' %}
-{% block title %}Listado de Incidencias - Cuadrilla{% endblock %}
+{% extends 'departamento/base_departamento.html' %}
+{% block title %}Listado de Incidencias - Departamento{% endblock %}
 
 {% block content %}
 <div class="section-container">
@@ -10,13 +10,13 @@
   <div class="stats-header">
     <h3>Filtrar por estado:</h3>
     <div class="form-actions">
-      <a href="{% url 'cua_listar_incidencias' %}" 
+      <a href="{% url 'dep_listar_incidencias' %}"
         class="btn {% if not estado_filtro %}btn-primary{% else %}btn-secondary{% endif %}"
         style="margin-right:8px;margin-bottom:6px;">
         Todas
       </a>
       {% for value, label in estado_choices %}
-        <a href="{% url 'cua_listar_incidencias' %}?estado={{ value }}" 
+        <a href="{% url 'dep_listar_incidencias' %}?estado={{ value }}" 
           class="btn {% if estado_filtro == value %}btn-primary{% else %}btn-secondary{% endif %}"
           style="margin-right:8px;margin-bottom:6px;">
           {{ label }}
@@ -58,22 +58,28 @@
               {% endif %}
             </td>
             <td class="action-buttons">
-              <a href="{% url 'cuadrilla_responder_incidencia' inc.id %}" class="btn btn-sm btn-info">Ver</a>
+              <a href="{% url 'ver_incidencia_departamento' inc.id %}" class="btn btn-sm btn-info">Ver</a>
               
-              {% if inc.estado == 'Derivada' %}
-                <a href="{% url 'cuadrilla_tomar_incidencia' inc.id %}" class="btn btn-sm btn-primary">Tomar</a>
-                <a href="{% url 'cuadrilla_responder_incidencia' inc.id %}" class="btn btn-sm btn-success">Finalizar</a>
-                <a href="{% url 'cuadrilla_rechazar_incidencia' inc.id %}" class="btn btn-sm btn-danger" 
+              {% if inc.estado == 'Abierta' %}
+                <form action="{% url 'derivar_incidencia' inc.id %}" method="POST" class="inline-form">
+                  {% csrf_token %}
+                  <select name="cuadrilla_id" class="form-control-sm" required>
+                    <option value="">Derivar a...</option>
+                    {% for c in cuadrillas %}
+                      <option value="{{ c.id }}">{{ c.nombre }}</option>
+                    {% endfor %}
+                  </select>
+                  <button type="submit" class="btn btn-sm btn-primary">Derivar</button>
+                </form>
+                <a href="{% url 'rechazar_incidencia' inc.id %}" class="btn btn-sm btn-danger" 
                    onclick="return confirm('¿Estás seguro de RECHAZAR esta incidencia?');">Rechazar</a>
-              {% elif inc.estado == 'En proceso' %}
-                <a href="{% url 'cuadrilla_responder_incidencia' inc.id %}" class="btn btn-sm btn-success">Finalizar Tarea</a>
               {% endif %}
             </td>
           </tr>
         {% empty %}
           <tr>
             <td colspan="8" class="text-center">
-              No hay incidencias {% if estado_filtro %}en estado {{ estado_filtro }}{% else %}asignadas{% endif %}.
+              No hay incidencias {% if estado_filtro %}en estado {{ estado_filtro }}{% else %}asignadas al departamento{% endif %}.
             </td>
           </tr>
         {% endfor %}
@@ -82,7 +88,7 @@
   </div>
 
   <div class="form-actions">
-    <a href="{% url 'dashboard_cuadrilla' %}" class="btn btn-secondary">Volver</a>
+    <a href="{% url 'dashboard_departamento' %}" class="btn btn-secondary">Volver</a> 
   </div>
 </div>
 {% endblock %}

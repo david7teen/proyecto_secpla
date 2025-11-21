@@ -255,6 +255,8 @@ def crear_incidencia(request):
             else:
                 datos_vecino = request.POST.get('datos_vecino')
             imagen = request.FILES.get('imagen')
+            video = request.FILES.get('video')
+            audio = request.FILES.get('audio')
 
             if not all([nombre_incidencia, descripcion, direccion_id, departamento_id, tipo_incidencia_id]):
                 messages.error(request, 'Por favor complete todos los campos obligatorios.')
@@ -279,6 +281,8 @@ def crear_incidencia(request):
                 ubicacion=ubicacion,
                 datos_vecino=datos_vecino,
                 imagen=imagen,
+                video=video,
+                audio=audio,
                 territorial_creador=usuario_activo,
                 estado='Abierta'
             )
@@ -438,4 +442,22 @@ def listar_incidencias_territorial(request):
         'incidencias': incidencias_list,
         'estado_choices': estado_choices,
         'estado_filtro': estado_filtro
+    })
+
+
+def ver_incidencia_territorial(request, incidencia_id):
+    usuario_activo_data = request.session.get('usuario_activo')
+    if not usuario_activo_data:
+        return redirect('/secpla/login/territorial/')
+    
+    usuario_activo = Usuario.objects.get(id=usuario_activo_data['id'])
+    incidencia = get_object_or_404(Incidencia, id=incidencia_id)
+
+    if incidencia.territorial_creador != usuario_activo:
+        messages.error(request, 'No tienes permisos para ver esta incidencia.')
+        return redirect('dashboard_territorial')
+
+    return render(request, 'territorial/ver_incidencia.html', {
+        'usuario_activo': usuario_activo,
+        'incidencia': incidencia
     })

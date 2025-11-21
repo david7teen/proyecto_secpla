@@ -4,14 +4,20 @@
 {% block content %}
 <div class="form-container">
   <div class="usuario-detalle-card">
-    <h2>Detalle de Incidencia (Supervisión)</h2>
+    <h2>Detalle de Incidencia</h2>
   
     <div class="usuario-info">
       <p><strong>ID Incidencia:</strong> {{ inc.id }}</p>
       <p><strong>Título:</strong> {{ inc.nombre_incidencia }}</p>
+      
       <p><strong>Descripción:</strong></p>
       <div class="descripcion-texto">{{ inc.descripcion|default:"Sin descripción" }}</div>
+      
       <p><strong>Ubicación:</strong> {{ inc.ubicacion|default:"No especificada" }}</p>
+      
+      <p><strong>Datos del Vecino:</strong> {{ inc.datos_vecino|default:"No especificados" }}</p>
+      
+      <p><strong>Tipo de Incidencia:</strong> {{ inc.tipo_incidencia.nombre|default:"No especificado" }}</p>
       
       <hr>
       <p><strong>Estado:</strong> 
@@ -25,10 +31,38 @@
       </p>
       <p><strong>Prioridad:</strong> {{ inc.get_prioridad_display }}</p>
       
+      <p><strong>Fecha Creación:</strong> {{ inc.fecha_creacion|date:"d/m/Y H:i" }}</p>
+      <p><strong>Fecha Derivación:</strong> {{ inc.fecha_derivacion|date:"d/m/Y H:i"|default:"-" }}</p>
+      <p><strong>Fecha Finalización:</strong> {{ inc.fecha_finalizacion|date:"d/m/Y H:i"|default:"-" }}</p>
+      
       <hr>
-      <p><strong>Creador (Territorial):</strong> {{ inc.territorial_creador.nombre|default:'N/A' }}</p>
+      <p><strong>Creador (Territorial):</strong> {{ inc.territorial_creador.nombre|default:'N/A' }} {{ inc.territorial_creador.apellido|default:'' }}</p>
       <p><strong>Departamento:</strong> {{ inc.departamento_incidencia.nombre_departamento }}</p>
-      <p><strong>Cuadrilla Asignada:</strong> {{ inc.cuadrilla_asignada.nombre|default:"Sin asignar" }}</p>
+      <p><strong>Cuadrilla Asignada:</strong> 
+        {% if inc.cuadrilla_asignada %}
+          {{ inc.cuadrilla_asignada.nombre }} {{ inc.cuadrilla_asignada.apellido }}
+        {% else %}
+          <span class="text-muted">Sin asignar</span>
+        {% endif %}
+      </p>
+
+      {% if inc.imagen %}
+        <hr>
+        <p><strong>Imagen Adjunta:</strong></p>
+        <img src="{{ inc.imagen.url }}" class="imagen-evidencia" alt="Evidencia" style="max-width: 300px; border-radius: 8px;">
+      {% endif %}
+
+      {% if inc.video %}
+        <p><strong>Video:</strong>
+          <a href="{{ inc.video.url }}" target="_blank" class="btn btn-sm btn-info">Ver video</a>
+        </p>
+      {% endif %}
+
+      {% if inc.audio %}
+        <p><strong>Audio:</strong>
+          <a href="{{ inc.audio.url }}" target="_blank" class="btn btn-sm btn-info">Escuchar audio</a>
+        </p>
+      {% endif %}
     </div>
   
     <div class="usuario-acciones">
@@ -36,4 +70,19 @@
     </div>
   </div>
 </div>
+
+<style>
+.descripcion-texto {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    border-left: 4px solid #007bff;
+}
+
+.imagen-evidencia {
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
 {% endblock %}

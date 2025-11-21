@@ -37,6 +37,7 @@
 		  <th>Prioridad</th>
 		  <th>Fecha</th>
 		  <th>Estado</th>
+		  <th>Acciones</th>
         </tr>
       </thead>
   	  <tbody>
@@ -58,6 +59,8 @@
 			    <span class="estado-pendiente">{{ i.get_estado_display }}</span>
 			  {% endif %}
 		    </td>
+		    <td class="action-buttons">
+			  <a href="{% url 'dir_ver_incidencia' i.id %}" class="btn btn-sm btn-info">Ver</a>
 		  </tr>
 	    {% empty %}
 		  <tr>

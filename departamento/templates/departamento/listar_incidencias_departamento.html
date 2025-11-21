@@ -59,7 +59,8 @@
             </td>
             <td class="action-buttons">
               <a href="{% url 'ver_incidencia_departamento' inc.id %}" class="btn btn-sm btn-info">Ver</a>
-              
+              <a href="{% url 'editar_incidencia_departamento' inc.id %}" class="btn btn-sm btn-warning">Editar
+            </a>
               {% if inc.estado == 'Abierta' %}
                 <form action="{% url 'derivar_incidencia' inc.id %}" method="POST" class="inline-form">
                   {% csrf_token %}

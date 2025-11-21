@@ -5,6 +5,8 @@ from direccion.models import Direccion
 from departamento.models import Departamento
 from django.contrib import messages
 from django.utils import timezone
+from django.http import JsonResponse
+from tipo_incidencia.models import TipoIncidencia
 
 def vista_direccion(request):
     usuario_activo_data = request.session.get('usuario_activo')
@@ -199,7 +201,19 @@ def editar_incidencia_direccion(request, incidencia_id):
             incidencia.descripcion = request.POST.get('descripcion')
             incidencia.prioridad = request.POST.get('prioridad')
             incidencia.ubicacion = request.POST.get('ubicacion')
-            incidencia.datos_vecino = request.POST.get('datos_vecino')
+            
+            datos_vecino_nombre = request.POST.get('datos_vecino_nombre', '').strip()
+            datos_vecino_celular = request.POST.get('datos_vecino_celular', '').strip()
+            datos_vecino_email = request.POST.get('datos_vecino_email', '').strip()
+            
+            if datos_vecino_nombre or datos_vecino_celular or datos_vecino_email:
+                incidencia.datos_vecino = f"{datos_vecino_nombre} - {datos_vecino_celular} - {datos_vecino_email}"
+            else:
+                incidencia.datos_vecino = request.POST.get('datos_vecino', '')
+
+            tipo_incidencia_id = request.POST.get('tipo_incidencia')
+            if tipo_incidencia_id:
+                incidencia.tipo_incidencia = TipoIncidencia.objects.get(id=tipo_incidencia_id)
 
             direccion_id = request.POST.get('direccion_incidencia')
             departamento_id = request.POST.get('departamento_incidencia')
@@ -211,6 +225,11 @@ def editar_incidencia_direccion(request, incidencia_id):
 
             if 'imagen' in request.FILES:
                 incidencia.imagen = request.FILES['imagen']
+            
+            if 'video' in request.FILES:
+                incidencia.video = request.FILES['video']
+            if 'audio' in request.FILES:
+                incidencia.audio = request.FILES['audio']
 
             incidencia.save()
             messages.success(request, 'Incidencia actualizada correctamente.')
@@ -221,12 +240,28 @@ def editar_incidencia_direccion(request, incidencia_id):
     
     direcciones = Direccion.objects.filter(estado='Activo')
     departamentos = Departamento.objects.filter(estado='Activo')
+    
+    tipos_incidencia = TipoIncidencia.objects.all()
+    
+    datos_vecino_nombre = datos_vecino_celular = datos_vecino_email = ''
+    if incidencia.datos_vecino:
+        parts = [p.strip() for p in incidencia.datos_vecino.split(' - ')]
+        if len(parts) >= 1:
+            datos_vecino_nombre = parts[0]
+        if len(parts) >= 2:
+            datos_vecino_celular = parts[1]
+        if len(parts) >= 3:
+            datos_vecino_email = parts[2]
 
     return render(request, 'direccion/editar_incidencia.html', {
         'usuario_activo': usuario_activo,
         'inc': incidencia,
         'direcciones': direcciones,
         'departamentos': departamentos,
+        'tipos_incidencia': tipos_incidencia,
+        'datos_vecino_nombre': datos_vecino_nombre,
+        'datos_vecino_celular': datos_vecino_celular,
+        'datos_vecino_email': datos_vecino_email,
     })
 
 
@@ -293,3 +328,14 @@ def listar_incidencias_direccion(request):
         'estado_filtro': estado_filtro,
         'cuadrillas': cuadrillas
     })
+
+def obtener_departamentos_por_direccion(request, direccion_id):
+    try:
+        departamentos = Departamento.objects.filter(
+            direccion_departamento_id=direccion_id, 
+            estado='Activo'
+        )
+        data = [{'id': d.id, 'nombre': d.nombre_departamento} for d in departamentos]
+        return JsonResponse(data, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)

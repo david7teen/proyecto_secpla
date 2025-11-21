@@ -58,6 +58,7 @@
               {% endif %}
             </td>
             <td class="action-buttons">
+				<a href="{% url 'ver_incidencia_territorial' i.id %}" class="btn btn-sm btn-info">Ver</a>
               {% if i.estado == 'Abierta' or i.estado == 'Rechazada' %}
                 <a href="{% url 'editar_incidencia' i.id %}" class="btn btn-sm btn-warning">Editar</a>
                 {% if i.estado == 'Abierta' %}

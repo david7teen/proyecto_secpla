@@ -18,6 +18,6 @@ urlpatterns = [
     path('incidencias/cerradas/', views.incidencias_cerradas, name='incidencias_cerradas'),
 	path('ver_solicitudes/', views.ver_todas_solicitudes, name='ver_solicitudes'),
 	path('incidencias/todas/', views.listar_incidencias_territorial, name='listar_incidencias_territorial'),
-
+	path('incidencia/ver/<int:incidencia_id>/', views.ver_incidencia_territorial, name='ver_incidencia_territorial'),
     path('encuestas_abiertas/', views.encuestas_abiertas, name='encuestas_abiertas'),
 ]

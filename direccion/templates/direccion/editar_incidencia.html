@@ -26,12 +26,31 @@
 
       <div class="form-group">
         <label>Descripción *</label>
-        <textarea name="descripcion" rows="4" required>{{ inc.descripcion }}</textarea>
+        <textarea name="descripcion" rows="4" required style="font-size:14px;">{{ inc.descripcion }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Tipo de Incidencia *</label>
+        <select name="tipo_incidencia" required>
+          <option value="">Seleccione un tipo</option>
+          {% for tipo in tipos_incidencia %}
+            <option value="{{ tipo.id }}" {% if inc.tipo_incidencia.id == tipo.id %}selected{% endif %}>
+              {{ tipo.nombre }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="ubicacion">Ubicación *</label>
+        <input type="text" name="ubicacion" id="ubicacion" value="{{ inc.ubicacion|default_if_none:'' }}" 
+               required placeholder="Ej: Las Condes, Avenida Kennedy, #1234">
       </div>
 
       <div class="form-group">
         <label>Dirección *</label>
-        <select name="direccion_incidencia" required>
+        <select id="direccion_incidencia" name="direccion_incidencia" required onchange="cargarDepartamentos()">
+          <option value="">Seleccione una dirección</option>
           {% for direccion in direcciones %}
             <option value="{{ direccion.id }}" {% if inc.direccion_incidencia.id == direccion.id %}selected{% endif %}>
               {{ direccion.nombre_direccion }}
@@ -42,7 +61,8 @@
 
       <div class="form-group">
         <label>Departamento *</label>
-        <select name="departamento_incidencia" required>
+        <select id="departamento_incidencia" name="departamento_incidencia" required>
+          <option value="">Seleccione un departamento</option>
           {% for departamento in departamentos %}
             <option value="{{ departamento.id }}" {% if inc.departamento_incidencia.id == departamento.id %}selected{% endif %}>
               {{ departamento.nombre_departamento }}
@@ -61,26 +81,59 @@
       </div>
 
       <div class="form-group">
-        <label>Ubicación</label>
-        <input type="text" name="ubicacion" value="{{ inc.ubicacion|default_if_none:'' }}" placeholder="Dirección exacta o referencia">
-      </div>
-
-      <div class="form-group">
         <label>Datos del Vecino</label>
-        <textarea name="datos_vecino" rows="3">{{ inc.datos_vecino|default_if_none:'' }}</textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input type="text" name="datos_vecino_nombre" value="{{ datos_vecino_nombre|default_if_none:'' }}" 
+                 placeholder="Nombre" style="flex:1; min-width:180px;">
+          <input type="text" name="datos_vecino_celular" value="{{ datos_vecino_celular|default_if_none:'' }}" 
+                 placeholder="Celular" style="width:160px;">
+          <input type="email" name="datos_vecino_email" value="{{ datos_vecino_email|default_if_none:'' }}" 
+                 placeholder="Email" style="flex:1; min-width:180px;">
+        </div>
+        <input type="hidden" name="datos_vecino" id="datos_vecino" value="{{ inc.datos_vecino|default_if_none:'' }}">
+      </div>
+      
+      <div class="form-group">
+        <label>Archivos Adjuntos</label>
       </div>
 
       <div class="form-group">
         <label>Imagen actual:</label>
         {% if inc.imagen %}
           <div class="imagen-actual">
-            <img src="{{ inc.imagen.url }}" alt="Imagen actual" width="200">
+            <img src="{{ inc.imagen.url }}" alt="Imagen actual" width="200" style="border-radius:8px;">
             <small>Imagen actual - Subir nueva imagen para reemplazar</small>
           </div>
         {% else %}
           <p class="text-muted">No hay imagen actual</p>
         {% endif %}
         <input type="file" name="imagen" accept="image/*">
+      </div>
+      
+      <div class="form-group">
+        <label>Video actual:</label>
+        {% if inc.video %}
+          <div class="archivo-actual">
+            <a href="{{ inc.video.url }}" target="_blank" class="btn btn-sm btn-info">Ver video actual</a>
+            <small> - Subir nuevo video para reemplazar</small>
+          </div>
+        {% else %}
+          <p class="text-muted">No hay video actual</p>
+        {% endif %}
+        <input type="file" name="video" accept="video/*">
+      </div>
+    
+      <div class="form-group">
+        <label>Audio actual:</label>
+        {% if inc.audio %}
+          <div class="archivo-actual">
+            <a href="{{ inc.audio.url }}" target="_blank" class="btn btn-sm btn-info">Escuchar audio actual</a>
+            <small> - Subir nuevo audio para reemplazar</small>
+          </div>
+        {% else %}
+          <p class="text-muted">No hay audio actual</p>
+        {% endif %}
+        <input type="file" name="audio" accept="audio/*">
       </div>
 
       <div class="form-actions">
@@ -90,4 +143,129 @@
     </form>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ubicacionInput = document.getElementById('ubicacion');
+    const form = document.querySelector('form');
+    
+    function validarFormatoUbicacion(ubicacion) {
+        if (!ubicacion.trim()) return true;
+        
+        const partes = ubicacion.trim().split(',').map(p => p.trim());
+        if (partes.length !== 3) return false;
+        
+        const [comuna, calle, numero] = partes;
+        
+        return comuna.length > 0 && 
+               calle.length > 0 && 
+               numero.startsWith('#') && 
+               /^\d+$/.test(numero.slice(1));
+    }
+
+    function formatearUbicacion(ubicacion) {
+        return ubicacion.split(', ').map(parte => 
+            parte.replace(/\b\w/g, char => char.toUpperCase())
+        ).join(', ');
+    }
+
+    ubicacionInput.addEventListener('blur', function() {
+        const valor = this.value.trim();
+        if (valor && !validarFormatoUbicacion(valor)) {
+            setTimeout(() => {
+                alert('Formato incorrecto. Use: Comuna, Calle, #Número\n\nEjemplo: Las Condes, Avenida Kennedy, #1234');
+                setTimeout(() => this.focus(), 10);
+            }, 10);
+        } else if (valor) {
+            this.value = formatearUbicacion(valor);
+        }
+    });
+
+    form.addEventListener('submit', function(e) {
+        const ubicacion = ubicacionInput.value.trim();
+        
+        if (ubicacion && !validarFormatoUbicacion(ubicacion)) {
+            e.preventDefault();
+            alert('Formato de ubicación incorrecto\n\nUse: Comuna, Calle, #Número\nEjemplo: Las Condes, Avenida Kennedy, #1234');
+            ubicacionInput.focus();
+            return false;
+        }
+        
+        if (ubicacion) {
+            ubicacionInput.value = formatearUbicacion(ubicacion);
+        }
+    });
+
+    function actualizarDatosVecino() {
+        const nombre = document.querySelector('input[name="datos_vecino_nombre"]').value.trim();
+        const celular = document.querySelector('input[name="datos_vecino_celular"]').value.trim();
+        const email = document.querySelector('input[name="datos_vecino_email"]').value.trim();
+        const datosCombinados = `${nombre} - ${celular} - ${email}`;
+        document.getElementById('datos_vecino').value = datosCombinados;
+    }
+
+    document.querySelectorAll('input[name="datos_vecino_nombre"], input[name="datos_vecino_celular"], input[name="datos_vecino_email"]').forEach(input => {
+        input.addEventListener('input', actualizarDatosVecino);
+    });
+});
+
+function cargarDepartamentos() {
+  const direccionId = document.getElementById('direccion_incidencia').value;
+  const departamentoSelect = document.getElementById('departamento_incidencia');
+
+  if (!direccionId) {
+    departamentoSelect.innerHTML = '<option value="">Seleccione una dirección primero</option>';
+    departamentoSelect.disabled = true;
+    return;
+  }
+
+  departamentoSelect.innerHTML = '<option value="">Cargando...</option>';
+  
+  fetch(`/direccion/api/departamentos/${direccionId}/`)
+    .then(response => response.json())
+    .then(data => {
+      departamentoSelect.innerHTML = '<option value="">Seleccione un departamento</option>';
+      
+      data.forEach(dep => {
+        const option = document.createElement('option');
+        option.value = dep.id;
+        option.text = dep.nombre;
+        departamentoSelect.appendChild(option);
+      });
+
+      departamentoSelect.disabled = false;
+      
+      const currentDeptId = "{{ inc.departamento_incidencia.id }}";
+      if (currentDeptId) {
+        departamentoSelect.value = currentDeptId;
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      departamentoSelect.innerHTML = '<option value="">Error al cargar departamentos</option>';
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const direccionSelect = document.getElementById('direccion_incidencia');
+  if (direccionSelect.value) {
+    cargarDepartamentos();
+  }
+});
+</script>
+
+<style>
+.imagen-actual img {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.archivo-actual {
+    margin-bottom: 10px;
+}
+
+.archivo-actual a {
+    margin-right: 10px;
+}
+</style>
 {% endblock %}

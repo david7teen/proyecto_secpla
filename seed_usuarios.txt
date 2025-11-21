@@ -5,17 +5,17 @@
 -- Para testing y desarrollo
 
 INSERT INTO "SECPLA_usuario" (nombre, apellido, correo, telefono, perfil, contraseña, estado) VALUES
-('Ana', 'Secpla', 'secpla@m.com', '+56912345678', 'SECPLA', '123', 'Activo'),
-('Carlos', 'Direccion', 'direccion@m.com', '+56987654321', 'Dirección', '123', 'Activo'),
-('Maria', 'Departamento', 'departamento@m.com', '+56911223344', 'Departamento', '123', 'Activo'),
-('Pedro', 'Territorial', 'territorial@m.com', '+56955667788', 'Territorial', '123', 'Activo'),
-('Luis', 'Cuadrilla', 'cuadrilla@m.com', '+56999887766', 'Cuadrilla', '123', 'Activo');
+('Ana', 'Secpla', 'secpla@munichile.cl', '+56912345678', 'SECPLA', '12345678', 'Activo'),
+('Carlos', 'Direccion', 'direccion@munichile.cl', '+56987654321', 'Dirección', '12345678', 'Activo'),
+('Maria', 'Departamento', 'departamento@munichile.cl', '+56911223344', 'Departamento', '12345678', 'Activo'),
+('Pedro', 'Territorial', 'territorial@munichile.cl', '+56955667788', 'Territorial', '12345678', 'Activo'),
+('Luis', 'Cuadrilla', 'cuadrilla@munichile.cl', '+56999887766', 'Cuadrilla', '12345678', 'Activo');
 
 -- =============================================================================
 -- CREDENCIALES DE ACCESO:
 -- =============================================================================
--- SECPLA: secpla@m.com / 123
--- Dirección: direccion@m.com / 123  
--- Departamento: departamento@m.com / 123
--- Territorial: territorial@m.com / 123
--- Cuadrilla: cuadrilla@m.com / 123
+-- SECPLA: secpla@munichile.cl / 12345678
+-- Dirección: direccion@munichile.cl / 12345678
+-- Departamento: departamento@munichile.cl / 12345678
+-- Territorial: territorial@munichile.cl / 12345678
+-- Cuadrilla: cuadrilla@munichile.cl / 12345678

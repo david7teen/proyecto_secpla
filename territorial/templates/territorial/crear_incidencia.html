@@ -136,15 +136,17 @@ document.addEventListener('DOMContentLoaded', function() {
         ).join(', ');
     }
 
-    ubicacionInput.addEventListener('blur', function() {
-        const valor = this.value.trim();
-        if (valor && !validarFormatoUbicacion(valor)) {
-            alert('Formato incorrecto. Use: Comuna, Calle, #Número\n\nEjemplo: Las Condes, Avenida Kennedy, #1234');
-            this.focus();
-        } else if (valor) {
-            this.value = formatearUbicacion(valor);
-        }
-    });
+	ubicacionInput.addEventListener('blur', function() {
+		const valor = this.value.trim();
+		if (valor && !validarFormatoUbicacion(valor)) {
+			setTimeout(() => {
+				alert('Formato incorrecto. Use: Comuna, Calle, #Número\n\nEjemplo: Las Condes, Avenida Kennedy, #1234');
+				setTimeout(() => this.focus(), 10);
+			}, 10);
+		} else if (valor) {
+			this.value = formatearUbicacion(valor);
+		}
+	});
 
     form.addEventListener('submit', function(e) {
         const ubicacion = ubicacionInput.value.trim();

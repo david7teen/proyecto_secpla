@@ -8,7 +8,7 @@ python manage.py migrate
 
 # 2. CREAR USUARIO SECPLA INICIAL (Ejecutar en PgAdmin)
 INSERT INTO "SECPLA_usuario" (nombre, apellido, correo, telefono, perfil, contraseña, estado) 
-VALUES ('nombre_1','apellido_1','secpla1@m.com','+56912345678','SECPLA','123','Activo');
+VALUES ('nombre_1','apellido_1','secpla1@munichile.cl','+56912345678','SECPLA','12345678','Activo');
 
 # 3. INICIAR SERVIDOR
 python manage.py runserver

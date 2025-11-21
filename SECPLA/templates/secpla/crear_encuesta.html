@@ -15,17 +15,17 @@
     {% endif %}
 
     <div class="form-group">
-      <label>Nombre:</label>
+      <label>Nombre</label>
       <input type="text" name="nombre_encuesta" required>
     </div>
 
     <div class="form-group">
-      <label>Descripción:</label>
+      <label>Descripción</label>
       <textarea name="descripcion_incidente"></textarea>
     </div>
     
     <div class="form-group">
-      <label for="tipo_incidencia">Tipo de incidencia: *</label>
+      <label for="tipo_incidencia">Tipo de incidencia *</label>
       <select id="tipo_incidencia" name="tipo_incidencia" required>
         <option value="">Seleccione una incidencia</option>
         {% for i in incidencias %}
@@ -44,7 +44,7 @@
     </div>
 
     <div class="form-group">
-      <label>Preguntas:</label>
+      <label>Preguntas</label>
       <div id="contenedorPreguntas">
         <div class="bloque-pregunta">
           <select name="preguntas[]">
@@ -88,7 +88,7 @@
     </div>
 
     <div class="form-group">
-      <label>Archivos adjuntos</label>
+      <label>Archivos Adjuntos</label>
     </div>
 
     <div style="margin-bottom: 10px;">
@@ -346,15 +346,17 @@ document.addEventListener('DOMContentLoaded', function() {
         ).join(', ');
     }
 
-    ubicacionInput.addEventListener('blur', function() {
-        const valor = this.value.trim();
-        if (valor && !validarFormatoUbicacion(valor)) {
-            alert('Formato incorrecto. Use: Comuna, Calle, #Número\n\nEjemplo: Las Condes, Avenida Kennedy, #1234');
-            this.focus();
-        } else if (valor) {
-            this.value = formatearUbicacion(valor);
-        }
-    });
+	ubicacionInput.addEventListener('blur', function() {
+		const valor = this.value.trim();
+		if (valor && !validarFormatoUbicacion(valor)) {
+			setTimeout(() => {
+				alert('Formato incorrecto. Use: Comuna, Calle, #Número\n\nEjemplo: Las Condes, Avenida Kennedy, #1234');
+				setTimeout(() => this.focus(), 10);
+			}, 10);
+		} else if (valor) {
+			this.value = formatearUbicacion(valor);
+		}
+	});
 
     form.addEventListener('submit', function(e) {
         const ubicacion = ubicacionInput.value.trim();

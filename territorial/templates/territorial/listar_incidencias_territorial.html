@@ -5,6 +5,7 @@
 <div class="section-container">
   <div class="section-header">
     <h2>Listado de Incidencias</h2>
+    <a href="{% url 'crear_incidencia' %}" class="btn btn-primary">Crear</a>
   </div>
 
   <div class="stats-header">
@@ -60,6 +61,7 @@
               {% endif %}
             </td>
             <td class="action-buttons">
+				<a href="{% url 'ver_incidencia_territorial' inc.id %}" class="btn btn-sm btn-info">Ver</a>
               {% if inc.estado == 'Abierta' or inc.estado == 'Rechazada' %}
                 <a href="{% url 'editar_incidencia' inc.id %}" class="btn btn-sm btn-warning">Editar</a>
                 {% if inc.estado == 'Abierta' %}

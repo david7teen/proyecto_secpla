@@ -32,33 +32,39 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Nombre</th>
+          <th>Nombre Incidencia</th>
+          <th>Descripción</th>
           <th>Creador</th>
           <th>Prioridad</th>
+          <th>Fecha</th>
           <th>Estado</th>
         </tr>
       </thead>
-	  <tbody>
-	    {% for i in incidencias %}
-		  <tr>
-		    <td>{{ i.id }}</td>
-		    <td>{{ i.nombre_incidencia }}</td>
-		    <td>{{ i.territorial_creador.nombre|default:'N/A' }}</td>
-		    <td>{{ i.get_prioridad_display }}</td>
-		    <td>
-			  {% if i.estado == "Finalizada" or i.estado == "Cerrada" %}
-			    <span class="estado-activo">{{ i.estado }}</span>
-			  {% elif i.estado == "Rechazada" %}
-			    <span class="estado-inactivo">{{ i.estado }}</span>
-			  {% else %}
-			    <span class="estado-pendiente">{{ i.estado }}</span>
-			  {% endif %}
-		    </td>
-		  </tr>
-	    {% empty %}
-		  <tr><td colspan="6">No hay incidencias registradas.</td></tr>
-	    {% endfor %}
-	  </tbody>
+      <tbody>
+        {% for i in incidencias %}
+          <tr>
+            <td>{{ i.id }}</td>
+            <td>{{ i.nombre_incidencia }}</td>
+            <td>{{ i.descripcion|truncatewords:10 }}</td>
+            <td>{{ i.territorial_creador.nombre|default:'N/A' }}</td>
+            <td>{{ i.get_prioridad_display }}</td>
+            <td>{{ i.fecha_creacion|date:"d/m/Y" }}</td>
+            <td>
+              {% if i.estado == "Finalizada" or i.estado == "Cerrada" %}
+                <span class="estado-activo">{{ i.estado }}</span>
+              {% elif i.estado == "Rechazada" %}
+                <span class="estado-inactivo">{{ i.estado }}</span>
+              {% else %}
+                <span class="estado-pendiente">{{ i.estado }}</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" class="text-center">No hay incidencias registradas.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
 
